@@ -3,6 +3,7 @@ import type { Box, VscpDocument } from "../schema";
 export interface EditorState {
   document: VscpDocument;
   selectedBoxId: string | null;
+  locked: boolean;
 }
 
 type Listener = () => void;
@@ -10,6 +11,7 @@ type Listener = () => void;
 let state: EditorState = {
   document: { boxes: [] },
   selectedBoxId: null,
+  locked: false,
 };
 
 const listeners: Set<Listener> = new Set();
@@ -28,9 +30,14 @@ export function setSelectedBoxId(id: string | null): void {
   notify();
 }
 
+export function setLocked(locked: boolean): void {
+  state = { ...state, locked };
+  notify();
+}
+
 export function updateBox(
   id: string,
-  changes: Partial<Pick<Box, "x" | "y" | "width" | "height">>
+  changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "label">>
 ): void {
   state = {
     ...state,

@@ -1,32 +1,53 @@
 import Konva from "konva";
 import type { Box } from "../schema";
+import { createBoxNode, updateBoxNode, type BoxNodeCallbacks } from "./boxNode";
+import type { LabelEditContext } from "./labelEditor";
 import type { EditorState } from "./state";
-
-const DEFAULT_COLOR = "#888888";
 
 export interface RendererCallbacks {
   onBoxChanged: (
     id: string,
-    changes: Partial<Pick<Box, "x" | "y" | "width" | "height">>
+    changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "label">>
   ) => void;
   onSelect: (id: string | null) => void;
 }
 
 export function createRenderer(
+  stage: Konva.Stage,
   layer: Konva.Layer,
   transformer: Konva.Transformer,
   callbacks: RendererCallbacks
 ) {
   let prevBoxIds: Set<string> = new Set();
+  let isLocked = false;
+
+  const textColor =
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--vscode-editor-foreground")
+      .trim() || "#cccccc";
+
+  const labelEditCtx: LabelEditContext = {
+    stage,
+    layer,
+    textColor,
+    onLabelChanged: (boxId, label) => callbacks.onBoxChanged(boxId, { label }),
+  };
+
+  const boxCallbacks: BoxNodeCallbacks = {
+    onBoxChanged: callbacks.onBoxChanged,
+    onSelect: callbacks.onSelect,
+    isLocked: () => isLocked,
+  };
 
   function render(state: EditorState): void {
-    const { document, selectedBoxId } = state;
-    const currentIds = new Set(document.boxes.map((b) => b.id));
+    const { document: doc, selectedBoxId, locked } = state;
+    isLocked = locked;
+    const currentIds = new Set(doc.boxes.map((b) => b.id));
 
     // Remove nodes for deleted boxes
     for (const id of prevBoxIds) {
       if (!currentIds.has(id)) {
-        const node = layer.findOne<Konva.Rect>(`#${id}`);
+        const node = layer.findOne<Konva.Group>(`#${id}`);
         if (node) {
           node.destroy();
         }
@@ -34,60 +55,21 @@ export function createRenderer(
     }
 
     // Create or update nodes
-    for (const box of document.boxes) {
-      let rect = layer.findOne<Konva.Rect>(`#${box.id}`);
+    for (const box of doc.boxes) {
+      let group = layer.findOne<Konva.Group>(`#${box.id}`);
 
-      if (!rect) {
-        rect = new Konva.Rect({
-          id: box.id,
-          draggable: true,
-          strokeWidth: 2,
-          stroke: "var(--vscode-editor-foreground)",
-        });
-
-        rect.on("click tap", (e) => {
-          e.cancelBubble = true;
-          callbacks.onSelect(box.id);
-        });
-
-        rect.on("dragend", () => {
-          callbacks.onBoxChanged(box.id, {
-            x: Math.round(rect!.x()),
-            y: Math.round(rect!.y()),
-          });
-        });
-
-        rect.on("transformend", () => {
-          const scaleX = rect!.scaleX();
-          const scaleY = rect!.scaleY();
-          callbacks.onBoxChanged(box.id, {
-            x: Math.round(rect!.x()),
-            y: Math.round(rect!.y()),
-            width: Math.round(rect!.width() * scaleX),
-            height: Math.round(rect!.height() * scaleY),
-          });
-          rect!.scaleX(1);
-          rect!.scaleY(1);
-        });
-
-        layer.add(rect);
+      if (!group) {
+        group = createBoxNode(box, textColor, labelEditCtx, boxCallbacks);
+        layer.add(group);
       }
 
-      // Skip updating nodes that are being dragged
-      if (!rect.isDragging()) {
-        rect.setAttrs({
-          x: box.x,
-          y: box.y,
-          width: box.width,
-          height: box.height,
-          fill: box.color ?? DEFAULT_COLOR,
-        });
-      }
+      group.draggable(!isLocked);
+      updateBoxNode(group, box);
     }
 
     // Manage transformer
-    if (selectedBoxId) {
-      const selectedNode = layer.findOne<Konva.Rect>(`#${selectedBoxId}`);
+    if (selectedBoxId && !locked) {
+      const selectedNode = layer.findOne<Konva.Group>(`#${selectedBoxId}`);
       if (selectedNode) {
         transformer.nodes([selectedNode]);
       } else {

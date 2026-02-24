@@ -2,18 +2,20 @@
   "boxes": [
     {
       "id": "box-1",
-      "x": 105,
-      "y": 137,
+      "x": 64,
+      "y": 209,
       "width": 200,
       "height": 100,
-      "color": "cornflowerblue"
+      "color": "cornflowerblue",
+      "label": "this\nis \na \nTesT!!!"
     },
     {
       "id": "box-2",
       "x": 222,
       "y": 366,
       "width": 150,
-      "height": 80
+      "height": 80,
+      "label": ""
     }
   ]
 }

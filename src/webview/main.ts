@@ -1,14 +1,10 @@
 import Konva from "konva";
 import type { ExtensionToWebviewMessage } from "../messages";
 import type { WebviewToExtensionMessage } from "../messages";
-import {
-  getState,
-  setDocument,
-  setSelectedBoxId,
-  subscribe,
-  updateBox,
-} from "./state";
+import { getState, setDocument, setSelectedBoxId, subscribe, updateBox } from "./state";
 import { createRenderer } from "./renderer";
+import { setupPanZoom } from "./panZoom";
+import { setupLockToggle } from "./lockToggle";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -56,6 +52,9 @@ stage.on("click tap", (e) => {
   }
 });
 
+setupPanZoom(stage);
+setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
+
 // Debounced edit sender
 let editTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -70,7 +69,7 @@ function sendEditDebounced(): void {
 }
 
 // Create renderer and wire up state subscription
-const renderer = createRenderer(layer, transformer, {
+const renderer = createRenderer(stage, layer, transformer, {
   onBoxChanged: (id, changes) => {
     updateBox(id, changes);
     sendEditDebounced();

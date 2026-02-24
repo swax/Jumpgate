@@ -120,10 +120,38 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       width: 100%;
       height: 100%;
     }
+    #lock-btn {
+      position: fixed;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 4px;
+      background: var(--vscode-button-secondaryBackground, #3a3d41);
+      color: var(--vscode-button-secondaryForeground, #cccccc);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 4px;
+      opacity: 0.7;
+    }
+    #lock-btn:hover {
+      opacity: 1;
+      background: var(--vscode-button-secondaryHoverBackground, #45494e);
+    }
+    #lock-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
   </style>
 </head>
 <body>
   <div id="canvas-container"></div>
+  <button id="lock-btn" title="Lock editing"></button>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;
