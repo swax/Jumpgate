@@ -182,8 +182,8 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   <div id="canvas-container"></div>
   <button id="lock-btn" title="Lock editing"></button>
   <div id="sidebar" style="display:none">
-    <input type="color" id="fill-color" class="color-field" title="Fill color">
-    <input type="color" id="text-color" class="color-field" title="Text color">
+    <input type="color" id="fill-color" class="color-field" title="Node color">
+    <input type="color" id="text-color" class="color-field" title="Label color">
   </div>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>

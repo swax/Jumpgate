@@ -1,7 +1,7 @@
 import Konva from "konva";
 import type { ExtensionToWebviewMessage } from "../messages";
 import type { WebviewToExtensionMessage } from "../messages";
-import { getState, setDocument, setSelectedBoxId, subscribe, updateBox } from "./state";
+import { getState, setDocument, setSelectedNodeId, subscribe, updateNode } from "./state";
 import { createRenderer } from "./renderer";
 import { setupPanZoom } from "./panZoom";
 import { setupLockToggle } from "./lockToggle";
@@ -49,15 +49,15 @@ layer.add(transformer);
 // Click on empty stage deselects
 stage.on("click tap", (e) => {
   if (e.target === stage) {
-    setSelectedBoxId(null);
+    setSelectedNodeId(null);
   }
 });
 
 setupPanZoom(stage);
 setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
 setupSidebar(document.documentElement, {
-  onBoxChanged: (id, changes) => {
-    updateBox(id, changes);
+  onNodeChanged: (id, changes) => {
+    updateNode(id, changes);
     sendEditDebounced();
   },
 });
@@ -77,12 +77,12 @@ function sendEditDebounced(): void {
 
 // Create renderer and wire up state subscription
 const renderer = createRenderer(stage, layer, transformer, {
-  onBoxChanged: (id, changes) => {
-    updateBox(id, changes);
+  onNodeChanged: (id, changes) => {
+    updateNode(id, changes);
     sendEditDebounced();
   },
   onSelect: (id) => {
-    setSelectedBoxId(id);
+    setSelectedNodeId(id);
   },
 });
 

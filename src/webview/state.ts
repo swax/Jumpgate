@@ -1,16 +1,16 @@
-import type { Box, VscpDocument } from "../schema";
+import type { Node, VscpDocument } from "../schema";
 
 export interface EditorState {
   document: VscpDocument;
-  selectedBoxId: string | null;
+  selectedNodeId: string | null;
   locked: boolean;
 }
 
 type Listener = () => void;
 
 let state: EditorState = {
-  document: { boxes: [] },
-  selectedBoxId: null,
+  document: { nodes: [] },
+  selectedNodeId: null,
   locked: false,
 };
 
@@ -25,8 +25,8 @@ export function setDocument(document: VscpDocument): void {
   notify();
 }
 
-export function setSelectedBoxId(id: string | null): void {
-  state = { ...state, selectedBoxId: id };
+export function setSelectedNodeId(id: string | null): void {
+  state = { ...state, selectedNodeId: id };
   notify();
 }
 
@@ -35,16 +35,16 @@ export function setLocked(locked: boolean): void {
   notify();
 }
 
-export function updateBox(
+export function updateNode(
   id: string,
-  changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "color" | "textColor" | "label">>
+  changes: Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>
 ): void {
   state = {
     ...state,
     document: {
       ...state.document,
-      boxes: state.document.boxes.map((box) =>
-        box.id === id ? { ...box, ...changes } : box
+      nodes: state.document.nodes.map((node) =>
+        node.id === id ? { ...node, ...changes } : node
       ),
     },
   };

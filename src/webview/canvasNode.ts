@@ -1,79 +1,79 @@
 import Konva from "konva";
-import type { Box } from "../schema";
+import type { Node } from "../schema";
 import { startLabelEdit, type LabelEditContext } from "./labelEditor";
 
-const DEFAULT_COLOR = "#888888";
+const DEFAULT_NODE_COLOR = "#888888";
 
-export interface BoxNodeCallbacks {
-  onBoxChanged: (
+export interface CanvasNodeCallbacks {
+  onNodeChanged: (
     id: string,
-    changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "color" | "textColor" | "label">>
+    changes: Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>
   ) => void;
   onSelect: (id: string) => void;
   isLocked: () => boolean;
 }
 
-export function createBoxNode(
-  box: Box,
-  textColor: string,
+export function createCanvasNode(
+  node: Node,
+  labelColor: string,
   labelEditCtx: LabelEditContext,
-  callbacks: BoxNodeCallbacks
+  callbacks: CanvasNodeCallbacks
 ): Konva.Group {
   const group = new Konva.Group({
-    id: box.id,
-    x: box.x,
-    y: box.y,
+    id: node.id,
+    x: node.x,
+    y: node.y,
     draggable: true,
   });
 
   const rect = new Konva.Rect({
-    name: "box-rect",
-    width: box.width,
-    height: box.height,
-    fill: box.color ?? DEFAULT_COLOR,
+    name: "node-rect",
+    width: node.width,
+    height: node.height,
+    fill: node.nodeColor ?? DEFAULT_NODE_COLOR,
     strokeWidth: 2,
     stroke: "#333333",
   });
 
   const text = new Konva.Text({
-    name: "box-label",
-    text: box.label || "",
-    width: box.width,
-    height: box.height,
+    name: "node-label",
+    text: node.label || "",
+    width: node.width,
+    height: node.height,
     align: "center",
     verticalAlign: "middle",
     fontSize: 14,
     fontFamily: "sans-serif",
-    fill: box.textColor ?? textColor,
+    fill: node.labelColor ?? labelColor,
     listening: false,
   });
 
   group.add(rect);
   group.add(text);
 
-  const boxId = box.id;
+  const nodeId = node.id;
 
   group.on("click tap", (e) => {
     if (callbacks.isLocked()) return;
     e.cancelBubble = true;
-    callbacks.onSelect(boxId);
+    callbacks.onSelect(nodeId);
   });
 
   group.on("dblclick dbltap", () => {
     if (callbacks.isLocked()) return;
-    startLabelEdit(labelEditCtx, group, boxId);
+    startLabelEdit(labelEditCtx, group, nodeId);
   });
 
   group.on("dragend", () => {
-    callbacks.onBoxChanged(boxId, {
+    callbacks.onNodeChanged(nodeId, {
       x: Math.round(group.x()),
       y: Math.round(group.y()),
     });
   });
 
   group.on("transformend", () => {
-    const r = group.findOne<Konva.Rect>(".box-rect")!;
-    const t = group.findOne<Konva.Text>(".box-label")!;
+    const r = group.findOne<Konva.Rect>(".node-rect")!;
+    const t = group.findOne<Konva.Text>(".node-label")!;
     const scaleX = group.scaleX();
     const scaleY = group.scaleY();
     const newWidth = Math.round(r.width() * scaleX);
@@ -84,7 +84,7 @@ export function createBoxNode(
     r.height(newHeight);
     t.width(newWidth);
     t.height(newHeight);
-    callbacks.onBoxChanged(boxId, {
+    callbacks.onNodeChanged(nodeId, {
       x: Math.round(group.x()),
       y: Math.round(group.y()),
       width: newWidth,
@@ -95,21 +95,21 @@ export function createBoxNode(
   return group;
 }
 
-export function updateBoxNode(group: Konva.Group, box: Box, textColor: string): void {
+export function updateCanvasNode(group: Konva.Group, node: Node, labelColor: string): void {
   if (group.isDragging()) return;
 
-  const rect = group.findOne<Konva.Rect>(".box-rect")!;
-  const text = group.findOne<Konva.Text>(".box-label")!;
-  group.setAttrs({ x: box.x, y: box.y });
+  const rect = group.findOne<Konva.Rect>(".node-rect")!;
+  const text = group.findOne<Konva.Text>(".node-label")!;
+  group.setAttrs({ x: node.x, y: node.y });
   rect.setAttrs({
-    width: box.width,
-    height: box.height,
-    fill: box.color ?? DEFAULT_COLOR,
+    width: node.width,
+    height: node.height,
+    fill: node.nodeColor ?? DEFAULT_NODE_COLOR,
   });
   text.setAttrs({
-    text: box.label || "",
-    width: box.width,
-    height: box.height,
-    fill: box.textColor ?? textColor,
+    text: node.label || "",
+    width: node.width,
+    height: node.height,
+    fill: node.labelColor ?? labelColor,
   });
 }

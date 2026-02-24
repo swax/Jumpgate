@@ -1,19 +1,19 @@
 import { z } from "zod";
 
-export const boxSchema = z.object({
+export const nodeSchema = z.object({
   id: z.string(),
   x: z.number(),
   y: z.number(),
   width: z.number().positive(),
   height: z.number().positive(),
-  color: z.string().optional(),
-  textColor: z.string().optional(),
+  nodeColor: z.string().optional(),
+  labelColor: z.string().optional(),
   label: z.string().optional(),
 });
 
 export const documentSchema = z.object({
-  boxes: z.array(boxSchema),
+  nodes: z.array(nodeSchema),
 });
 
-export type Box = z.infer<typeof boxSchema>;
+export type Node = z.infer<typeof nodeSchema>;
 export type VscpDocument = z.infer<typeof documentSchema>;

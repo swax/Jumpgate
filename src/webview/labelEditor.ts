@@ -3,17 +3,17 @@ import Konva from "konva";
 export interface LabelEditContext {
   stage: Konva.Stage;
   layer: Konva.Layer;
-  textColor: string;
-  onLabelChanged: (boxId: string, label: string) => void;
+  labelColor: string;
+  onLabelChanged: (nodeId: string, label: string) => void;
 }
 
 export function startLabelEdit(
   ctx: LabelEditContext,
   group: Konva.Group,
-  boxId: string
+  nodeId: string
 ): void {
-  const rect = group.findOne<Konva.Rect>(".box-rect")!;
-  const textNode = group.findOne<Konva.Text>(".box-label")!;
+  const rect = group.findOne<Konva.Rect>(".node-rect")!;
+  const textNode = group.findOne<Konva.Text>(".node-label")!;
 
   textNode.hide();
   ctx.layer.batchDraw();
@@ -39,7 +39,7 @@ export function startLabelEdit(
     padding: "0",
     margin: "0",
     background: "transparent",
-    color: ctx.textColor,
+    color: ctx.labelColor,
     outline: "none",
     boxSizing: "border-box",
     resize: "none",
@@ -72,7 +72,7 @@ export function startLabelEdit(
     textNode.text(newLabel);
     textNode.show();
     ctx.layer.batchDraw();
-    ctx.onLabelChanged(boxId, newLabel);
+    ctx.onLabelChanged(nodeId, newLabel);
   };
 
   const cancel = () => {

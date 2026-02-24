@@ -1,13 +1,13 @@
 import Konva from "konva";
-import type { Box } from "../schema";
-import { createBoxNode, updateBoxNode, type BoxNodeCallbacks } from "./boxNode";
+import type { Node } from "../schema";
+import { createCanvasNode, updateCanvasNode, type CanvasNodeCallbacks } from "./canvasNode";
 import type { LabelEditContext } from "./labelEditor";
 import type { EditorState } from "./state";
 
 export interface RendererCallbacks {
-  onBoxChanged: (
+  onNodeChanged: (
     id: string,
-    changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "color" | "textColor" | "label">>
+    changes: Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>
   ) => void;
   onSelect: (id: string | null) => void;
 }
@@ -18,10 +18,10 @@ export function createRenderer(
   transformer: Konva.Transformer,
   callbacks: RendererCallbacks
 ) {
-  let prevBoxIds: Set<string> = new Set();
+  let prevNodeIds: Set<string> = new Set();
   let isLocked = false;
 
-  const textColor =
+  const labelColor =
     getComputedStyle(document.documentElement)
       .getPropertyValue("--vscode-editor-foreground")
       .trim() || "#cccccc";
@@ -29,23 +29,23 @@ export function createRenderer(
   const labelEditCtx: LabelEditContext = {
     stage,
     layer,
-    textColor,
-    onLabelChanged: (boxId, label) => callbacks.onBoxChanged(boxId, { label }),
+    labelColor,
+    onLabelChanged: (nodeId, label) => callbacks.onNodeChanged(nodeId, { label }),
   };
 
-  const boxCallbacks: BoxNodeCallbacks = {
-    onBoxChanged: callbacks.onBoxChanged,
+  const nodeCallbacks: CanvasNodeCallbacks = {
+    onNodeChanged: callbacks.onNodeChanged,
     onSelect: callbacks.onSelect,
     isLocked: () => isLocked,
   };
 
   function render(state: EditorState): void {
-    const { document: doc, selectedBoxId, locked } = state;
+    const { document: doc, selectedNodeId, locked } = state;
     isLocked = locked;
-    const currentIds = new Set(doc.boxes.map((b) => b.id));
+    const currentIds = new Set(doc.nodes.map((n) => n.id));
 
-    // Remove nodes for deleted boxes
-    for (const id of prevBoxIds) {
+    // Remove nodes for deleted items
+    for (const id of prevNodeIds) {
       if (!currentIds.has(id)) {
         const node = layer.findOne<Konva.Group>(`#${id}`);
         if (node) {
@@ -55,21 +55,21 @@ export function createRenderer(
     }
 
     // Create or update nodes
-    for (const box of doc.boxes) {
-      let group = layer.findOne<Konva.Group>(`#${box.id}`);
+    for (const node of doc.nodes) {
+      let group = layer.findOne<Konva.Group>(`#${node.id}`);
 
       if (!group) {
-        group = createBoxNode(box, textColor, labelEditCtx, boxCallbacks);
+        group = createCanvasNode(node, labelColor, labelEditCtx, nodeCallbacks);
         layer.add(group);
       }
 
       group.draggable(!isLocked);
-      updateBoxNode(group, box, textColor);
+      updateCanvasNode(group, node, labelColor);
     }
 
     // Manage transformer
-    if (selectedBoxId && !locked) {
-      const selectedNode = layer.findOne<Konva.Group>(`#${selectedBoxId}`);
+    if (selectedNodeId && !locked) {
+      const selectedNode = layer.findOne<Konva.Group>(`#${selectedNodeId}`);
       if (selectedNode) {
         transformer.nodes([selectedNode]);
       } else {
@@ -79,7 +79,7 @@ export function createRenderer(
       transformer.nodes([]);
     }
 
-    prevBoxIds = currentIds;
+    prevNodeIds = currentIds;
     layer.batchDraw();
   }
 
