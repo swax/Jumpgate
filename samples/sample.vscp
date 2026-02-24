@@ -1,6 +1,19 @@
 {
-  "x": 10,
-  "y": 10,
-  "width": 200,
-  "height": 100
+  "boxes": [
+    {
+      "id": "box-1",
+      "x": 105,
+      "y": 137,
+      "width": 200,
+      "height": 100,
+      "color": "cornflowerblue"
+    },
+    {
+      "id": "box-2",
+      "x": 222,
+      "y": 366,
+      "width": 150,
+      "height": 80
+    }
+  ]
 }

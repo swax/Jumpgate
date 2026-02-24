@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
-import { boxSchema } from "./schema";
+import { documentSchema } from "./schema";
+import type {
+  ExtensionToWebviewMessage,
+  WebviewToExtensionMessage,
+} from "./messages";
 
 export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = "perspective.vscpPreview";
@@ -21,79 +25,117 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel: vscode.WebviewPanel,
     _token: vscode.CancellationToken
   ): Promise<void> {
-    webviewPanel.webview.options = { enableScripts: false };
+    const webview = webviewPanel.webview;
 
-    const updateWebview = () => {
-      webviewPanel.webview.html = this.getHtmlForWebview(document);
+    webview.options = {
+      enableScripts: true,
+      localResourceRoots: [
+        vscode.Uri.joinPath(this.context.extensionUri, "dist"),
+      ],
     };
+
+    webview.html = this.getHtmlForWebview(webview);
+
+    let isApplyingEdit = false;
+
+    const sendDocument = () => {
+      const text = document.getText();
+      try {
+        const json: unknown = JSON.parse(text);
+        const result = documentSchema.safeParse(json);
+        if (result.success) {
+          const msg: ExtensionToWebviewMessage = {
+            type: "update",
+            document: result.data,
+          };
+          webview.postMessage(msg);
+        }
+      } catch {
+        // Ignore parse errors — webview keeps last valid state
+      }
+    };
+
+    const messageSubscription = webview.onDidReceiveMessage(
+      async (msg: WebviewToExtensionMessage) => {
+        switch (msg.type) {
+          case "ready":
+            sendDocument();
+            break;
+          case "edit": {
+            const newContent = JSON.stringify(msg.document, null, 2) + "\n";
+            const edit = new vscode.WorkspaceEdit();
+            edit.replace(
+              document.uri,
+              new vscode.Range(0, 0, document.lineCount, 0),
+              newContent
+            );
+            isApplyingEdit = true;
+            await vscode.workspace.applyEdit(edit);
+            isApplyingEdit = false;
+            break;
+          }
+        }
+      }
+    );
 
     const changeDocumentSubscription =
       vscode.workspace.onDidChangeTextDocument((e) => {
-        if (e.document.uri.toString() === document.uri.toString()) {
-          updateWebview();
+        if (
+          e.document.uri.toString() === document.uri.toString() &&
+          !isApplyingEdit
+        ) {
+          sendDocument();
         }
       });
 
     webviewPanel.onDidDispose(() => {
+      messageSubscription.dispose();
       changeDocumentSubscription.dispose();
     });
-
-    updateWebview();
   }
 
-  private getHtmlForWebview(document: vscode.TextDocument): string {
-    const text = document.getText();
-    let content: string;
-
-    try {
-      const json: unknown = JSON.parse(text);
-      const result = boxSchema.safeParse(json);
-
-      if (!result.success) {
-        const errors = result.error.issues
-          .map((i) => `${i.path.join(".")}: ${i.message}`)
-          .join("<br>");
-        content = `<div class="error">Invalid VSCP file:<br>${errors}</div>`;
-      } else {
-        const { x, y, width, height } = result.data;
-        content = `
-          <svg viewBox="${x - 10} ${y - 10} ${width + 20} ${height + 20}"
-               style="max-width:100%;max-height:100vh;">
-            <rect x="${x}" y="${y}" width="${width}" height="${height}"
-                  fill="none" stroke="var(--vscode-editor-foreground)" stroke-width="2"/>
-          </svg>`;
-      }
-    } catch {
-      content = `<div class="error">Failed to parse JSON</div>`;
-    }
+  private getHtmlForWebview(webview: vscode.Webview): string {
+    const scriptUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this.context.extensionUri, "dist", "webview.js")
+    );
+    const nonce = getNonce();
 
     return /* html */ `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline';">
   <style>
-    body {
+    html, body {
       margin: 0;
-      padding: 16px;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background: var(--vscode-editor-background);
-      color: var(--vscode-editor-foreground);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      box-sizing: border-box;
     }
-    .error {
-      color: var(--vscode-errorForeground);
-      font-family: var(--vscode-font-family);
-      font-size: 14px;
+    #canvas-container {
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  ${content}
+  <div id="canvas-container"></div>
+  <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;
   }
+}
+
+function getNonce(): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let nonce = "";
+  for (let i = 0; i < 32; i++) {
+    nonce += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return nonce;
 }

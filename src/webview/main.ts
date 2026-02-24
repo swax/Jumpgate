@@ -1,0 +1,108 @@
+import Konva from "konva";
+import type { ExtensionToWebviewMessage } from "../messages";
+import type { WebviewToExtensionMessage } from "../messages";
+import {
+  getState,
+  setDocument,
+  setSelectedBoxId,
+  subscribe,
+  updateBox,
+} from "./state";
+import { createRenderer } from "./renderer";
+
+// VS Code webview API
+const vscode = acquireVsCodeApi();
+
+function postMessage(msg: WebviewToExtensionMessage): void {
+  vscode.postMessage(msg);
+}
+
+// Set up Konva stage
+const container = document.getElementById("canvas-container") as HTMLDivElement;
+
+const stage = new Konva.Stage({
+  container,
+  width: container.clientWidth,
+  height: container.clientHeight,
+});
+
+const layer = new Konva.Layer();
+stage.add(layer);
+
+const transformer = new Konva.Transformer({
+  rotateEnabled: false,
+  enabledAnchors: [
+    "top-left",
+    "top-center",
+    "top-right",
+    "middle-left",
+    "middle-right",
+    "bottom-left",
+    "bottom-center",
+    "bottom-right",
+  ],
+  boundBoxFunc: (_oldBox, newBox) => {
+    newBox.width = Math.max(10, newBox.width);
+    newBox.height = Math.max(10, newBox.height);
+    return newBox;
+  },
+});
+layer.add(transformer);
+
+// Click on empty stage deselects
+stage.on("click tap", (e) => {
+  if (e.target === stage) {
+    setSelectedBoxId(null);
+  }
+});
+
+// Debounced edit sender
+let editTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function sendEditDebounced(): void {
+  if (editTimeout) {
+    clearTimeout(editTimeout);
+  }
+  editTimeout = setTimeout(() => {
+    editTimeout = null;
+    postMessage({ type: "edit", document: getState().document });
+  }, 100);
+}
+
+// Create renderer and wire up state subscription
+const renderer = createRenderer(layer, transformer, {
+  onBoxChanged: (id, changes) => {
+    updateBox(id, changes);
+    sendEditDebounced();
+  },
+  onSelect: (id) => {
+    setSelectedBoxId(id);
+  },
+});
+
+subscribe(() => {
+  renderer.render(getState());
+});
+
+// Handle messages from the extension
+window.addEventListener("message", (event) => {
+  const msg = event.data as ExtensionToWebviewMessage;
+  switch (msg.type) {
+    case "update":
+      setDocument(msg.document);
+      break;
+  }
+});
+
+// Keep stage sized to container
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const { width, height } = entry.contentRect;
+    stage.width(width);
+    stage.height(height);
+  }
+});
+resizeObserver.observe(container);
+
+// Tell extension we're ready
+postMessage({ type: "ready" });

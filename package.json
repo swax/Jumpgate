@@ -31,8 +31,12 @@
     ]
   },
   "scripts": {
-    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
-    "watch": "npm run build -- --watch",
+    "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "build:webview": "esbuild src/webview/main.ts --bundle --outfile=dist/webview.js --format=iife --platform=browser --sourcemap",
+    "build": "npm run build:extension && npm run build:webview",
+    "watch:extension": "npm run build:extension -- --watch",
+    "watch:webview": "npm run build:webview -- --watch",
+    "watch": "npm run watch:extension & npm run watch:webview",
     "lint": "eslint src/",
     "package": "vsce package",
     "publish": "vsce publish"
@@ -47,6 +51,7 @@
     "typescript-eslint": "^8.0.0"
   },
   "dependencies": {
+    "konva": "^10.2.0",
     "zod": "^3.24.0"
   }
 }
