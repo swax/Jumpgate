@@ -5,6 +5,7 @@ import { getState, setDocument, setSelectedBoxId, subscribe, updateBox } from ".
 import { createRenderer } from "./renderer";
 import { setupPanZoom } from "./panZoom";
 import { setupLockToggle } from "./lockToggle";
+import { setupSidebar } from "./sidebar";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -54,6 +55,12 @@ stage.on("click tap", (e) => {
 
 setupPanZoom(stage);
 setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
+setupSidebar(document.documentElement, {
+  onBoxChanged: (id, changes) => {
+    updateBox(id, changes);
+    sendEditDebounced();
+  },
+});
 
 // Debounced edit sender
 let editTimeout: ReturnType<typeof setTimeout> | null = null;

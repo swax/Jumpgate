@@ -2,20 +2,22 @@
   "boxes": [
     {
       "id": "box-1",
-      "x": 64,
-      "y": 209,
+      "x": 167,
+      "y": 134,
       "width": 200,
       "height": 100,
-      "color": "cornflowerblue",
+      "color": "#a93737",
       "label": "this\nis \na \nTesT!!!"
     },
     {
       "id": "box-2",
-      "x": 222,
-      "y": 366,
+      "x": 270,
+      "y": 317,
       "width": 150,
       "height": 80,
-      "label": ""
+      "label": "HEY",
+      "textColor": "#1e42ae",
+      "color": "#d11f1f"
     }
   ]
 }

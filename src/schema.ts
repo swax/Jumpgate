@@ -7,6 +7,7 @@ export const boxSchema = z.object({
   width: z.number().positive(),
   height: z.number().positive(),
   color: z.string().optional(),
+  textColor: z.string().optional(),
   label: z.string().optional(),
 });
 

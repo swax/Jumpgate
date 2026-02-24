@@ -7,7 +7,7 @@ const DEFAULT_COLOR = "#888888";
 export interface BoxNodeCallbacks {
   onBoxChanged: (
     id: string,
-    changes: Partial<Pick<Box, "x" | "y" | "width" | "height">>
+    changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "color" | "textColor" | "label">>
   ) => void;
   onSelect: (id: string) => void;
   isLocked: () => boolean;
@@ -44,7 +44,7 @@ export function createBoxNode(
     verticalAlign: "middle",
     fontSize: 14,
     fontFamily: "sans-serif",
-    fill: textColor,
+    fill: box.textColor ?? textColor,
     listening: false,
   });
 
@@ -95,7 +95,7 @@ export function createBoxNode(
   return group;
 }
 
-export function updateBoxNode(group: Konva.Group, box: Box): void {
+export function updateBoxNode(group: Konva.Group, box: Box, textColor: string): void {
   if (group.isDragging()) return;
 
   const rect = group.findOne<Konva.Rect>(".box-rect")!;
@@ -110,5 +110,6 @@ export function updateBoxNode(group: Konva.Group, box: Box): void {
     text: box.label || "",
     width: box.width,
     height: box.height,
+    fill: box.textColor ?? textColor,
   });
 }

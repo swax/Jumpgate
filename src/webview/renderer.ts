@@ -7,7 +7,7 @@ import type { EditorState } from "./state";
 export interface RendererCallbacks {
   onBoxChanged: (
     id: string,
-    changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "label">>
+    changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "color" | "textColor" | "label">>
   ) => void;
   onSelect: (id: string | null) => void;
 }
@@ -64,7 +64,7 @@ export function createRenderer(
       }
 
       group.draggable(!isLocked);
-      updateBoxNode(group, box);
+      updateBoxNode(group, box, textColor);
     }
 
     // Manage transformer

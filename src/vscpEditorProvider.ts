@@ -147,11 +147,44 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       height: 20px;
       fill: currentColor;
     }
+    #sidebar {
+      position: fixed;
+      top: 48px;
+      right: 11px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .color-field {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 1px solid #000;
+      border-radius: 4px;
+      background: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .color-field::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    .color-field::-webkit-color-swatch {
+      border: none;
+    }
+    .color-field::-moz-color-swatch {
+      border: none;
+    }
   </style>
 </head>
 <body>
   <div id="canvas-container"></div>
   <button id="lock-btn" title="Lock editing"></button>
+  <div id="sidebar" style="display:none">
+    <input type="color" id="fill-color" class="color-field" title="Fill color">
+    <input type="color" id="text-color" class="color-field" title="Text color">
+  </div>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;

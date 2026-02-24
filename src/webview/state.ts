@@ -37,7 +37,7 @@ export function setLocked(locked: boolean): void {
 
 export function updateBox(
   id: string,
-  changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "label">>
+  changes: Partial<Pick<Box, "x" | "y" | "width" | "height" | "color" | "textColor" | "label">>
 ): void {
   state = {
     ...state,
