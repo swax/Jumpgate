@@ -42,7 +42,7 @@ type NodeChanges = {
 export interface CanvasNodeCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
-  onSelect: (id: string, shiftKey: boolean) => void;
+  onSelect: (id: string, ctrlKey: boolean) => void;
   getSelectedNodeIds: () => string[];
   isLocked: () => boolean;
   isEdgeMode: () => boolean;
@@ -211,7 +211,7 @@ export function createCanvasNode(
           startLabelEdit(labelEditCtx, group, nodeId);
         } else {
           lastClickTime = now;
-          callbacks.onSelect(nodeId, ue.shiftKey);
+          callbacks.onSelect(nodeId, ue.ctrlKey);
         }
       }
 

@@ -17,7 +17,7 @@ type NodeChanges = {
 export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
-  onSelect: (id: string, shiftKey: boolean) => void;
+  onSelect: (id: string, ctrlKey: boolean) => void;
   onEdgeSelect: (edgeId: string) => void;
   onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to">>) => void;
 }

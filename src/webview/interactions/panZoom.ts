@@ -1,15 +1,25 @@
 import { Application, Container, FederatedPointerEvent } from "pixi.js";
+import type { CursorManager } from "./cursorManager";
 
 const SCALE_BY = 1.2;
 
-export function setupPanZoom(app: Application, viewport: Container): void {
+export function setupPanZoom(
+  app: Application,
+  viewport: Container,
+  cursorManager: CursorManager
+): void {
   let isPanning = false;
   let lastPointer = { x: 0, y: 0 };
+  let hoverOnStage = false;
+  const cursor = cursorManager;
+  const CURSOR_KEY = "pan";
 
   // Pan: drag on empty stage background
   app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
     if (e.target !== app.stage) return;
+    if (e.ctrlKey) return;
     isPanning = true;
+    cursor.set(CURSOR_KEY, "grabbing", 1);
     lastPointer = { x: e.global.x, y: e.global.y };
   });
 
@@ -24,9 +34,35 @@ export function setupPanZoom(app: Application, viewport: Container): void {
 
   const stopPan = () => {
     isPanning = false;
+    if (hoverOnStage) {
+      cursor.set(CURSOR_KEY, "grab", 1);
+    } else {
+      cursor.clear(CURSOR_KEY);
+    }
   };
   app.stage.on("pointerup", stopPan);
   app.stage.on("pointerupoutside", stopPan);
+
+  app.stage.on("globalpointermove", (e: FederatedPointerEvent) => {
+    hoverOnStage = e.target === app.stage;
+    if (isPanning) return;
+    if (e.ctrlKey) {
+      cursor.clear(CURSOR_KEY);
+      return;
+    }
+    if (hoverOnStage) {
+      cursor.set(CURSOR_KEY, "grab", 1);
+    } else {
+      cursor.clear(CURSOR_KEY);
+    }
+  });
+
+  app.stage.on("pointerout", () => {
+    hoverOnStage = false;
+    if (!isPanning) {
+      cursor.clear(CURSOR_KEY);
+    }
+  });
 
   // Zoom: mouse wheel to cursor position
   app.canvas.addEventListener("wheel", (e: WheelEvent) => {

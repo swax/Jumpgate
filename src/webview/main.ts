@@ -22,6 +22,8 @@ import { setupSidebar } from "./controls/sidebar";
 import { setupGridSnap } from "./controls/gridSnap";
 import { setupKeyboard } from "./interactions/keyboard";
 import { setupEdgeMode } from "./interactions/edgeMode";
+import { setupSelectionBox } from "./interactions/selectionBox";
+import { createCursorManager } from "./interactions/cursorManager";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -42,28 +44,24 @@ async function main(): Promise<void> {
   });
   container.appendChild(app.canvas);
 
+  const cursorManager = createCursorManager(app.canvas);
+
   // Viewport container for pan/zoom
   const viewport = new Container();
   app.stage.addChild(viewport);
 
-  // Make app.stage interactive for click-to-deselect
-  app.stage.eventMode = "static";
-  app.stage.hitArea = app.screen;
+  setupSelectionBox(app, viewport, cursorManager);
 
-  app.stage.on("pointerdown", (e) => {
-    if (getState().edgeMode) return; // Edge mode handles its own clicks
-    if (e.target === app.stage) {
-      setSelectedNodeIds([]);
-      setSelectedEdgeIds([]);
-    }
-  });
-
-  setupPanZoom(app, viewport);
+  setupPanZoom(app, viewport, cursorManager);
   setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
   setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
   setupSidebar(document.documentElement, {
     onNodeChanged: (id, changes) => {
       updateNode(id, changes);
+      sendEditDebounced();
+    },
+    onNodesChanged: (updates) => {
+      updateNodes(updates);
       sendEditDebounced();
     },
   });
@@ -91,8 +89,8 @@ async function main(): Promise<void> {
       updateNodes(updates);
       sendEditDebounced();
     },
-    onSelect: (id, shiftKey) => {
-      if (shiftKey) {
+    onSelect: (id, ctrlKey) => {
+      if (ctrlKey) {
         toggleSelectedNodeId(id);
       } else {
         setSelectedNodeIds([id]);
@@ -106,6 +104,7 @@ async function main(): Promise<void> {
       sendEditDebounced();
     },
   });
+
 
   subscribe(() => {
     renderer.render(getState());

@@ -1,5 +1,31 @@
 import type { Edge, Node, VscpDocument } from "../schema";
 
+let usedNodeIds = new Set<string>();
+let usedEdgeIds = new Set<string>();
+let nextNodeId = 1;
+let nextEdgeId = 1;
+
+function initializeIdTracking(document: VscpDocument): void {
+  usedNodeIds = new Set(document.nodes.map((n) => n.id));
+  usedEdgeIds = new Set(document.edges.map((e) => e.id));
+
+  let maxNodeId = 0;
+  for (const id of usedNodeIds) {
+    const stripped = id.startsWith("node-") ? id.slice(5) : id;
+    const num = parseInt(stripped, 10);
+    if (!isNaN(num) && num > maxNodeId) maxNodeId = num;
+  }
+  nextNodeId = maxNodeId + 1;
+
+  let maxEdgeId = 0;
+  for (const id of usedEdgeIds) {
+    const stripped = id.startsWith("edge-") ? id.slice(5) : id;
+    const num = parseInt(stripped, 10);
+    if (!isNaN(num) && num > maxEdgeId) maxEdgeId = num;
+  }
+  nextEdgeId = maxEdgeId + 1;
+}
+
 export interface EditorState {
   document: VscpDocument;
   selectedNodeIds: string[];
@@ -27,6 +53,7 @@ export function getState(): EditorState {
 }
 
 export function setDocument(document: VscpDocument): void {
+  initializeIdTracking(document);
   state = { ...state, document };
   notify();
 }
@@ -78,7 +105,13 @@ export function deleteNodes(ids: string[]): void {
 }
 
 export function generateNodeId(): string {
-  return crypto.randomUUID();
+  while (usedNodeIds.has(`node-${nextNodeId}`)) {
+    nextNodeId++;
+  }
+  const id = `node-${nextNodeId}`;
+  usedNodeIds.add(id);
+  nextNodeId++;
+  return id;
 }
 
 export function setEdgeMode(edgeMode: boolean): void {
@@ -124,7 +157,13 @@ export function updateEdge(id: string, changes: Partial<Omit<Edge, "id">>): void
 }
 
 export function generateEdgeId(): string {
-  return `edge-${crypto.randomUUID()}`;
+  while (usedEdgeIds.has(`edge-${nextEdgeId}`)) {
+    nextEdgeId++;
+  }
+  const id = `edge-${nextEdgeId}`;
+  usedEdgeIds.add(id);
+  nextEdgeId++;
+  return id;
 }
 
 export function setLocked(locked: boolean): void {

@@ -18,7 +18,7 @@ type NodeInfo = Bounds & { id: string };
 
 const HANDLE_SIZE = 8;
 const HANDLE_COLOR = 0x4a90d9;
-const OUTLINE_COLOR = 0x4a90d9;
+const OUTLINE_COLOR = 0x4da3ff;
 
 type HandleId =
   | "top-left"
@@ -187,8 +187,8 @@ export class SelectionOverlay {
 
   private drawOutline(viewportScale: number): void {
     const { x, y, width, height } = this.bbox;
-    const lineWidth = 1.5 / viewportScale;
-    const dashLen = 6 / viewportScale;
+    const lineWidth = 2.5 / viewportScale;
+    const dashLen = 8 / viewportScale;
     const gapLen = 4 / viewportScale;
 
     this.outline.clear();
@@ -198,8 +198,8 @@ export class SelectionOverlay {
   }
 
   private drawMultiOutlines(nodes: NodeInfo[], viewportScale: number): void {
-    const lineWidth = 1.5 / viewportScale;
-    const dashLen = 6 / viewportScale;
+    const lineWidth = 2.5 / viewportScale;
+    const dashLen = 8 / viewportScale;
     const gapLen = 4 / viewportScale;
 
     this.outline.clear();

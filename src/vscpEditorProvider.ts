@@ -184,6 +184,33 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     .color-field::-moz-color-swatch {
       border: none;
     }
+    #text-color-wrapper {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #000;
+      border-radius: 4px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    #text-color-wrapper #text-color {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    #text-color-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      pointer-events: none;
+    }
     #edge-mode-status {
       display: none;
       position: fixed;
@@ -209,9 +236,12 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   <button id="snap-btn" class="toolbar-btn" title="Snap to grid (on)"></button>
   <button id="lock-btn" class="toolbar-btn" title="Lock editing"></button>
   <div id="edge-mode-status"></div>
-  <div id="sidebar" style="display:none">
+  <div id="sidebar">
     <input type="color" id="fill-color" class="color-field" title="Node color">
-    <input type="color" id="text-color" class="color-field" title="Label color">
+    <div id="text-color-wrapper" title="Label color">
+      <span id="text-color-label">T</span>
+      <input type="color" id="text-color" class="color-field">
+    </div>
   </div>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
