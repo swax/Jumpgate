@@ -1,4 +1,4 @@
-import type { Node } from "../schema";
+import type { Node } from "../../schema";
 import {
   getState,
   setSelectedNodeIds,
@@ -6,7 +6,7 @@ import {
   deleteNodes,
   deleteEdges,
   generateNodeId,
-} from "./state";
+} from "../state";
 
 export function setupKeyboard(onEdit: () => void): void {
   let clipboard: Node[] = [];

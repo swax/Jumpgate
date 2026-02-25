@@ -1,5 +1,5 @@
 import { Application, Container, Text as PixiText } from "pixi.js";
-import { getContainerBounds } from "./canvasNode";
+import { getContainerBounds } from "../canvas/canvasNode";
 
 export interface LabelEditContext {
   app: Application;

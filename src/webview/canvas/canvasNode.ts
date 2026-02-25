@@ -1,7 +1,7 @@
 import { Container, Graphics, Text as PixiText, TextStyle, FederatedPointerEvent } from "pixi.js";
-import type { Bounds, Node } from "../schema";
-import { startLabelEdit, type LabelEditContext } from "./labelEditor";
-import { snap } from "./gridSnap";
+import type { Bounds, Node } from "../../schema";
+import { startLabelEdit, type LabelEditContext } from "../interactions/labelEditor";
+import { snap } from "../controls/gridSnap";
 
 const DEFAULT_NODE_COLOR = 0x888888;
 const STROKE_COLOR = 0x333333;

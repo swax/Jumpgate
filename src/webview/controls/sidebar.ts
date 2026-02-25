@@ -1,5 +1,5 @@
-import type { Node } from "../schema";
-import { getState, subscribe } from "./state";
+import type { Node } from "../../schema";
+import { getState, subscribe } from "../state";
 
 const DEFAULT_FILL = "#888888";
 const DEFAULT_TEXT = "#cccccc";

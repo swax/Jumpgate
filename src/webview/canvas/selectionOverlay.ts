@@ -1,6 +1,6 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
-import type { Bounds } from "../schema";
-import { snap, GRID_SIZE } from "./gridSnap";
+import type { Bounds } from "../../schema";
+import { snap, GRID_SIZE } from "../controls/gridSnap";
 import { setContainerBounds } from "./canvasNode";
 
 type NodeChanges = {

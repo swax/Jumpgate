@@ -1,4 +1,4 @@
-import { getState, setSnapToGrid, subscribe } from "./state";
+import { getState, setSnapToGrid, subscribe } from "../state";
 
 export const GRID_SIZE = 20;
 

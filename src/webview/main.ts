@@ -16,12 +16,12 @@ import {
   generateEdgeId,
 } from "./state";
 import { createRenderer } from "./renderer";
-import { setupPanZoom } from "./panZoom";
-import { setupLockToggle } from "./lockToggle";
-import { setupSidebar } from "./sidebar";
-import { setupGridSnap } from "./gridSnap";
-import { setupKeyboard } from "./keyboard";
-import { setupEdgeMode } from "./edgeMode";
+import { setupPanZoom } from "./interactions/panZoom";
+import { setupLockToggle } from "./controls/lockToggle";
+import { setupSidebar } from "./controls/sidebar";
+import { setupGridSnap } from "./controls/gridSnap";
+import { setupKeyboard } from "./interactions/keyboard";
+import { setupEdgeMode } from "./interactions/edgeMode";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();

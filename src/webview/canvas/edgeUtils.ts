@@ -1,7 +1,7 @@
 import type { Container } from "pixi.js";
-import type { Bounds, EdgeEndpoint } from "../schema";
-import { getState } from "./state";
-import { GRID_SIZE, snap } from "./gridSnap";
+import type { Bounds, EdgeEndpoint } from "../../schema";
+import { getState } from "../state";
+import { GRID_SIZE, snap } from "../controls/gridSnap";
 import { resolveAnchor } from "./canvasEdge";
 import { getContainerBounds } from "./canvasNode";
 

@@ -1,10 +1,10 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
-import type { Bounds, Edge, EdgeEndpoint } from "../schema";
+import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 import { resolveEndpoint } from "./canvasEdge";
 import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "./edgeUtils";
 import { resolveAnchor } from "./canvasEdge";
-import { getState } from "./state";
-import { snap } from "./gridSnap";
+import { getState } from "../state";
+import { snap } from "../controls/gridSnap";
 
 export interface EdgeHandleCallbacks {
   onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to">>) => void;

@@ -1,9 +1,9 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
-import type { Edge, EdgeEndpoint } from "../schema";
-import { getState, setEdgeMode, subscribe } from "./state";
-import { snap } from "./gridSnap";
-import { resolveAnchor } from "./canvasEdge";
-import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "./edgeUtils";
+import type { Edge, EdgeEndpoint } from "../../schema";
+import { getState, setEdgeMode, subscribe } from "../state";
+import { snap } from "../controls/gridSnap";
+import { resolveAnchor } from "../canvas/canvasEdge";
+import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "../canvas/edgeUtils";
 
 const EDGE_BTN_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
   <line x1="5" y1="18" x2="19" y2="6"/>

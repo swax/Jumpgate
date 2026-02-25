@@ -1,11 +1,11 @@
 import { Application, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
-import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvasNode";
-import { createCanvasEdge, updateCanvasEdge, resolveEndpoint } from "./canvasEdge";
-import type { LabelEditContext } from "./labelEditor";
+import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
+import { createCanvasEdge, updateCanvasEdge, resolveEndpoint } from "./canvas/canvasEdge";
+import type { LabelEditContext } from "./interactions/labelEditor";
 import type { EditorState } from "./state";
-import { SelectionOverlay } from "./selectionOverlay";
-import { EdgeHandleOverlay } from "./edgeHandleOverlay";
+import { SelectionOverlay } from "./canvas/selectionOverlay";
+import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
 
 type NodeChanges = {
   bounds?: Partial<Node["bounds"]>;

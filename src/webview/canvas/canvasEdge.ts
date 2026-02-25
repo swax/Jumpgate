@@ -1,5 +1,5 @@
 import { Graphics, Polygon } from "pixi.js";
-import type { Bounds, Edge, EdgeEndpoint } from "../schema";
+import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
 const SELECTED_EDGE_COLOR = 0x4488ff;
