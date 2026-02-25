@@ -90,9 +90,15 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
                   selection = new vscode.Range(startPos, endPos);
                 }
               }
+              // If another editor group exists, open there; otherwise same group
+              const panelColumn = webviewPanel.viewColumn;
+              const otherGroup = vscode.window.tabGroups.all.find(
+                (g) => g.viewColumn !== panelColumn
+              );
               await vscode.window.showTextDocument(fileDoc, {
                 selection,
-                preview: false,
+                preview: true,
+                viewColumn: otherGroup?.viewColumn,
               });
             } catch {
               vscode.window.showErrorMessage(`Could not open file: ${msg.path}`);
