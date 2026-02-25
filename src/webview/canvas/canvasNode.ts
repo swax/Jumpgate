@@ -75,6 +75,7 @@ export function createCanvasNode(
   const textFill = node.labelColor ?? labelColor;
   const text = new PixiText({
     text: node.label || "",
+    resolution: 2,
     style: new TextStyle({
       fontSize: 14,
       fontFamily: "sans-serif",
@@ -264,6 +265,13 @@ export function createCanvasNode(
 
 export function isDraggingNode(id: string): boolean {
   return draggingIds.has(id) || groupDraggingIds.has(id);
+}
+
+export function updateNodeTextResolution(group: Container, resolution: number): void {
+  const text = group.getChildByLabel("node-label") as PixiText | null;
+  if (text && text.resolution !== resolution) {
+    text.resolution = resolution;
+  }
 }
 
 export function updateCanvasNode(group: Container, node: Node, labelColor: string): void {

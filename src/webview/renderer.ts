@@ -1,6 +1,6 @@
 import { Application, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
-import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
+import { createCanvasNode, updateCanvasNode, updateNodeTextResolution, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
 import { createCanvasEdge, updateCanvasEdge, resolveEndpoint } from "./canvas/canvasEdge";
 import type { LabelEditContext } from "./interactions/labelEditor";
 import type { EditorState } from "./state";
@@ -100,6 +100,19 @@ export function createRenderer(
   };
 
   let lastState: EditorState | null = null;
+
+  // Keep text crisp during zoom by updating resolution when viewport scale changes
+  let lastTextRes = 2;
+  app.ticker.add(() => {
+    if (!lastState) return;
+    const textRes = Math.max(2, Math.ceil(viewport.scale.x * window.devicePixelRatio));
+    if (textRes === lastTextRes) return;
+    lastTextRes = textRes;
+    for (const node of lastState.document.nodes) {
+      const group = viewport.getChildByLabel(node.id) as Container | null;
+      if (group) updateNodeTextResolution(group, textRes);
+    }
+  });
 
   /** Build a nodeMap using live container positions/sizes (covers both drag and resize previews). */
   function buildNodeMap(state: EditorState): Map<string, Bounds> {
@@ -204,6 +217,13 @@ export function createRenderer(
       if (!isDraggingNode(node.id)) {
         updateCanvasNode(group, node, labelColor);
       }
+    }
+
+    // Update text resolution for crisp rendering at current zoom
+    const textRes = Math.max(2, Math.ceil(viewport.scale.x * window.devicePixelRatio));
+    for (const node of doc.nodes) {
+      const group = viewport.getChildByLabel(node.id) as Container | null;
+      if (group) updateNodeTextResolution(group, textRes);
     }
 
     // Update selection overlay
