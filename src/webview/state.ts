@@ -42,7 +42,7 @@ let state: EditorState = {
   selectedNodeIds: [],
   selectedEdgeIds: [],
   edgeMode: false,
-  locked: false,
+  locked: true,
   snapToGrid: true,
 };
 

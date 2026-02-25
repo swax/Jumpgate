@@ -74,6 +74,31 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
             isApplyingEdit = false;
             break;
           }
+          case "openFileLink": {
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            if (!workspaceFolder) break;
+            const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, msg.path);
+            try {
+              const fileDoc = await vscode.workspace.openTextDocument(fileUri);
+              let selection: vscode.Range | undefined;
+              if (msg.match) {
+                const text = fileDoc.getText();
+                const idx = text.indexOf(msg.match);
+                if (idx >= 0) {
+                  const startPos = fileDoc.positionAt(idx);
+                  const endPos = fileDoc.positionAt(idx + msg.match.length);
+                  selection = new vscode.Range(startPos, endPos);
+                }
+              }
+              await vscode.window.showTextDocument(fileDoc, {
+                selection,
+                preview: false,
+              });
+            } catch {
+              vscode.window.showErrorMessage(`Could not open file: ${msg.path}`);
+            }
+            break;
+          }
         }
       }
     );

@@ -42,7 +42,8 @@ type NodeChanges = {
 export interface CanvasNodeCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
-  onSelect: (id: string, ctrlKey: boolean) => void;
+  onSelect: (id: string, shiftKey: boolean) => void;
+  onOpenFileLink: (id: string) => void;
   getSelectedNodeIds: () => string[];
   isLocked: () => boolean;
   isEdgeMode: () => boolean;
@@ -61,7 +62,7 @@ export function createCanvasNode(
   group.label = node.id;
   setContainerBounds(group, node.bounds);
   group.eventMode = "static";
-  group.cursor = "pointer";
+  group.cursor = node.fileLink ? "pointer" : "default";
 
   const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
   const rect = new Graphics();
@@ -92,6 +93,23 @@ export function createCanvasNode(
 
   group.addChild(rect);
   group.addChild(text);
+  (group as any)._hasFileLink = !!node.fileLink;
+  (group as any)._fileLinkPath = node.fileLink?.path ?? null;
+
+  // Tooltip on linked node hover
+  group.on("pointerover", () => {
+    const path = (group as any)._fileLinkPath;
+    if (path) {
+      const canvas = document.querySelector("canvas");
+      if (canvas) canvas.title = `${path} (Ctrl+Click)`;
+    }
+  });
+  group.on("pointerout", () => {
+    if ((group as any)._fileLinkPath) {
+      const canvas = document.querySelector("canvas");
+      if (canvas) canvas.title = "";
+    }
+  });
 
   const nodeId = node.id;
 
@@ -106,7 +124,20 @@ export function createCanvasNode(
   const startPositions = new Map<string, { x: number; y: number }>();
 
   group.on("pointerdown", (e: FederatedPointerEvent) => {
-    if (callbacks.isLocked()) return;
+    // In locked mode, click on linked nodes opens the file link
+    if (callbacks.isLocked()) {
+      if (!(group as any)._hasFileLink) return;
+      e.stopPropagation();
+      const onUpLocked = () => {
+        group.off("pointerup", onUpLocked);
+        group.off("pointerupoutside", onUpLocked);
+        callbacks.onOpenFileLink(nodeId);
+      };
+      group.on("pointerup", onUpLocked);
+      group.on("pointerupoutside", onUpLocked);
+      return;
+    }
+
     if (callbacks.isEdgeMode()) return; // Let event propagate to viewport for edge creation
     e.stopPropagation();
 
@@ -205,13 +236,17 @@ export function createCanvasNode(
         startPositions.clear();
 
         const now = Date.now();
-        if (now - lastClickTime < DOUBLE_CLICK_MS) {
+        if ((group as any)._hasFileLink && ue.ctrlKey) {
+          // Ctrl+Click on linked node — open file
+          callbacks.onSelect(nodeId, false);
+          callbacks.onOpenFileLink(nodeId);
+        } else if (now - lastClickTime < DOUBLE_CLICK_MS) {
           // Double click
           lastClickTime = 0;
           startLabelEdit(labelEditCtx, group, nodeId);
         } else {
           lastClickTime = now;
-          callbacks.onSelect(nodeId, ue.ctrlKey);
+          callbacks.onSelect(nodeId, ue.shiftKey);
         }
       }
 
@@ -251,4 +286,9 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   text.style.wordWrapWidth = node.bounds.width;
   text.x = node.bounds.width / 2;
   text.y = Math.max(0, (node.bounds.height - text.height) / 2);
+
+  const hasLink = !!node.fileLink;
+  group.cursor = hasLink ? "pointer" : "default";
+  (group as any)._hasFileLink = hasLink;
+  (group as any)._fileLinkPath = node.fileLink?.path ?? null;
 }

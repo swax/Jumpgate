@@ -42,7 +42,7 @@ export function createCanvasEdge(edge: Edge, callbacks: CanvasEdgeCallbacks): Gr
   const gfx = new Graphics();
   gfx.label = edge.id;
   gfx.eventMode = "static";
-  gfx.cursor = "pointer";
+  gfx.cursor = edge.fileLink ? "pointer" : "default";
 
   gfx.on("pointerdown", (e) => {
     e.stopPropagation();
@@ -60,6 +60,7 @@ export function updateCanvasEdge(
   viewportScale: number
 ): void {
   gfx.clear();
+  gfx.cursor = edge.fileLink ? "pointer" : "default";
 
   const from = resolveEndpoint(edge.from, nodeMap);
   const to = resolveEndpoint(edge.to, nodeMap);

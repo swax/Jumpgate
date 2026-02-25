@@ -17,7 +17,8 @@ type NodeChanges = {
 export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
-  onSelect: (id: string, ctrlKey: boolean) => void;
+  onSelect: (id: string, shiftKey: boolean) => void;
+  onOpenFileLink: (id: string) => void;
   onEdgeSelect: (edgeId: string) => void;
   onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to">>) => void;
 }
@@ -76,6 +77,7 @@ export function createRenderer(
     onNodeChanged: callbacks.onNodeChanged,
     onNodesChanged: callbacks.onNodesChanged,
     onSelect: callbacks.onSelect,
+    onOpenFileLink: callbacks.onOpenFileLink,
     getSelectedNodeIds: () => selectedNodeIds,
     isLocked: () => isLocked,
     isEdgeMode: () => isEdgeMode,
@@ -196,8 +198,8 @@ export function createRenderer(
         viewport.addChildAt(group, overlayIndex);
       }
 
-      group.eventMode = isLocked ? "none" : "static";
-      group.cursor = isLocked ? "default" : "pointer";
+      const hasFileLink = !!node.fileLink;
+      group.eventMode = (isLocked && !hasFileLink) ? "none" : "static";
 
       if (!isDraggingNode(node.id)) {
         updateCanvasNode(group, node, labelColor);

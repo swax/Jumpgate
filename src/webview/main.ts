@@ -89,11 +89,17 @@ async function main(): Promise<void> {
       updateNodes(updates);
       sendEditDebounced();
     },
-    onSelect: (id, ctrlKey) => {
-      if (ctrlKey) {
+    onSelect: (id, shiftKey) => {
+      if (shiftKey) {
         toggleSelectedNodeId(id);
       } else {
         setSelectedNodeIds([id]);
+      }
+    },
+    onOpenFileLink: (id) => {
+      const node = getState().document.nodes.find((n) => n.id === id);
+      if (node?.fileLink) {
+        postMessage({ type: "openFileLink", path: node.fileLink.path, match: node.fileLink.match });
       }
     },
     onEdgeSelect: (edgeId) => {

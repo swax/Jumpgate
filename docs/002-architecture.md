@@ -18,10 +18,10 @@ Edits from the canvas apply via `WorkspaceEdit` which marks the tab dirty (does 
 
 ```
 src/
-  extension.ts            Activation: registers VscpEditorProvider
-  schema.ts               Zod schemas (nodeSchema, documentSchema) + types
-  messages.ts             Typed message protocol (extension ↔ webview)
-  vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging
+  extension.ts            Activation: registers VscpEditorProvider + perspective.linkToNode command
+  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types
+  messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink
+  vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler
   webview/
     main.ts               Entry point — PixiJS Application, viewport container, message wiring
     state.ts              Pub/sub store (EditorState: document + selectedNodeIds[] + selectedEdgeIds[] + edgeMode + locked + snapToGrid)
@@ -42,6 +42,8 @@ src/
       keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state
       edgeMode.ts         Edge creation mode — toolbar toggle, two-click workflow, preview line + cursor dot
       labelEditor.ts      DOM textarea overlay for inline label editing on double-click
+      selectionBox.ts     Shift+drag rubber-band selection box + click-off deselect
+      cursorManager.ts    Centralized cursor priority manager (pan/select)
 ```
 
 ## Container Hierarchy
@@ -76,11 +78,14 @@ Two esbuild bundles (`npm run build`):
 - **Debounced edits** (`main.ts`): Canvas changes are batched (100ms) before posting to the extension to avoid spamming WorkspaceEdits.
 - **Pub/sub store** (`state.ts`): Simple reactive state — `EditorState` holds document, `selectedNodeIds[]`, `selectedEdgeIds[]`, edgeMode, locked, and snapToGrid flags. Subscribers (renderer) are notified on any change. `updateNodes()` batches multiple node changes into a single notify.
 - **Multi-select** (`canvasNode.ts`): Shift+click toggles nodes in/out of selection. Multi-drag uses absolute positioning from recorded start positions to avoid delta accumulation drift. A `groupDraggingIds` set prevents re-renders from resetting companion nodes mid-drag.
+- **Selection box** (`selectionBox.ts`): Shift+drag on empty space draws a rubber-band box. Nodes are selected on overlap (not full containment). Drag-select unions with existing selection; click on empty space without Shift clears selection.
+- **Cursor management** (`cursorManager.ts`): Simple priority-based cursor stack so pan (grab/grabbing) and selection (crosshair) cues don’t fight.
 - **Copy/paste** (`keyboard.ts`): Ctrl+C snapshots selected nodes; Ctrl+V pastes with new IDs and +20,+20 offset. Repeated paste cascades diagonally.
 - **Delete** (`keyboard.ts`): Delete/Backspace removes selected nodes.
 - **Snap to grid** (`gridSnap.ts`): Optional grid snapping (20px) applied during drag and resize. Toggled via toolbar button.
-- **Lock mode** (`lockToggle.ts`): Toggles all interactions off — deselects nodes, hides sidebar, disables dragging and transforms.
+- **Lock mode** (`lockToggle.ts`): Toggles all interactions off — deselects nodes, hides sidebar, disables dragging and transforms. Linked nodes remain clickable to follow file links.
 - **Label editing** (`labelEditor.ts`): Overlays an HTML `<textarea>` at the node's screen position on double-click, scaled with viewport zoom. Commits on blur/Enter, cancels on Escape.
 - **Edge creation** (`edgeMode.ts`): Toggle via toolbar button. Two-click workflow: first click sets source endpoint, second click creates the edge. Preview line + cursor dot follow the mouse. ESC exits edge mode.
 - **Edge endpoints** (`canvasEdge.ts`): An endpoint is either node-anchored (`nodeId` + proportional `anchor`) or a free-point (`x`, `y`). `resolveEndpoint` converts both forms to world coordinates using a `nodeMap`.
 - **Live edge following** (`renderer.ts`): `buildNodeMap` always reads live container positions/sizes, so edges follow during both node drag (`onDragUpdate` from `canvasNode`) and node resize (`onDragUpdate` from `selectionOverlay`). During edge handle drags, `renderEdges` applies the overlay's endpoint override to draw the edge at the in-flight position.
+- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick flow. Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Ctrl+Click)". Ctrl+Click opens the file and jumps to the matched text. In locked mode, a plain click follows the link. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.

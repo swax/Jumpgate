@@ -17,7 +17,7 @@ export function setupPanZoom(
   // Pan: drag on empty stage background
   app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
     if (e.target !== app.stage) return;
-    if (e.ctrlKey) return;
+    if (e.shiftKey) return;
     isPanning = true;
     cursor.set(CURSOR_KEY, "grabbing", 1);
     lastPointer = { x: e.global.x, y: e.global.y };
@@ -46,7 +46,7 @@ export function setupPanZoom(
   app.stage.on("globalpointermove", (e: FederatedPointerEvent) => {
     hoverOnStage = e.target === app.stage;
     if (isPanning) return;
-    if (e.ctrlKey) {
+    if (e.shiftKey) {
       cursor.clear(CURSOR_KEY);
       return;
     }

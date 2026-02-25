@@ -3,102 +3,122 @@
     {
       "id": "activate",
       "bounds": { "x": 380, "y": 40, "width": 160, "height": 50 },
-      "nodeColor": "#4CAF50", "labelColor": "white", "label": "activate"
+      "nodeColor": "#4CAF50", "labelColor": "white", "label": "activate",
+      "fileLink": { "path": "src/extension.ts", "match": "function activate" }
     },
     {
       "id": "resolveEditor",
       "bounds": { "x": 330, "y": 140, "width": 240, "height": 50 },
-      "nodeColor": "#4CAF50", "labelColor": "white", "label": "resolveCustomTextEditor"
+      "nodeColor": "#4CAF50", "labelColor": "white", "label": "resolveCustomTextEditor",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "async resolveCustomTextEditor" }
     },
     {
       "id": "postMessage",
       "bounds": { "x": 680, "y": 140, "width": 160, "height": 50 },
-      "nodeColor": "#2196F3", "labelColor": "white", "label": "postMessage"
+      "nodeColor": "#2196F3", "labelColor": "white", "label": "postMessage",
+      "fileLink": { "path": "src/webview/main.ts", "match": "function postMessage" }
     },
     {
       "id": "main",
       "bounds": { "x": 380, "y": 280, "width": 160, "height": 50 },
-      "nodeColor": "#2196F3", "labelColor": "white", "label": "main"
+      "nodeColor": "#2196F3", "labelColor": "white", "label": "main",
+      "fileLink": { "path": "src/webview/main.ts", "match": "function main" }
     },
     {
       "id": "subscribe",
       "bounds": { "x": 900, "y": 280, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "subscribe"
+      "nodeColor": "#FFC107", "labelColor": "black", "label": "subscribe",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function subscribe" }
     },
     {
       "id": "setupPanZoom",
       "bounds": { "x": 20, "y": 420, "width": 160, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupPanZoom"
+      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupPanZoom",
+      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "function setupPanZoom" }
     },
     {
       "id": "setupKeyboard",
       "bounds": { "x": 200, "y": 420, "width": 170, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupKeyboard"
+      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupKeyboard",
+      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "function setupKeyboard" }
     },
     {
       "id": "setupEdgeMode",
       "bounds": { "x": 390, "y": 420, "width": 170, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupEdgeMode"
+      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupEdgeMode",
+      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "function setupEdgeMode" }
     },
     {
       "id": "createRenderer",
       "bounds": { "x": 600, "y": 420, "width": 170, "height": 50 },
-      "nodeColor": "#FF9800", "labelColor": "white", "label": "createRenderer"
+      "nodeColor": "#FF9800", "labelColor": "white", "label": "createRenderer",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "function createRenderer" }
     },
     {
       "id": "updateNode",
       "bounds": { "x": 900, "y": 420, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "updateNode"
+      "nodeColor": "#FFC107", "labelColor": "black", "label": "updateNode",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function updateNode" }
     },
     {
       "id": "setupSidebar",
       "bounds": { "x": 20, "y": 540, "width": 160, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupSidebar"
+      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupSidebar",
+      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "function setupSidebar" }
     },
     {
       "id": "setupLockToggle",
       "bounds": { "x": 200, "y": 540, "width": 170, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupLockToggle"
+      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupLockToggle",
+      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "function setupLockToggle" }
     },
     {
       "id": "setupGridSnap",
       "bounds": { "x": 390, "y": 540, "width": 160, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupGridSnap"
+      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupGridSnap",
+      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function setupGridSnap" }
     },
     {
       "id": "render",
       "bounds": { "x": 600, "y": 540, "width": 160, "height": 50 },
-      "nodeColor": "#FF9800", "labelColor": "white", "label": "render"
+      "nodeColor": "#FF9800", "labelColor": "white", "label": "render",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "function render" }
     },
     {
       "id": "addNodes",
       "bounds": { "x": 900, "y": 540, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "addNodes"
+      "nodeColor": "#FFC107", "labelColor": "black", "label": "addNodes",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function addNodes" }
     },
     {
       "id": "createCanvasNode",
       "bounds": { "x": 460, "y": 680, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "createCanvasNode"
+      "nodeColor": "#E91E63", "labelColor": "white", "label": "createCanvasNode",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function createCanvasNode" }
     },
     {
       "id": "createCanvasEdge",
       "bounds": { "x": 660, "y": 680, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "createCanvasEdge"
+      "nodeColor": "#E91E63", "labelColor": "white", "label": "createCanvasEdge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function createCanvasEdge" }
     },
     {
       "id": "deleteNodes",
       "bounds": { "x": 900, "y": 680, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "deleteNodes"
+      "nodeColor": "#FFC107", "labelColor": "black", "label": "deleteNodes",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function deleteNodes" }
     },
     {
       "id": "startLabelEdit",
       "bounds": { "x": 460, "y": 780, "width": 170, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "startLabelEdit"
+      "nodeColor": "#E91E63", "labelColor": "white", "label": "startLabelEdit",
+      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startLabelEdit" }
     },
     {
       "id": "selectionOverlay",
       "bounds": { "x": 660, "y": 780, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "SelectionOverlay"
+      "nodeColor": "#E91E63", "labelColor": "white", "label": "SelectionOverlay",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
     }
   ],
   "edges": [

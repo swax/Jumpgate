@@ -7,15 +7,22 @@ export const boundsSchema = z.object({
   height: z.number().positive(),
 });
 
+export const fileLinkSchema = z.object({
+  path: z.string(),
+  match: z.string().optional(),
+});
+
 export const nodeSchema = z.object({
   id: z.string(),
   bounds: boundsSchema,
   nodeColor: z.string().optional(),
   labelColor: z.string().optional(),
   label: z.string().optional(),
+  fileLink: fileLinkSchema.optional(),
 });
 
 export type Bounds = z.infer<typeof boundsSchema>;
+export type FileLink = z.infer<typeof fileLinkSchema>;
 
 export const edgeEndpointSchema = z.union([
   z.object({ nodeId: z.string(), anchor: z.tuple([z.number(), z.number()]).optional() }),
@@ -30,6 +37,7 @@ export const edgeSchema = z.object({
   color: z.string().optional(),
   style: z.enum(["solid", "dashed", "dotted"]).optional(),
   arrow: z.enum(["none", "end", "start", "both"]).optional(),
+  fileLink: fileLinkSchema.optional(),
 });
 
 export const documentSchema = z.object({

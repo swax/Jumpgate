@@ -17,6 +17,20 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "perspective.linkToNode",
+        "title": "Link to Perspective Node"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "perspective.linkToNode",
+          "group": "navigation"
+        }
+      ]
+    },
     "customEditors": [
       {
         "viewType": "perspective.vscpPreview",

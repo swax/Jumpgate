@@ -61,7 +61,7 @@ export function setupSelectionBox(
     if (state.locked) return;
     if (e.target !== app.stage) return;
 
-    if (!e.ctrlKey) {
+    if (!e.shiftKey) {
       setSelectedNodeIds([]);
       setSelectedEdgeIds([]);
       return;
@@ -135,7 +135,7 @@ export function setupSelectionBox(
     app.stage.on("pointerupoutside", onUp);
   });
 
-  function updateHoverCursor(ctrlKey: boolean): void {
+  function updateHoverCursor(shiftKey: boolean): void {
     const state = getState();
     if (state.edgeMode || state.locked) return;
 
@@ -144,7 +144,7 @@ export function setupSelectionBox(
       return;
     }
 
-    if (ctrlKey && hoverOnStage) {
+    if (shiftKey && hoverOnStage) {
       cursor.set(CURSOR_KEY, "crosshair", 2);
     } else {
       cursor.clear(CURSOR_KEY);
@@ -161,7 +161,7 @@ export function setupSelectionBox(
     }
 
     hoverOnStage = e.target === app.stage;
-    updateHoverCursor(e.ctrlKey);
+    updateHoverCursor(e.shiftKey);
   });
 
   app.stage.on("pointerout", () => {
@@ -170,13 +170,13 @@ export function setupSelectionBox(
   });
 
   window.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === "Control") {
+    if (e.key === "Shift") {
       updateHoverCursor(true);
     }
   });
 
   window.addEventListener("keyup", (e: KeyboardEvent) => {
-    if (e.key === "Control") {
+    if (e.key === "Shift") {
       updateHoverCursor(false);
     }
   });
