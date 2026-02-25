@@ -106,7 +106,7 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline';">
+        content="default-src 'none'; script-src 'nonce-${nonce}' 'unsafe-eval'; style-src 'unsafe-inline';">
   <style>
     html, body {
       margin: 0;

@@ -1,12 +1,21 @@
-import Konva from "konva";
+import { Container, Graphics, Text as PixiText, TextStyle, FederatedPointerEvent } from "pixi.js";
 import type { Node } from "../schema";
 import { startLabelEdit, type LabelEditContext } from "./labelEditor";
-import { snap, GRID_SIZE } from "./gridSnap";
+import { snap } from "./gridSnap";
 
-const DEFAULT_NODE_COLOR = "#888888";
+const DEFAULT_NODE_COLOR = 0x888888;
+const STROKE_COLOR = 0x333333;
+
+function colorToHex(color: string | undefined, fallback: number): number {
+  if (!color) return fallback;
+  return parseInt(color.replace("#", ""), 16);
+}
 
 /** IDs of nodes currently being moved as part of a multi-drag. */
 const groupDraggingIds = new Set<string>();
+
+/** IDs of nodes currently being dragged (including single drag). */
+const draggingIds = new Set<string>();
 
 type NodeChanges = Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>;
 
@@ -17,6 +26,8 @@ export interface CanvasNodeCallbacks {
   getSelectedNodeIds: () => string[];
   isLocked: () => boolean;
   isSnapEnabled: () => boolean;
+  getViewport: () => Container;
+  onDragUpdate: () => void;
 }
 
 export function createCanvasNode(
@@ -24,172 +35,205 @@ export function createCanvasNode(
   labelColor: string,
   labelEditCtx: LabelEditContext,
   callbacks: CanvasNodeCallbacks
-): Konva.Group {
-  const group = new Konva.Group({
-    id: node.id,
-    x: node.x,
-    y: node.y,
-    draggable: true,
-  });
+): Container {
+  const group = new Container();
+  group.label = node.id;
+  group.position.set(node.x, node.y);
+  group.eventMode = "static";
+  group.cursor = "pointer";
 
-  const rect = new Konva.Rect({
-    name: "node-rect",
-    width: node.width,
-    height: node.height,
-    fill: node.nodeColor ?? DEFAULT_NODE_COLOR,
-    strokeWidth: 2,
-    stroke: "#333333",
-  });
+  // Store dimensions on the container for label editor and selection overlay
+  (group as any)._nodeWidth = node.width;
+  (group as any)._nodeHeight = node.height;
 
-  const text = new Konva.Text({
-    name: "node-label",
+  const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
+  const rect = new Graphics();
+  rect.label = "node-rect";
+  rect.rect(0, 0, node.width, node.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
+  (rect as any)._fillColor = fillColor;
+  (rect as any)._strokeColor = STROKE_COLOR;
+  rect.eventMode = "passive";
+
+  const textFill = node.labelColor ?? labelColor;
+  const text = new PixiText({
     text: node.label || "",
-    width: node.width,
-    height: node.height,
-    align: "center",
-    verticalAlign: "middle",
-    fontSize: 14,
-    fontFamily: "sans-serif",
-    fill: node.labelColor ?? labelColor,
-    listening: false,
+    style: new TextStyle({
+      fontSize: 14,
+      fontFamily: "sans-serif",
+      fill: textFill,
+      align: "center",
+      wordWrap: true,
+      wordWrapWidth: node.width,
+    }),
   });
+  text.label = "node-label";
+  text.anchor.set(0.5, 0);
+  text.x = node.width / 2;
+  // Vertical centering
+  text.y = Math.max(0, (node.height - text.height) / 2);
+  text.eventMode = "none";
 
-  group.add(rect);
-  group.add(text);
+  group.addChild(rect);
+  group.addChild(text);
 
   const nodeId = node.id;
 
-  group.on("click tap", (e) => {
-    if (callbacks.isLocked()) return;
-    e.cancelBubble = true;
-    callbacks.onSelect(nodeId, e.evt.shiftKey);
-  });
+  // --- Click / double-click detection ---
+  let pointerDownPos: { x: number; y: number } | null = null;
+  let lastClickTime = 0;
+  const DOUBLE_CLICK_MS = 400;
+  const DRAG_THRESHOLD = 4;
 
-  group.on("dblclick dbltap", () => {
-    if (callbacks.isLocked()) return;
-    startLabelEdit(labelEditCtx, group, nodeId);
-  });
-
-  // Absolute start positions for all nodes in a multi-drag
+  // --- Drag state ---
+  let isDragging = false;
   const startPositions = new Map<string, { x: number; y: number }>();
 
-  group.on("dragstart", () => {
-    const selectedIds = callbacks.getSelectedNodeIds();
+  group.on("pointerdown", (e: FederatedPointerEvent) => {
+    if (callbacks.isLocked()) return;
+    e.stopPropagation();
+
+    const viewport = callbacks.getViewport();
+    const local = viewport.toLocal(e.global);
+    pointerDownPos = { x: local.x, y: local.y };
+    isDragging = false;
+
+    // Record start positions for multi-drag
     startPositions.clear();
+    const selectedIds = callbacks.getSelectedNodeIds();
     if (selectedIds.length > 1 && selectedIds.includes(nodeId)) {
-      const layer = group.getLayer();
-      if (layer) {
-        for (const id of selectedIds) {
-          const g = id === nodeId ? group : layer.findOne<Konva.Group>(`#${id}`);
-          if (g) {
-            startPositions.set(id, { x: g.x(), y: g.y() });
-            groupDraggingIds.add(id);
-          }
+      for (const id of selectedIds) {
+        const g = id === nodeId ? group : (viewport.getChildByLabel(id) as Container | null);
+        if (g) {
+          startPositions.set(id, { x: g.position.x, y: g.position.y });
+          groupDraggingIds.add(id);
         }
       }
     }
-  });
 
-  group.on("dragmove", () => {
-    if (callbacks.isSnapEnabled()) {
-      group.x(snap(group.x()));
-      group.y(snap(group.y()));
-    }
+    const onMove = (me: FederatedPointerEvent) => {
+      if (!pointerDownPos) return;
+      const localPt = viewport.toLocal(me.global);
+      const dx = localPt.x - pointerDownPos.x;
+      const dy = localPt.y - pointerDownPos.y;
 
-    const myStart = startPositions.get(nodeId);
-    if (!myStart || startPositions.size <= 1) return;
+      if (!isDragging && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
 
-    // Compute total delta from start — no accumulation drift
-    const dx = group.x() - myStart.x;
-    const dy = group.y() - myStart.y;
-
-    const layer = group.getLayer();
-    if (!layer) return;
-
-    for (const [id, start] of startPositions) {
-      if (id === nodeId) continue;
-      const other = layer.findOne<Konva.Group>(`#${id}`);
-      if (other) {
-        other.x(start.x + dx);
-        other.y(start.y + dy);
+      if (!isDragging) {
+        isDragging = true;
+        draggingIds.add(nodeId);
+        // Record start if single drag
+        if (startPositions.size === 0) {
+          startPositions.set(nodeId, { x: group.position.x, y: group.position.y });
+        }
       }
-    }
-  });
 
-  group.on("dragend", () => {
-    if (startPositions.size > 1) {
-      // Batch-update all moved nodes in one state change → one render
-      const layer = group.getLayer();
-      const updates: { id: string; changes: NodeChanges }[] = [];
-      if (layer) {
-        for (const id of startPositions.keys()) {
-          const g = id === nodeId ? group : layer.findOne<Konva.Group>(`#${id}`);
-          if (g) {
-            updates.push({ id, changes: { x: Math.round(g.x()), y: Math.round(g.y()) } });
+      // Move main node
+      const myStart = startPositions.get(nodeId)!;
+      let newX = myStart.x + dx;
+      let newY = myStart.y + dy;
+      if (callbacks.isSnapEnabled()) {
+        newX = snap(newX);
+        newY = snap(newY);
+      }
+      group.position.set(newX, newY);
+
+      // Multi-drag: move others
+      if (startPositions.size > 1) {
+        const actualDx = group.position.x - myStart.x;
+        const actualDy = group.position.y - myStart.y;
+        for (const [id, start] of startPositions) {
+          if (id === nodeId) continue;
+          const other = viewport.getChildByLabel(id) as Container | null;
+          if (other) {
+            other.position.set(start.x + actualDx, start.y + actualDy);
           }
         }
       }
-      startPositions.clear();
-      groupDraggingIds.clear();
-      callbacks.onNodesChanged(updates);
-    } else {
-      groupDraggingIds.clear();
-      callbacks.onNodeChanged(nodeId, {
-        x: Math.round(group.x()),
-        y: Math.round(group.y()),
-      });
-    }
-  });
 
-  group.on("transformend", () => {
-    const r = group.findOne<Konva.Rect>(".node-rect")!;
-    const t = group.findOne<Konva.Text>(".node-label")!;
-    const scaleX = group.scaleX();
-    const scaleY = group.scaleY();
-    let newWidth = Math.round(r.width() * scaleX);
-    let newHeight = Math.round(r.height() * scaleY);
-    let newX = Math.round(group.x());
-    let newY = Math.round(group.y());
-    if (callbacks.isSnapEnabled()) {
-      newWidth = Math.max(GRID_SIZE, snap(newWidth));
-      newHeight = Math.max(GRID_SIZE, snap(newHeight));
-      newX = snap(newX);
-      newY = snap(newY);
-    }
-    group.scaleX(1);
-    group.scaleY(1);
-    r.width(newWidth);
-    r.height(newHeight);
-    t.width(newWidth);
-    t.height(newHeight);
-    group.x(newX);
-    group.y(newY);
-    callbacks.onNodeChanged(nodeId, {
-      x: newX,
-      y: newY,
-      width: newWidth,
-      height: newHeight,
-    });
+      callbacks.onDragUpdate();
+    };
+
+    const onUp = (ue: FederatedPointerEvent) => {
+      group.off("globalpointermove", onMove);
+      group.off("pointerup", onUp);
+      group.off("pointerupoutside", onUp);
+
+      if (isDragging) {
+        // Commit drag
+        if (startPositions.size > 1) {
+          const updates: { id: string; changes: NodeChanges }[] = [];
+          for (const id of startPositions.keys()) {
+            const g = id === nodeId ? group : (viewport.getChildByLabel(id) as Container | null);
+            if (g) {
+              updates.push({ id, changes: { x: Math.round(g.position.x), y: Math.round(g.position.y) } });
+            }
+          }
+          startPositions.clear();
+          groupDraggingIds.clear();
+          draggingIds.delete(nodeId);
+          callbacks.onNodesChanged(updates);
+        } else {
+          startPositions.clear();
+          groupDraggingIds.clear();
+          draggingIds.delete(nodeId);
+          callbacks.onNodeChanged(nodeId, {
+            x: Math.round(group.position.x),
+            y: Math.round(group.position.y),
+          });
+        }
+      } else {
+        // Click (no drag)
+        groupDraggingIds.clear();
+        draggingIds.delete(nodeId);
+        startPositions.clear();
+
+        const now = Date.now();
+        if (now - lastClickTime < DOUBLE_CLICK_MS) {
+          // Double click
+          lastClickTime = 0;
+          startLabelEdit(labelEditCtx, group, nodeId);
+        } else {
+          lastClickTime = now;
+          callbacks.onSelect(nodeId, ue.shiftKey);
+        }
+      }
+
+      pointerDownPos = null;
+      isDragging = false;
+    };
+
+    group.on("globalpointermove", onMove);
+    group.on("pointerup", onUp);
+    group.on("pointerupoutside", onUp);
   });
 
   return group;
 }
 
-export function updateCanvasNode(group: Konva.Group, node: Node, labelColor: string): void {
-  if (group.isDragging() || groupDraggingIds.has(group.id())) return;
+export function isDraggingNode(id: string): boolean {
+  return draggingIds.has(id) || groupDraggingIds.has(id);
+}
 
-  const rect = group.findOne<Konva.Rect>(".node-rect")!;
-  const text = group.findOne<Konva.Text>(".node-label")!;
-  group.setAttrs({ x: node.x, y: node.y });
-  rect.setAttrs({
-    width: node.width,
-    height: node.height,
-    fill: node.nodeColor ?? DEFAULT_NODE_COLOR,
-  });
-  text.setAttrs({
-    text: node.label || "",
-    width: node.width,
-    height: node.height,
-    fill: node.labelColor ?? labelColor,
-  });
+export function updateCanvasNode(group: Container, node: Node, labelColor: string): void {
+  if (draggingIds.has(node.id) || groupDraggingIds.has(node.id)) return;
+
+  const rect = group.getChildByLabel("node-rect") as Graphics;
+  const text = group.getChildByLabel("node-label") as PixiText;
+
+  group.position.set(node.x, node.y);
+  (group as any)._nodeWidth = node.width;
+  (group as any)._nodeHeight = node.height;
+
+  const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
+  rect.clear();
+  rect.rect(0, 0, node.width, node.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
+  (rect as any)._fillColor = fillColor;
+  (rect as any)._strokeColor = STROKE_COLOR;
+
+  const textFill = node.labelColor ?? labelColor;
+  text.text = node.label || "";
+  text.style.fill = textFill;
+  text.style.wordWrapWidth = node.width;
+  text.x = node.width / 2;
+  text.y = Math.max(0, (node.height - text.height) / 2);
 }

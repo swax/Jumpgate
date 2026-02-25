@@ -1,8 +1,9 @@
-import Konva from "konva";
+import { Application, Container } from "pixi.js";
 import type { Node } from "../schema";
-import { createCanvasNode, updateCanvasNode, type CanvasNodeCallbacks } from "./canvasNode";
+import { createCanvasNode, updateCanvasNode, isDraggingNode, type CanvasNodeCallbacks } from "./canvasNode";
 import type { LabelEditContext } from "./labelEditor";
 import type { EditorState } from "./state";
+import { SelectionOverlay } from "./selectionOverlay";
 
 type NodeChanges = Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>;
 
@@ -13,9 +14,8 @@ export interface RendererCallbacks {
 }
 
 export function createRenderer(
-  stage: Konva.Stage,
-  layer: Konva.Layer,
-  transformer: Konva.Transformer,
+  app: Application,
+  viewport: Container,
   callbacks: RendererCallbacks
 ) {
   let prevNodeIds: Set<string> = new Set();
@@ -28,13 +28,23 @@ export function createRenderer(
       .trim() || "#cccccc";
 
   const labelEditCtx: LabelEditContext = {
-    stage,
-    layer,
+    app,
+    viewport,
     labelColor,
     onLabelChanged: (nodeId, label) => callbacks.onNodeChanged(nodeId, { label }),
   };
 
   let selectedNodeIds: string[] = [];
+
+  const selectionOverlay = new SelectionOverlay(
+    () => viewport,
+    {
+      onNodeChanged: callbacks.onNodeChanged,
+      onNodesChanged: callbacks.onNodesChanged,
+      isSnapEnabled: () => snapEnabled,
+    }
+  );
+  viewport.addChild(selectionOverlay.container);
 
   const nodeCallbacks: CanvasNodeCallbacks = {
     onNodeChanged: callbacks.onNodeChanged,
@@ -43,6 +53,25 @@ export function createRenderer(
     getSelectedNodeIds: () => selectedNodeIds,
     isLocked: () => isLocked,
     isSnapEnabled: () => snapEnabled,
+    getViewport: () => viewport,
+    onDragUpdate: () => {
+      if (selectedNodeIds.length > 0 && !isLocked) {
+        const nodeInfos = selectedNodeIds
+          .map((id) => {
+            const container = viewport.getChildByLabel(id) as Container | null;
+            if (!container) return null;
+            return {
+              id,
+              x: container.position.x,
+              y: container.position.y,
+              width: (container as any)._nodeWidth ?? 100,
+              height: (container as any)._nodeHeight ?? 100,
+            };
+          })
+          .filter((n): n is NonNullable<typeof n> => n !== null);
+        selectionOverlay.update(nodeInfos, viewport.scale.x);
+      }
+    },
   };
 
   function render(state: EditorState): void {
@@ -55,8 +84,9 @@ export function createRenderer(
     // Remove nodes for deleted items
     for (const id of prevNodeIds) {
       if (!currentIds.has(id)) {
-        const node = layer.findOne<Konva.Group>(`#${id}`);
+        const node = viewport.getChildByLabel(id);
         if (node) {
+          viewport.removeChild(node);
           node.destroy();
         }
       }
@@ -64,29 +94,38 @@ export function createRenderer(
 
     // Create or update nodes
     for (const node of doc.nodes) {
-      let group = layer.findOne<Konva.Group>(`#${node.id}`);
+      let group = viewport.getChildByLabel(node.id) as Container | null;
 
       if (!group) {
         group = createCanvasNode(node, labelColor, labelEditCtx, nodeCallbacks);
-        layer.add(group);
+        // Insert before selection overlay so overlay renders on top
+        const overlayIndex = viewport.getChildIndex(selectionOverlay.container);
+        viewport.addChildAt(group, overlayIndex);
       }
 
-      group.draggable(!isLocked);
-      updateCanvasNode(group, node, labelColor);
+      group.eventMode = isLocked ? "none" : "static";
+      group.cursor = isLocked ? "default" : "pointer";
+
+      if (!isDraggingNode(node.id)) {
+        updateCanvasNode(group, node, labelColor);
+      }
     }
 
-    // Manage transformer
+    // Update selection overlay
     if (stateSelectedNodeIds.length > 0 && !locked) {
-      const selectedNodes = stateSelectedNodeIds
-        .map((id) => layer.findOne<Konva.Group>(`#${id}`))
-        .filter((n): n is Konva.Group => n !== undefined);
-      transformer.nodes(selectedNodes);
+      const nodeInfos = stateSelectedNodeIds
+        .map((id) => {
+          const n = doc.nodes.find((n) => n.id === id);
+          if (!n) return null;
+          return { id: n.id, x: n.x, y: n.y, width: n.width, height: n.height };
+        })
+        .filter((n): n is NonNullable<typeof n> => n !== null);
+      selectionOverlay.update(nodeInfos, viewport.scale.x);
     } else {
-      transformer.nodes([]);
+      selectionOverlay.update([], viewport.scale.x);
     }
 
     prevNodeIds = currentIds;
-    layer.batchDraw();
   }
 
   return { render };

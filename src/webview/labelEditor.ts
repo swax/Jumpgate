@@ -1,36 +1,36 @@
-import Konva from "konva";
+import { Application, Container, Text as PixiText } from "pixi.js";
 
 export interface LabelEditContext {
-  stage: Konva.Stage;
-  layer: Konva.Layer;
+  app: Application;
+  viewport: Container;
   labelColor: string;
   onLabelChanged: (nodeId: string, label: string) => void;
 }
 
 export function startLabelEdit(
   ctx: LabelEditContext,
-  group: Konva.Group,
+  group: Container,
   nodeId: string
 ): void {
-  const rect = group.findOne<Konva.Rect>(".node-rect")!;
-  const textNode = group.findOne<Konva.Text>(".node-label")!;
+  const textNode = group.getChildByLabel("node-label") as PixiText;
+  const width = (group as any)._nodeWidth as number;
+  const height = (group as any)._nodeHeight as number;
 
-  textNode.hide();
-  ctx.layer.batchDraw();
+  textNode.visible = false;
 
-  const absPos = group.getAbsolutePosition();
-  const scale = ctx.stage.scaleX();
-  const container = ctx.stage.container();
+  const globalPos = group.toGlobal({ x: 0, y: 0 });
+  const scale = ctx.viewport.scale.x;
+  const container = ctx.app.canvas.parentElement!;
 
   const textarea = document.createElement("textarea");
-  textarea.value = textNode.text();
+  textarea.value = textNode.text;
 
   Object.assign(textarea.style, {
     position: "absolute",
-    top: `${absPos.y}px`,
-    left: `${absPos.x}px`,
-    width: `${rect.width() * scale}px`,
-    height: `${rect.height() * scale}px`,
+    top: `${globalPos.y}px`,
+    left: `${globalPos.x}px`,
+    width: `${width * scale}px`,
+    height: `${height * scale}px`,
     fontSize: `${14 * scale}px`,
     fontFamily: "sans-serif",
     lineHeight: `${18 * scale}px`,
@@ -50,7 +50,7 @@ export function startLabelEdit(
   const updatePadding = () => {
     const lines = textarea.value.split("\n").length;
     const textHeight = lines * LINE_HEIGHT;
-    const boxHeight = rect.height() * scale;
+    const boxHeight = height * scale;
     const pad = Math.max(0, (boxHeight - textHeight) / 2);
     textarea.style.paddingTop = `${pad}px`;
   };
@@ -69,9 +69,8 @@ export function startLabelEdit(
     done = true;
     const newLabel = textarea.value;
     textarea.remove();
-    textNode.text(newLabel);
-    textNode.show();
-    ctx.layer.batchDraw();
+    textNode.text = newLabel;
+    textNode.visible = true;
     ctx.onLabelChanged(nodeId, newLabel);
   };
 
@@ -79,8 +78,7 @@ export function startLabelEdit(
     if (done) return;
     done = true;
     textarea.remove();
-    textNode.show();
-    ctx.layer.batchDraw();
+    textNode.visible = true;
   };
 
   textarea.addEventListener("keydown", (e) => {

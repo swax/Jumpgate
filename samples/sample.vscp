@@ -2,9 +2,9 @@
   "nodes": [
     {
       "id": "node-1",
-      "x": 160,
-      "y": 120,
-      "width": 120,
+      "x": 220,
+      "y": 220,
+      "width": 100,
       "height": 100,
       "nodeColor": "#f2f2f2",
       "labelColor": "black",
@@ -12,9 +12,29 @@
     },
     {
       "id": "node-2",
-      "x": 300,
-      "y": 120,
-      "width": 120,
+      "x": 100,
+      "y": 100,
+      "width": 100,
+      "height": 100,
+      "nodeColor": "#f2f2f2",
+      "labelColor": "#000000",
+      "label": "HEY"
+    },
+    {
+      "id": "ddb8734d-3fe5-40ad-a03e-fb957d400076",
+      "x": 220,
+      "y": 100,
+      "width": 100,
+      "height": 100,
+      "nodeColor": "#ffffff",
+      "labelColor": "black",
+      "label": "this\nis \na \nTesT!!!"
+    },
+    {
+      "id": "1cbaf393-7826-451d-afd1-0e9a98f8a429",
+      "x": 100,
+      "y": 220,
+      "width": 100,
       "height": 100,
       "nodeColor": "#f2f2f2",
       "labelColor": "#000000",
