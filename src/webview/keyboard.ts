@@ -4,6 +4,7 @@ import {
   setSelectedNodeIds,
   addNodes,
   deleteNodes,
+  deleteEdges,
   generateNodeId,
 } from "./state";
 
@@ -19,6 +20,10 @@ export function setupKeyboard(onEdit: () => void): void {
     if (e.key === "Delete" || e.key === "Backspace") {
       if (state.selectedNodeIds.length > 0) {
         deleteNodes(state.selectedNodeIds);
+        onEdit();
+      }
+      if (state.selectedEdgeIds.length > 0) {
+        deleteEdges(state.selectedEdgeIds);
         onEdit();
       }
       return;
@@ -39,8 +44,7 @@ export function setupKeyboard(onEdit: () => void): void {
         const pastedNodes = clipboard.map((n) => ({
           ...n,
           id: generateNodeId(),
-          x: n.x + 20,
-          y: n.y + 20,
+          bounds: { ...n.bounds, x: n.bounds.x + 20, y: n.bounds.y + 20 },
         }));
         addNodes(pastedNodes);
         setSelectedNodeIds(pastedNodes.map((n) => n.id));

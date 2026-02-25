@@ -152,6 +152,9 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     #snap-btn {
       right: 48px;
     }
+    #edge-btn {
+      right: 88px;
+    }
     #sidebar {
       position: fixed;
       top: 48px;
@@ -181,12 +184,31 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     .color-field::-moz-color-swatch {
       border: none;
     }
+    #edge-mode-status {
+      display: none;
+      position: fixed;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 12px;
+      border-radius: 4px;
+      background: var(--vscode-editorWidget-background, #252526);
+      color: var(--vscode-editorWidget-foreground, #cccccc);
+      border: 1px solid var(--vscode-editorWidget-border, #454545);
+      font-family: var(--vscode-font-family, sans-serif);
+      font-size: 12px;
+      z-index: 20;
+      pointer-events: none;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
   <div id="canvas-container"></div>
+  <button id="edge-btn" class="toolbar-btn" title="Add Edge"></button>
   <button id="snap-btn" class="toolbar-btn" title="Snap to grid (on)"></button>
   <button id="lock-btn" class="toolbar-btn" title="Lock editing"></button>
+  <div id="edge-mode-status"></div>
   <div id="sidebar" style="display:none">
     <input type="color" id="fill-color" class="color-field" title="Node color">
     <input type="color" id="text-color" class="color-field" title="Label color">

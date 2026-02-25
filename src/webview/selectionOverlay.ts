@@ -1,26 +1,20 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
+import type { Bounds } from "../schema";
 import { snap, GRID_SIZE } from "./gridSnap";
+import { setContainerBounds } from "./canvasNode";
 
-type NodeChanges = Partial<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}>;
+type NodeChanges = {
+  bounds?: Partial<Bounds>;
+};
 
 export interface SelectionOverlayCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
   isSnapEnabled: () => boolean;
+  onDragUpdate: () => void;
 }
 
-interface NodeInfo {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+type NodeInfo = Bounds & { id: string };
 
 const HANDLE_SIZE = 8;
 const HANDLE_COLOR = 0x4a90d9;
@@ -305,6 +299,8 @@ export class SelectionOverlay {
     const viewport = this.viewportGetter();
     this.drawOutline(viewport.scale.x);
     this.drawHandles(viewport.scale.x);
+
+    this.callbacks.onDragUpdate();
   }
 
   private applyToNodes(commit: boolean): void {
@@ -320,9 +316,8 @@ export class SelectionOverlay {
         const newW = Math.round(this.bbox.width);
         const newH = Math.round(this.bbox.height);
 
-        container.position.set(newX, newY);
-        (container as any)._nodeWidth = newW;
-        (container as any)._nodeHeight = newH;
+        const newBounds = { x: newX, y: newY, width: newW, height: newH };
+        setContainerBounds(container, newBounds);
 
         // Update graphics
         const rect = container.getChildByLabel("node-rect") as Graphics;
@@ -341,12 +336,7 @@ export class SelectionOverlay {
         }
 
         if (commit) {
-          this.callbacks.onNodeChanged(node.id, {
-            x: newX,
-            y: newY,
-            width: newW,
-            height: newH,
-          });
+          this.callbacks.onNodeChanged(node.id, { bounds: newBounds });
         }
       }
     } else if (this.selectedNodes.length > 1) {
@@ -358,16 +348,16 @@ export class SelectionOverlay {
       for (const node of this.selectedNodes) {
         const relX = node.x - sb.x;
         const relY = node.y - sb.y;
-        const newX = Math.round(this.bbox.x + relX * scaleX);
-        const newY = Math.round(this.bbox.y + relY * scaleY);
-        const newW = Math.round(node.width * scaleX);
-        const newH = Math.round(node.height * scaleY);
+        const newBounds = {
+          x: Math.round(this.bbox.x + relX * scaleX),
+          y: Math.round(this.bbox.y + relY * scaleY),
+          width: Math.round(node.width * scaleX),
+          height: Math.round(node.height * scaleY),
+        };
 
         const container = viewport.getChildByLabel(node.id) as Container | null;
         if (container) {
-          container.position.set(newX, newY);
-          (container as any)._nodeWidth = newW;
-          (container as any)._nodeHeight = newH;
+          setContainerBounds(container, newBounds);
 
           const rect = container.getChildByLabel("node-rect") as Graphics;
           const text = container.getChildByLabel("node-label") as any;
@@ -375,21 +365,18 @@ export class SelectionOverlay {
             const fill = (rect as any)._fillColor ?? 0x888888;
             const strokeColor = (rect as any)._strokeColor ?? 0x333333;
             rect.clear();
-            rect.rect(0, 0, newW, newH).fill(fill).stroke({ width: 2, color: strokeColor });
+            rect.rect(0, 0, newBounds.width, newBounds.height).fill(fill).stroke({ width: 2, color: strokeColor });
           }
           if (text) {
-            text.style.wordWrapWidth = newW;
+            text.style.wordWrapWidth = newBounds.width;
             const textH = text.height;
-            text.x = newW / 2;
-            text.y = Math.max(0, (newH - textH) / 2);
+            text.x = newBounds.width / 2;
+            text.y = Math.max(0, (newBounds.height - textH) / 2);
           }
         }
 
         if (commit) {
-          updates.push({
-            id: node.id,
-            changes: { x: newX, y: newY, width: newW, height: newH },
-          });
+          updates.push({ id: node.id, changes: { bounds: newBounds } });
         }
       }
 

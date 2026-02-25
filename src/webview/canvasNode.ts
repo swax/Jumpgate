@@ -1,10 +1,25 @@
 import { Container, Graphics, Text as PixiText, TextStyle, FederatedPointerEvent } from "pixi.js";
-import type { Node } from "../schema";
+import type { Bounds, Node } from "../schema";
 import { startLabelEdit, type LabelEditContext } from "./labelEditor";
 import { snap } from "./gridSnap";
 
 const DEFAULT_NODE_COLOR = 0x888888;
 const STROKE_COLOR = 0x333333;
+
+export function getContainerBounds(container: Container): Bounds {
+  return {
+    x: container.position.x,
+    y: container.position.y,
+    width: (container as any)._nodeWidth ?? 100,
+    height: (container as any)._nodeHeight ?? 100,
+  };
+}
+
+export function setContainerBounds(container: Container, bounds: Bounds): void {
+  container.position.set(bounds.x, bounds.y);
+  (container as any)._nodeWidth = bounds.width;
+  (container as any)._nodeHeight = bounds.height;
+}
 
 function colorToHex(color: string | undefined, fallback: number): number {
   if (!color) return fallback;
@@ -17,7 +32,12 @@ const groupDraggingIds = new Set<string>();
 /** IDs of nodes currently being dragged (including single drag). */
 const draggingIds = new Set<string>();
 
-type NodeChanges = Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>;
+type NodeChanges = {
+  bounds?: Partial<Node["bounds"]>;
+  nodeColor?: string;
+  labelColor?: string;
+  label?: string;
+};
 
 export interface CanvasNodeCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
@@ -25,6 +45,7 @@ export interface CanvasNodeCallbacks {
   onSelect: (id: string, shiftKey: boolean) => void;
   getSelectedNodeIds: () => string[];
   isLocked: () => boolean;
+  isEdgeMode: () => boolean;
   isSnapEnabled: () => boolean;
   getViewport: () => Container;
   onDragUpdate: () => void;
@@ -38,18 +59,14 @@ export function createCanvasNode(
 ): Container {
   const group = new Container();
   group.label = node.id;
-  group.position.set(node.x, node.y);
+  setContainerBounds(group, node.bounds);
   group.eventMode = "static";
   group.cursor = "pointer";
-
-  // Store dimensions on the container for label editor and selection overlay
-  (group as any)._nodeWidth = node.width;
-  (group as any)._nodeHeight = node.height;
 
   const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
   const rect = new Graphics();
   rect.label = "node-rect";
-  rect.rect(0, 0, node.width, node.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
+  rect.rect(0, 0, node.bounds.width, node.bounds.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
   (rect as any)._fillColor = fillColor;
   (rect as any)._strokeColor = STROKE_COLOR;
   rect.eventMode = "passive";
@@ -63,14 +80,14 @@ export function createCanvasNode(
       fill: textFill,
       align: "center",
       wordWrap: true,
-      wordWrapWidth: node.width,
+      wordWrapWidth: node.bounds.width,
     }),
   });
   text.label = "node-label";
   text.anchor.set(0.5, 0);
-  text.x = node.width / 2;
+  text.x = node.bounds.width / 2;
   // Vertical centering
-  text.y = Math.max(0, (node.height - text.height) / 2);
+  text.y = Math.max(0, (node.bounds.height - text.height) / 2);
   text.eventMode = "none";
 
   group.addChild(rect);
@@ -90,6 +107,7 @@ export function createCanvasNode(
 
   group.on("pointerdown", (e: FederatedPointerEvent) => {
     if (callbacks.isLocked()) return;
+    if (callbacks.isEdgeMode()) return; // Let event propagate to viewport for edge creation
     e.stopPropagation();
 
     const viewport = callbacks.getViewport();
@@ -165,7 +183,7 @@ export function createCanvasNode(
           for (const id of startPositions.keys()) {
             const g = id === nodeId ? group : (viewport.getChildByLabel(id) as Container | null);
             if (g) {
-              updates.push({ id, changes: { x: Math.round(g.position.x), y: Math.round(g.position.y) } });
+              updates.push({ id, changes: { bounds: { x: Math.round(g.position.x), y: Math.round(g.position.y) } } });
             }
           }
           startPositions.clear();
@@ -177,8 +195,7 @@ export function createCanvasNode(
           groupDraggingIds.clear();
           draggingIds.delete(nodeId);
           callbacks.onNodeChanged(nodeId, {
-            x: Math.round(group.position.x),
-            y: Math.round(group.position.y),
+            bounds: { x: Math.round(group.position.x), y: Math.round(group.position.y) },
           });
         }
       } else {
@@ -220,20 +237,18 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   const rect = group.getChildByLabel("node-rect") as Graphics;
   const text = group.getChildByLabel("node-label") as PixiText;
 
-  group.position.set(node.x, node.y);
-  (group as any)._nodeWidth = node.width;
-  (group as any)._nodeHeight = node.height;
+  setContainerBounds(group, node.bounds);
 
   const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
   rect.clear();
-  rect.rect(0, 0, node.width, node.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
+  rect.rect(0, 0, node.bounds.width, node.bounds.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
   (rect as any)._fillColor = fillColor;
   (rect as any)._strokeColor = STROKE_COLOR;
 
   const textFill = node.labelColor ?? labelColor;
   text.text = node.label || "";
   text.style.fill = textFill;
-  text.style.wordWrapWidth = node.width;
-  text.x = node.width / 2;
-  text.y = Math.max(0, (node.height - text.height) / 2);
+  text.style.wordWrapWidth = node.bounds.width;
+  text.x = node.bounds.width / 2;
+  text.y = Math.max(0, (node.bounds.height - text.height) / 2);
 }

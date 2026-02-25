@@ -6,10 +6,14 @@ import {
   getState,
   setDocument,
   setSelectedNodeIds,
+  setSelectedEdgeIds,
   toggleSelectedNodeId,
   subscribe,
   updateNode,
   updateNodes,
+  addEdge,
+  updateEdge,
+  generateEdgeId,
 } from "./state";
 import { createRenderer } from "./renderer";
 import { setupPanZoom } from "./panZoom";
@@ -17,6 +21,7 @@ import { setupLockToggle } from "./lockToggle";
 import { setupSidebar } from "./sidebar";
 import { setupGridSnap } from "./gridSnap";
 import { setupKeyboard } from "./keyboard";
+import { setupEdgeMode } from "./edgeMode";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -46,8 +51,10 @@ async function main(): Promise<void> {
   app.stage.hitArea = app.screen;
 
   app.stage.on("pointerdown", (e) => {
+    if (getState().edgeMode) return; // Edge mode handles its own clicks
     if (e.target === app.stage) {
       setSelectedNodeIds([]);
+      setSelectedEdgeIds([]);
     }
   });
 
@@ -91,6 +98,13 @@ async function main(): Promise<void> {
         setSelectedNodeIds([id]);
       }
     },
+    onEdgeSelect: (edgeId) => {
+      setSelectedEdgeIds([edgeId]);
+    },
+    onEdgeChanged: (id, changes) => {
+      updateEdge(id, changes);
+      sendEditDebounced();
+    },
   });
 
   subscribe(() => {
@@ -98,6 +112,18 @@ async function main(): Promise<void> {
   });
 
   setupKeyboard(sendEditDebounced);
+  setupEdgeMode(
+    document.getElementById("edge-btn") as HTMLButtonElement,
+    viewport,
+    app.stage,
+    {
+      addEdge: (edge) => {
+        addEdge(edge);
+        sendEditDebounced();
+      },
+      generateEdgeId,
+    }
+  );
 
   // Handle messages from the extension
   window.addEventListener("message", (event) => {

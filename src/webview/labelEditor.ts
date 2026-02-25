@@ -1,4 +1,5 @@
 import { Application, Container, Text as PixiText } from "pixi.js";
+import { getContainerBounds } from "./canvasNode";
 
 export interface LabelEditContext {
   app: Application;
@@ -13,8 +14,7 @@ export function startLabelEdit(
   nodeId: string
 ): void {
   const textNode = group.getChildByLabel("node-label") as PixiText;
-  const width = (group as any)._nodeWidth as number;
-  const height = (group as any)._nodeHeight as number;
+  const { width, height } = getContainerBounds(group);
 
   textNode.visible = false;
 
