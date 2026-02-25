@@ -19,32 +19,32 @@ export function setupSidebar(
   const textInput = container.querySelector<HTMLInputElement>("#text-color")!;
 
   fillInput.addEventListener("input", () => {
-    const { selectedNodeId } = getState();
-    if (selectedNodeId) {
-      callbacks.onNodeChanged(selectedNodeId, { nodeColor: fillInput.value });
+    const { selectedNodeIds } = getState();
+    for (const id of selectedNodeIds) {
+      callbacks.onNodeChanged(id, { nodeColor: fillInput.value });
     }
   });
 
   textInput.addEventListener("input", () => {
-    const { selectedNodeId } = getState();
-    if (selectedNodeId) {
-      callbacks.onNodeChanged(selectedNodeId, { labelColor: textInput.value });
+    const { selectedNodeIds } = getState();
+    for (const id of selectedNodeIds) {
+      callbacks.onNodeChanged(id, { labelColor: textInput.value });
     }
   });
 
   subscribe(() => {
-    const { document: doc, selectedNodeId, locked } = getState();
-    const selectedNode = selectedNodeId
-      ? doc.nodes.find((n) => n.id === selectedNodeId)
+    const { document: doc, selectedNodeIds, locked } = getState();
+    const firstSelected = selectedNodeIds.length > 0
+      ? doc.nodes.find((n) => n.id === selectedNodeIds[0])
       : null;
 
-    const hidden = !selectedNode || locked;
+    const hidden = !firstSelected || locked;
     const sidebar = container.querySelector<HTMLElement>("#sidebar")!;
     sidebar.style.display = hidden ? "none" : "";
 
-    if (selectedNode) {
-      fillInput.value = selectedNode.nodeColor ?? DEFAULT_FILL;
-      textInput.value = selectedNode.labelColor ?? DEFAULT_TEXT;
+    if (firstSelected) {
+      fillInput.value = firstSelected.nodeColor ?? DEFAULT_FILL;
+      textInput.value = firstSelected.labelColor ?? DEFAULT_TEXT;
     }
   });
 }

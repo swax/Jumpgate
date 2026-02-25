@@ -120,10 +120,9 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       width: 100%;
       height: 100%;
     }
-    #lock-btn {
+    .toolbar-btn {
       position: fixed;
       top: 8px;
-      right: 8px;
       width: 32px;
       height: 32px;
       border: none;
@@ -138,14 +137,20 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       padding: 4px;
       opacity: 0.7;
     }
-    #lock-btn:hover {
-      opacity: 1;
+    .toolbar-btn:hover {
+      opacity: 1 !important;
       background: var(--vscode-button-secondaryHoverBackground, #45494e);
     }
-    #lock-btn svg {
+    .toolbar-btn svg {
       width: 20px;
       height: 20px;
       fill: currentColor;
+    }
+    #lock-btn {
+      right: 8px;
+    }
+    #snap-btn {
+      right: 48px;
     }
     #sidebar {
       position: fixed;
@@ -180,7 +185,8 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
 </head>
 <body>
   <div id="canvas-container"></div>
-  <button id="lock-btn" title="Lock editing"></button>
+  <button id="snap-btn" class="toolbar-btn" title="Snap to grid (on)"></button>
+  <button id="lock-btn" class="toolbar-btn" title="Lock editing"></button>
   <div id="sidebar" style="display:none">
     <input type="color" id="fill-color" class="color-field" title="Node color">
     <input type="color" id="text-color" class="color-field" title="Label color">

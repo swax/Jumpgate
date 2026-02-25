@@ -4,12 +4,12 @@ import { createCanvasNode, updateCanvasNode, type CanvasNodeCallbacks } from "./
 import type { LabelEditContext } from "./labelEditor";
 import type { EditorState } from "./state";
 
+type NodeChanges = Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>;
+
 export interface RendererCallbacks {
-  onNodeChanged: (
-    id: string,
-    changes: Partial<Pick<Node, "x" | "y" | "width" | "height" | "nodeColor" | "labelColor" | "label">>
-  ) => void;
-  onSelect: (id: string | null) => void;
+  onNodeChanged: (id: string, changes: NodeChanges) => void;
+  onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
+  onSelect: (id: string, shiftKey: boolean) => void;
 }
 
 export function createRenderer(
@@ -20,6 +20,7 @@ export function createRenderer(
 ) {
   let prevNodeIds: Set<string> = new Set();
   let isLocked = false;
+  let snapEnabled = true;
 
   const labelColor =
     getComputedStyle(document.documentElement)
@@ -33,15 +34,22 @@ export function createRenderer(
     onLabelChanged: (nodeId, label) => callbacks.onNodeChanged(nodeId, { label }),
   };
 
+  let selectedNodeIds: string[] = [];
+
   const nodeCallbacks: CanvasNodeCallbacks = {
     onNodeChanged: callbacks.onNodeChanged,
+    onNodesChanged: callbacks.onNodesChanged,
     onSelect: callbacks.onSelect,
+    getSelectedNodeIds: () => selectedNodeIds,
     isLocked: () => isLocked,
+    isSnapEnabled: () => snapEnabled,
   };
 
   function render(state: EditorState): void {
-    const { document: doc, selectedNodeId, locked } = state;
+    const { document: doc, selectedNodeIds: stateSelectedNodeIds, locked, snapToGrid } = state;
+    selectedNodeIds = stateSelectedNodeIds;
     isLocked = locked;
+    snapEnabled = snapToGrid;
     const currentIds = new Set(doc.nodes.map((n) => n.id));
 
     // Remove nodes for deleted items
@@ -68,13 +76,11 @@ export function createRenderer(
     }
 
     // Manage transformer
-    if (selectedNodeId && !locked) {
-      const selectedNode = layer.findOne<Konva.Group>(`#${selectedNodeId}`);
-      if (selectedNode) {
-        transformer.nodes([selectedNode]);
-      } else {
-        transformer.nodes([]);
-      }
+    if (stateSelectedNodeIds.length > 0 && !locked) {
+      const selectedNodes = stateSelectedNodeIds
+        .map((id) => layer.findOne<Konva.Group>(`#${id}`))
+        .filter((n): n is Konva.Group => n !== undefined);
+      transformer.nodes(selectedNodes);
     } else {
       transformer.nodes([]);
     }

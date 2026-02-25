@@ -1,11 +1,21 @@
 import Konva from "konva";
 import type { ExtensionToWebviewMessage } from "../messages";
 import type { WebviewToExtensionMessage } from "../messages";
-import { getState, setDocument, setSelectedNodeId, subscribe, updateNode } from "./state";
+import {
+  getState,
+  setDocument,
+  setSelectedNodeIds,
+  toggleSelectedNodeId,
+  subscribe,
+  updateNode,
+  updateNodes,
+} from "./state";
 import { createRenderer } from "./renderer";
 import { setupPanZoom } from "./panZoom";
 import { setupLockToggle } from "./lockToggle";
 import { setupSidebar } from "./sidebar";
+import { setupGridSnap, snapBoundBox } from "./gridSnap";
+import { setupKeyboard } from "./keyboard";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -38,23 +48,20 @@ const transformer = new Konva.Transformer({
     "bottom-center",
     "bottom-right",
   ],
-  boundBoxFunc: (_oldBox, newBox) => {
-    newBox.width = Math.max(10, newBox.width);
-    newBox.height = Math.max(10, newBox.height);
-    return newBox;
-  },
+  boundBoxFunc: (oldBox, newBox) => snapBoundBox(oldBox, newBox, stage.scaleX()),
 });
 layer.add(transformer);
 
 // Click on empty stage deselects
 stage.on("click tap", (e) => {
   if (e.target === stage) {
-    setSelectedNodeId(null);
+    setSelectedNodeIds([]);
   }
 });
 
 setupPanZoom(stage);
 setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
+setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
 setupSidebar(document.documentElement, {
   onNodeChanged: (id, changes) => {
     updateNode(id, changes);
@@ -81,14 +88,24 @@ const renderer = createRenderer(stage, layer, transformer, {
     updateNode(id, changes);
     sendEditDebounced();
   },
-  onSelect: (id) => {
-    setSelectedNodeId(id);
+  onNodesChanged: (updates) => {
+    updateNodes(updates);
+    sendEditDebounced();
+  },
+  onSelect: (id, shiftKey) => {
+    if (shiftKey) {
+      toggleSelectedNodeId(id);
+    } else {
+      setSelectedNodeIds([id]);
+    }
   },
 });
 
 subscribe(() => {
   renderer.render(getState());
 });
+
+setupKeyboard(sendEditDebounced);
 
 // Handle messages from the extension
 window.addEventListener("message", (event) => {

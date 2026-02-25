@@ -2,23 +2,23 @@
   "nodes": [
     {
       "id": "node-1",
-      "x": 167,
-      "y": 134,
-      "width": 200,
+      "x": 160,
+      "y": 120,
+      "width": 120,
       "height": 100,
-      "nodeColor": "#a93737",
-      "label": "this\nis \na \nTesT!!!",
-      "labelColor": "black"
+      "nodeColor": "#f2f2f2",
+      "labelColor": "black",
+      "label": "this\nis \na \nTesT!!!"
     },
     {
       "id": "node-2",
-      "x": 270,
-      "y": 317,
-      "width": 150,
-      "height": 80,
-      "label": "HEY",
-      "labelColor": "#1e42ae",
-      "nodeColor": "#d11f1f"
+      "x": 300,
+      "y": 120,
+      "width": 120,
+      "height": 100,
+      "nodeColor": "#f2f2f2",
+      "labelColor": "#000000",
+      "label": "HEY"
     }
   ]
 }

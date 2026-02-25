@@ -90,6 +90,22 @@ rect.on('transformend', () => {
 
 **Multi-node:** `tr.nodes([rect1, rect2, rect3]);`
 
+**Multi-node drag** -- Transformer only moves nodes together on resize handles, NOT on drag. Each node drags independently. To keep selections moving as a group:
+```typescript
+// On dragstart: record absolute start positions of ALL selected nodes
+const startPositions = new Map<string, { x: number; y: number }>();
+// On dragmove: compute total delta from the dragged node's start, apply to companions
+const dx = draggedNode.x() - startPositions.get(draggedId)!.x;
+for (const [id, start] of startPositions) {
+  if (id === draggedId) continue;
+  otherNode.x(start.x + dx);  // absolute, not incremental -- avoids drift
+}
+// On dragend: batch-update all positions in one state change
+```
+**Gotcha:** Incremental deltas (`dx = current - prev`) accumulate floating-point drift with grid snapping. Always use absolute offsets from start positions.
+
+**Gotcha:** If your app re-renders from state on each change, companion nodes (moved programmatically, not by Konva drag) will have `isDragging() === false` and get reset by the re-render. Guard them with a separate set of "group-dragging" IDs cleared on `dragend`.
+
 **Gotcha:** `boundBoxFunc` box values can be negative (when flipped). Use `Math.abs()`.
 
 ---
