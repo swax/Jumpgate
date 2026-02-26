@@ -19,7 +19,7 @@ Edits from the canvas apply via `WorkspaceEdit` which marks the tab dirty (does 
 ```
 src/
   extension.ts            Activation: registers VscpEditorProvider + perspective.linkToNode command
-  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum), direction ("up"|"right"|"down"|"left", omitted when "up"), and parentId (string, for node grouping); edgeSchema includes optional label, color, labelColor, style, arrow, and fileLink
+  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum), direction ("up"|"right"|"down"|"left", omitted when "up"), and parentId (string, for node grouping); edgeSchema includes optional waypoints, label, color, labelColor, style, arrow, and fileLink
   messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink
   vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler
   webview/
@@ -29,11 +29,11 @@ src/
     globals.d.ts          acquireVsCodeApi type declaration
     canvas/
       canvasNode.ts       Node container factory (shape Graphics + Text label) + drag/click/dblclick handlers
-      shapeDrawing.ts     Centralized drawShape() + directionToDeg() — 12 shape types, direction-based orientation within bounding box
-      canvasEdge.ts       Edge container factory (Graphics "edge-line" + Text "edge-label") + line/arrowhead rendering + endpoint resolution + double-click label editing
+      shapeDrawing.ts     Centralized drawShape() + directionToDeg() — 13 shape types, direction-based orientation within bounding box
+      canvasEdge.ts       Edge container factory (Graphics "edge-line" + Text "edge-label") + polyline rendering (waypoints) + arrowhead rendering + endpoint resolution + double-click label editing; exports buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance
       edgeUtils.ts        Shared edge utilities: findNodeAtPoint (with optional excludeIds), computeAnchor, buildEndpoint, dot constants
       selectionOverlay.ts Dashed bounding box + 8 resize handles for selected nodes
-      edgeHandleOverlay.ts Draggable endpoint handles on selected edges — drag to reposition from/to
+      edgeHandleOverlay.ts Draggable endpoint handles on selected edges — drag to reposition from/to; also manages waypoint handles (pooled Graphics) with drag-to-move and Ctrl+double-click to remove
     controls/
       lockToggle.ts       Lock button UI — toggles editing, hides sidebar, disables interactions
       gridSnap.ts         Snap-to-grid toggle button and snap() utility (GRID_SIZE = 20)
@@ -63,7 +63,8 @@ app.stage                         (background click-to-deselect)
       │   ├─ Graphics             (dashed outline)
       │   └─ Graphics × 8         (resize handles)
       └─ EdgeHandleOverlay        (zIndex 9001, eventMode: "passive")
-          └─ Graphics × 2         (from/to endpoint handles)
+          ├─ Graphics × 2         (from/to endpoint handles)
+          └─ Graphics × N         (waypoint handles, pooled — shown when edge selected)
 ```
 
 Z-index layers (bottom to top): depth-0 nodes (1000+i), depth-0 text nodes (1500+i), depth-1 nodes (2000+i), depth-1 text nodes (2500+i), etc. Edges sit just below the higher of their two connected nodes (max node zIndex − 0.5). Dragged nodes temporarily boost to 8900+. Overlays at 9000+. Depth is determined by `parentId` ancestry chain — children render above parents.
@@ -77,8 +78,8 @@ Two esbuild bundles (`npm run build`):
 ## Key Patterns
 
 - **Reconciliation** (`renderer.ts`): Diffs state against existing PixiJS containers by node ID — creates, updates, or destroys as needed. Skips nodes mid-drag to avoid fighting user input.
-- **Selection overlay** (`selectionOverlay.ts`): Draws a dashed bounding box around selected nodes with 8 resize handles. Single-node resize moves/resizes directly; multi-node resize scales all nodes proportionally within the bounding box. Handles and stroke scale inversely with viewport zoom to maintain consistent visual size. Fires `onDragUpdate` during resize so edges follow live.
-- **Edge handle overlay** (`edgeHandleOverlay.ts`): When exactly one edge is selected (not locked, not in edge mode), shows draggable dot handles at from/to endpoints. Red = node-anchored, blue = free-point. During drag, exposes `getEndpointOverride()` so `renderEdges` draws the edge at the in-flight position. Fires `onDragMove` each frame for live preview.
+- **Selection overlay** (`selectionOverlay.ts`): Draws a dashed bounding box around selected nodes with 8 resize handles. Single-node selection shows resize handles for direct move/resize; multi-node selection shows individual dashed outlines per node but no resize handles. Handles and stroke scale inversely with viewport zoom to maintain consistent visual size. Fires `onDragUpdate` during resize so edges follow live.
+- **Edge handle overlay** (`edgeHandleOverlay.ts`): When exactly one edge is selected (not locked, not in edge mode), shows draggable dot handles at from/to endpoints and at each waypoint. Red = node-anchored, blue = free-point/waypoint. During drag, exposes `getEndpointOverride()` and `getWaypointOverrides()` so `renderEdges` draws the edge at the in-flight position. Waypoint handles use a pooled array (`ensureWaypointHandles`) that grows as needed. Ctrl+double-click timing is stored on the handle object (`_lastCtrlClickTime`) to survive listener re-setup across renders. Dragging a waypoint onto a from/to endpoint removes it (merge). `insertWaypoint(edgeId, segmentIndex, point)` is called from the renderer on Ctrl+double-click-on-segment.
 - **Edge utilities** (`edgeUtils.ts`): Shared helpers extracted from `edgeMode.ts` — `findNodeAtPoint`, `computeAnchor`, `buildEndpoint`. Snap-before-hit-test: coordinates are grid-snapped before node hit-testing so the visual dot color always matches the snapped position.
 - **Echo guard** (`vscpEditorProvider.ts`): `isApplyingEdit` flag prevents `onDidChangeTextDocument` from echoing back edits the webview just made.
 - **Debounced edits** (`main.ts`): Canvas changes are batched (100ms) before posting to the extension to avoid spamming WorkspaceEdits.
@@ -93,7 +94,8 @@ Two esbuild bundles (`npm run build`):
 - **Lock mode** (`lockToggle.ts`): Toggles all interactions off — deselects nodes, hides sidebar, disables dragging and transforms. Linked nodes remain clickable to follow file links.
 - **Label editing** (`labelEditor.ts`): Overlays an HTML `<textarea>` at the element's screen position on double-click, scaled with viewport zoom. Works for both nodes (`startLabelEdit`) and edges (`startEdgeLabelEdit`). Enter commits, Shift+Enter inserts a newline, Escape cancels, blur commits.
 - **Edge creation** (`edgeMode.ts`): Toggle via toolbar button. Two-click workflow: first click sets source endpoint, second click creates the edge. Preview line + cursor dot follow the mouse. ESC exits edge mode.
-- **Edge labels** (`canvasEdge.ts`, `labelEditor.ts`): Edges support optional labels rendered as `PixiText` at the edge midpoint. Double-click an edge to edit its label. Selected edges show a blue dashed overlay rather than changing the edge color.
+- **Edge waypoints** (`canvasEdge.ts`, `edgeHandleOverlay.ts`, `renderer.ts`): Edges support optional `waypoints` — an array of `{x, y}` coordinates that create polyline paths routing through intermediate points. Rendering builds a point array `[from, ...waypoints, to]` via `buildPolylinePoints`. Solid lines draw a single polyline; dashed/dotted styles iterate per segment. Arrowheads use the first/last segment direction. Labels sit at the arc-length midpoint via `computePolylineMidpoint`. Hit-testing uses `PolylineHitArea` which checks point-to-segment distance across all segments. Ctrl+double-click on an edge segment inserts a waypoint; Ctrl+double-click on a waypoint handle removes it; dragging a waypoint onto a from/to endpoint also removes it.
+- **Edge labels** (`canvasEdge.ts`, `labelEditor.ts`): Edges support optional labels rendered as `PixiText` at the polyline midpoint. Double-click an edge to edit its label. Selected edges show a blue dashed overlay rather than changing the edge color.
 - **Edge endpoints** (`canvasEdge.ts`): An endpoint is either node-anchored (`nodeId` + proportional `anchor`) or a free-point (`x`, `y`). `resolveEndpoint` converts both forms to world coordinates using a `nodeMap`.
-- **Live edge following** (`renderer.ts`): `buildNodeMap` always reads live container positions/sizes, so edges follow during both node drag (`onDragUpdate` from `canvasNode`) and node resize (`onDragUpdate` from `selectionOverlay`). During edge handle drags, `renderEdges` applies the overlay's endpoint override to draw the edge at the in-flight position.
-- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick flow. Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Ctrl+Click)". Ctrl+Click opens the file and jumps to the matched text. In locked mode, a plain click follows the link. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.
+- **Live edge following** (`renderer.ts`): `buildNodeMap` always reads live container positions/sizes, so edges follow during both node drag (`onDragUpdate` from `canvasNode`) and node resize (`onDragUpdate` from `selectionOverlay`). During edge handle drags, `renderEdges` applies the overlay's endpoint override and waypoint override to draw the edge at the in-flight position.
+- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`, `canvasEdge.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick that lists both nodes and edges. Edges without a label display as "from label → to label". Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Ctrl+Click)". Ctrl+Click opens the file and jumps to the matched text. In locked mode, a plain click follows the link. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.

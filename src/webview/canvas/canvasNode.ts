@@ -6,6 +6,7 @@ import { getState, getDescendantIds, getChildNodeIds } from "../state";
 import { snap } from "../controls/gridSnap";
 import { drawShape } from "./shapeDrawing";
 import { findNodeAtPoint } from "./edgeUtils";
+import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
 
 const DEFAULT_NODE_COLOR = 0x888888;
 const STROKE_COLOR = 0x333333;
@@ -84,15 +85,16 @@ export function createCanvasNode(
   const textFill = node.labelColor ?? labelColor;
   const text = new PixiText({
     text: node.label || "",
-    resolution: 2,
+    resolution: MIN_TEXT_RESOLUTION,
     style: new TextStyle({
-      fontSize: 14,
+      fontSize: BASE_FONT_SIZE,
       fontFamily: "sans-serif",
       fill: textFill,
       align: "center",
       wordWrap: true,
       wordWrapWidth: node.bounds.width,
     }),
+    textureStyle: { scaleMode: "linear" },
   });
   text.label = "node-label";
   text.anchor.set(0.5, 0);

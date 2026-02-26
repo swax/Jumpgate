@@ -1,0 +1,1214 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "bounds": { "x": 400, "y": -80, "width": 500, "height": 50 },
+      "label": "Perspective — Detailed Function Map",
+      "shape": "text"
+    },
+
+    {
+      "id": "grp-extension",
+      "bounds": { "x": 20, "y": 20, "width": 760, "height": 280 },
+      "nodeColor": "#263238",
+      "label": "VS Code Extension Host"
+    },
+    {
+      "id": "ext-activate",
+      "bounds": { "x": 40, "y": 60, "width": 200, "height": 50 },
+      "nodeColor": "#43A047", "labelColor": "white",
+      "label": "activate()\nextension.ts",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/extension.ts", "match": "function activate" }
+    },
+    {
+      "id": "ext-deactivate",
+      "bounds": { "x": 40, "y": 130, "width": 200, "height": 40 },
+      "nodeColor": "#66BB6A", "labelColor": "white",
+      "label": "deactivate()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/extension.ts", "match": "function deactivate" }
+    },
+    {
+      "id": "ext-linkToNode",
+      "bounds": { "x": 40, "y": 190, "width": 200, "height": 50 },
+      "nodeColor": "#66BB6A", "labelColor": "white",
+      "label": "linkToNodeCommand()\nQuickPick flow",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/extension.ts", "match": "linkToNodeCommand" }
+    },
+
+    {
+      "id": "provider-class",
+      "bounds": { "x": 280, "y": 60, "width": 240, "height": 50 },
+      "nodeColor": "#2E7D32", "labelColor": "white",
+      "label": "VscpEditorProvider\nCustomTextEditorProvider",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "class VscpEditorProvider" }
+    },
+    {
+      "id": "provider-resolve",
+      "bounds": { "x": 280, "y": 130, "width": 240, "height": 50 },
+      "nodeColor": "#43A047", "labelColor": "white",
+      "label": "resolveCustomTextEditor()\nwebview + messaging",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "resolveCustomTextEditor" }
+    },
+    {
+      "id": "provider-html",
+      "bounds": { "x": 280, "y": 200, "width": 240, "height": 40 },
+      "nodeColor": "#66BB6A", "labelColor": "white",
+      "label": "getHtmlForWebview()\nCSP + nonce",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "getHtmlForWebview" }
+    },
+
+    {
+      "id": "schema-box",
+      "bounds": { "x": 560, "y": 60, "width": 200, "height": 100 },
+      "nodeColor": "#5C6BC0", "labelColor": "white",
+      "label": "schema.ts\nnodeSchema\nedgeSchema\ndocumentSchema",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/schema.ts" }
+    },
+    {
+      "id": "messages-box",
+      "bounds": { "x": 560, "y": 180, "width": 200, "height": 60 },
+      "nodeColor": "#5C6BC0", "labelColor": "white",
+      "label": "messages.ts\nExtension ↔ Webview",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension",
+      "fileLink": { "path": "src/messages.ts" }
+    },
+
+    {
+      "id": "grp-webview-entry",
+      "bounds": { "x": 20, "y": 360, "width": 760, "height": 200 },
+      "nodeColor": "#1A237E",
+      "label": "Webview Entry & Wiring"
+    },
+    {
+      "id": "main-fn",
+      "bounds": { "x": 40, "y": 400, "width": 220, "height": 50 },
+      "nodeColor": "#1E88E5", "labelColor": "white",
+      "label": "main()\nPixiJS init + wiring",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-webview-entry",
+      "fileLink": { "path": "src/webview/main.ts", "match": "async function main" }
+    },
+    {
+      "id": "main-postmsg",
+      "bounds": { "x": 280, "y": 400, "width": 220, "height": 50 },
+      "nodeColor": "#42A5F5", "labelColor": "white",
+      "label": "postMessage()\nTyped IPC to extension",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-webview-entry",
+      "fileLink": { "path": "src/webview/main.ts", "match": "function postMessage" }
+    },
+    {
+      "id": "main-debounce",
+      "bounds": { "x": 520, "y": 400, "width": 240, "height": 50 },
+      "nodeColor": "#42A5F5", "labelColor": "white",
+      "label": "sendEditDebounced()\n100ms batch → extension",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-webview-entry",
+      "fileLink": { "path": "src/webview/main.ts", "match": "sendEditDebounced" }
+    },
+
+    {
+      "id": "main-msglistener",
+      "bounds": { "x": 40, "y": 480, "width": 220, "height": 50 },
+      "nodeColor": "#42A5F5", "labelColor": "white",
+      "label": "message listener\nupdate → setDocument",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-webview-entry",
+      "fileLink": { "path": "src/webview/main.ts", "match": "addEventListener" }
+    },
+
+    {
+      "id": "grp-state",
+      "bounds": { "x": 820, "y": 360, "width": 500, "height": 440 },
+      "nodeColor": "#E65100",
+      "label": "State Management"
+    },
+    {
+      "id": "state-getState",
+      "bounds": { "x": 840, "y": 400, "width": 220, "height": 40 },
+      "nodeColor": "#F9A825", "labelColor": "black",
+      "label": "getState() → EditorState",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function getState" }
+    },
+    {
+      "id": "state-setDoc",
+      "bounds": { "x": 1080, "y": 400, "width": 220, "height": 40 },
+      "nodeColor": "#F9A825", "labelColor": "black",
+      "label": "setDocument(doc)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function setDocument" }
+    },
+    {
+      "id": "state-selectNodes",
+      "bounds": { "x": 840, "y": 460, "width": 220, "height": 40 },
+      "nodeColor": "#FFB300", "labelColor": "black",
+      "label": "setSelectedNodeIds(ids)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function setSelectedNodeIds" }
+    },
+    {
+      "id": "state-selectEdges",
+      "bounds": { "x": 1080, "y": 460, "width": 220, "height": 40 },
+      "nodeColor": "#FFB300", "labelColor": "black",
+      "label": "setSelectedEdgeIds(ids)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function setSelectedEdgeIds" }
+    },
+    {
+      "id": "state-toggleNode",
+      "bounds": { "x": 840, "y": 520, "width": 220, "height": 40 },
+      "nodeColor": "#FFB300", "labelColor": "black",
+      "label": "toggleSelectedNodeId(id)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function toggleSelectedNodeId" }
+    },
+    {
+      "id": "state-updateNode",
+      "bounds": { "x": 840, "y": 580, "width": 220, "height": 40 },
+      "nodeColor": "#FFA000", "labelColor": "black",
+      "label": "updateNode(id, changes)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function updateNode" }
+    },
+    {
+      "id": "state-updateNodes",
+      "bounds": { "x": 1080, "y": 580, "width": 220, "height": 40 },
+      "nodeColor": "#FFA000", "labelColor": "black",
+      "label": "updateNodes(batch)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function updateNodes" }
+    },
+    {
+      "id": "state-addNodes",
+      "bounds": { "x": 840, "y": 640, "width": 140, "height": 40 },
+      "nodeColor": "#FF8F00", "labelColor": "white",
+      "label": "addNodes()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function addNodes" }
+    },
+    {
+      "id": "state-deleteNodes",
+      "bounds": { "x": 1000, "y": 640, "width": 140, "height": 40 },
+      "nodeColor": "#FF8F00", "labelColor": "white",
+      "label": "deleteNodes()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function deleteNodes" }
+    },
+    {
+      "id": "state-addEdge",
+      "bounds": { "x": 1160, "y": 640, "width": 140, "height": 40 },
+      "nodeColor": "#FF8F00", "labelColor": "white",
+      "label": "addEdge()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function addEdge" }
+    },
+    {
+      "id": "state-deleteEdges",
+      "bounds": { "x": 840, "y": 700, "width": 140, "height": 40 },
+      "nodeColor": "#FF8F00", "labelColor": "white",
+      "label": "deleteEdges()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function deleteEdges" }
+    },
+    {
+      "id": "state-updateEdge",
+      "bounds": { "x": 1000, "y": 700, "width": 140, "height": 40 },
+      "nodeColor": "#FF8F00", "labelColor": "white",
+      "label": "updateEdge()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function updateEdge" }
+    },
+    {
+      "id": "state-subscribe",
+      "bounds": { "x": 1160, "y": 700, "width": 140, "height": 40 },
+      "nodeColor": "#E65100", "labelColor": "white",
+      "label": "subscribe()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function subscribe" }
+    },
+    {
+      "id": "state-hierarchy",
+      "bounds": { "x": 1080, "y": 520, "width": 220, "height": 40 },
+      "nodeColor": "#FFA000", "labelColor": "black",
+      "label": "getDescendantIds()\ngetChildNodeIds() · getNodeDepth()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-state",
+      "fileLink": { "path": "src/webview/state.ts", "match": "function getDescendantIds" }
+    },
+
+    {
+      "id": "grp-renderer",
+      "bounds": { "x": 20, "y": 620, "width": 760, "height": 280 },
+      "nodeColor": "#BF360C",
+      "label": "Renderer (reconciliation)"
+    },
+    {
+      "id": "renderer-create",
+      "bounds": { "x": 40, "y": 660, "width": 240, "height": 50 },
+      "nodeColor": "#FB8C00", "labelColor": "white",
+      "label": "createRenderer()\nfactory → { render }",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "function createRenderer" }
+    },
+    {
+      "id": "renderer-render",
+      "bounds": { "x": 300, "y": 660, "width": 220, "height": 50 },
+      "nodeColor": "#FB8C00", "labelColor": "white",
+      "label": "render(state)\nfull reconcile pass",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "function render" }
+    },
+    {
+      "id": "renderer-renderEdges",
+      "bounds": { "x": 540, "y": 660, "width": 220, "height": 50 },
+      "nodeColor": "#EF6C00", "labelColor": "white",
+      "label": "renderEdges(state)\ncreate/update/remove",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "renderEdges" }
+    },
+    {
+      "id": "renderer-buildNodeMap",
+      "bounds": { "x": 40, "y": 740, "width": 240, "height": 50 },
+      "nodeColor": "#EF6C00", "labelColor": "white",
+      "label": "buildNodeMap(state)\nlive bounds for edges",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "buildNodeMap" }
+    },
+    {
+      "id": "renderer-edgeZIndex",
+      "bounds": { "x": 300, "y": 740, "width": 220, "height": 50 },
+      "nodeColor": "#EF6C00", "labelColor": "white",
+      "label": "computeEdgeZIndex()\nmax(from,to) − 0.5",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "computeEdgeZIndex" }
+    },
+    {
+      "id": "renderer-selOverlay",
+      "bounds": { "x": 540, "y": 740, "width": 220, "height": 50 },
+      "nodeColor": "#E65100", "labelColor": "white",
+      "label": "SelectionOverlay\nupdate()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
+    },
+    {
+      "id": "renderer-edgeHdlOverlay",
+      "bounds": { "x": 540, "y": 810, "width": 220, "height": 50 },
+      "nodeColor": "#E65100", "labelColor": "white",
+      "label": "EdgeHandleOverlay\nupdate()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-renderer",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "class EdgeHandleOverlay" }
+    },
+
+    {
+      "id": "grp-canvas-node",
+      "bounds": { "x": 20, "y": 960, "width": 500, "height": 300 },
+      "nodeColor": "#880E4F",
+      "label": "Canvas Node (canvasNode.ts)"
+    },
+    {
+      "id": "cn-create",
+      "bounds": { "x": 40, "y": 1000, "width": 220, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "createCanvasNode()\nGraphics + Text + events",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function createCanvasNode" }
+    },
+    {
+      "id": "cn-update",
+      "bounds": { "x": 280, "y": 1000, "width": 220, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "updateCanvasNode()\nsync data → container",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function updateCanvasNode" }
+    },
+    {
+      "id": "cn-getBounds",
+      "bounds": { "x": 40, "y": 1070, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "getContainerBounds()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function getContainerBounds" }
+    },
+    {
+      "id": "cn-setBounds",
+      "bounds": { "x": 280, "y": 1070, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "setContainerBounds()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function setContainerBounds" }
+    },
+    {
+      "id": "cn-isDragging",
+      "bounds": { "x": 40, "y": 1130, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "isDraggingNode(id)",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function isDraggingNode" }
+    },
+    {
+      "id": "cn-textRes",
+      "bounds": { "x": 280, "y": 1130, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "updateNodeTextResolution()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function updateNodeTextResolution" }
+    },
+    {
+      "id": "cn-dragState",
+      "bounds": { "x": 40, "y": 1190, "width": 460, "height": 40 },
+      "nodeColor": "#C2185B", "labelColor": "white",
+      "label": "groupDraggingIds + draggingIds — multi-drag & group cascade",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-node"
+    },
+
+    {
+      "id": "grp-canvas-edge",
+      "bounds": { "x": 560, "y": 960, "width": 500, "height": 320 },
+      "nodeColor": "#880E4F",
+      "label": "Canvas Edge (canvasEdge.ts)"
+    },
+    {
+      "id": "ce-create",
+      "bounds": { "x": 580, "y": 1000, "width": 220, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "createCanvasEdge()\nGraphics + label + events",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function createCanvasEdge" }
+    },
+    {
+      "id": "ce-update",
+      "bounds": { "x": 820, "y": 1000, "width": 220, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "updateCanvasEdge()\nredraw lines/arrows",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function updateCanvasEdge" }
+    },
+    {
+      "id": "ce-resolve",
+      "bounds": { "x": 580, "y": 1070, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "resolveEndpoint()\nworld coordinates",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function resolveEndpoint" }
+    },
+    {
+      "id": "ce-anchor",
+      "bounds": { "x": 820, "y": 1070, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "resolveAnchor()\nproportional → world",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function resolveAnchor" }
+    },
+    {
+      "id": "ce-polyline",
+      "bounds": { "x": 580, "y": 1130, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "buildPolylinePoints()\nfrom + waypoints + to",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function buildPolylinePoints" }
+    },
+    {
+      "id": "ce-midpoint",
+      "bounds": { "x": 820, "y": 1130, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "computePolylineMidpoint()\nlabel placement",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function computePolylineMidpoint" }
+    },
+    {
+      "id": "ce-hitDist",
+      "bounds": { "x": 580, "y": 1190, "width": 220, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "pointToSegmentDistance()\nhit-testing",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function pointToSegmentDistance" }
+    },
+    {
+      "id": "ce-privates",
+      "bounds": { "x": 820, "y": 1190, "width": 220, "height": 40 },
+      "nodeColor": "#C2185B", "labelColor": "white",
+      "label": "drawDashedLine()\ndrawArrowhead()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas-edge"
+    },
+
+    {
+      "id": "grp-shapes",
+      "bounds": { "x": 20, "y": 1320, "width": 500, "height": 200 },
+      "nodeColor": "#4A148C",
+      "label": "Shape Drawing (shapeDrawing.ts)"
+    },
+    {
+      "id": "sd-drawShape",
+      "bounds": { "x": 40, "y": 1360, "width": 220, "height": 50 },
+      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "label": "drawShape()\n13 shape types",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-shapes",
+      "fileLink": { "path": "src/webview/canvas/shapeDrawing.ts", "match": "function drawShape" }
+    },
+    {
+      "id": "sd-dirToDeg",
+      "bounds": { "x": 280, "y": 1360, "width": 220, "height": 50 },
+      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "label": "directionToDeg()\nup=0 right=90 ...",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-shapes",
+      "fileLink": { "path": "src/webview/canvas/shapeDrawing.ts", "match": "function directionToDeg" }
+    },
+    {
+      "id": "sd-privates",
+      "bounds": { "x": 40, "y": 1430, "width": 460, "height": 50 },
+      "nodeColor": "#9C27B0", "labelColor": "white",
+      "label": "transformVertices() · ellipseVertices() · roundRectVertices() · getShapeVertices()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-shapes"
+    },
+
+    {
+      "id": "grp-edge-utils",
+      "bounds": { "x": 560, "y": 1320, "width": 500, "height": 200 },
+      "nodeColor": "#4A148C",
+      "label": "Edge Utilities (edgeUtils.ts)"
+    },
+    {
+      "id": "eu-findNode",
+      "bounds": { "x": 580, "y": 1360, "width": 220, "height": 50 },
+      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "label": "findNodeAtPoint()\nhit-test topmost node",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-utils",
+      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function findNodeAtPoint" }
+    },
+    {
+      "id": "eu-computeAnchor",
+      "bounds": { "x": 820, "y": 1360, "width": 220, "height": 50 },
+      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "label": "computeAnchor()\nclick → [0..1, 0..1]",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-utils",
+      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function computeAnchor" }
+    },
+    {
+      "id": "eu-buildEndpoint",
+      "bounds": { "x": 580, "y": 1430, "width": 220, "height": 50 },
+      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "label": "buildEndpoint()\nsnap → hit → endpoint",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-utils",
+      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function buildEndpoint" }
+    },
+    {
+      "id": "eu-constants",
+      "bounds": { "x": 820, "y": 1430, "width": 220, "height": 50 },
+      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "label": "DOT_RADIUS · DOT_COLOR_EMPTY\nDOT_COLOR_NODE",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-utils",
+      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "DOT_RADIUS" }
+    },
+
+    {
+      "id": "grp-selection-overlay",
+      "bounds": { "x": 1100, "y": 860, "width": 440, "height": 260 },
+      "nodeColor": "#880E4F",
+      "label": "Selection Overlay"
+    },
+    {
+      "id": "so-class",
+      "bounds": { "x": 1120, "y": 900, "width": 200, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "SelectionOverlay\nclass",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-selection-overlay",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
+    },
+    {
+      "id": "so-update",
+      "bounds": { "x": 1340, "y": 900, "width": 180, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "update()\noutline + handles",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-selection-overlay",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "update(" }
+    },
+    {
+      "id": "so-resize",
+      "bounds": { "x": 1120, "y": 970, "width": 200, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "onHandleMove()\nlive resize drag",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-selection-overlay"
+    },
+    {
+      "id": "so-apply",
+      "bounds": { "x": 1340, "y": 970, "width": 180, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "applyToNodes()\nproportional scale",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-selection-overlay"
+    },
+    {
+      "id": "so-outlines",
+      "bounds": { "x": 1120, "y": 1030, "width": 400, "height": 40 },
+      "nodeColor": "#C2185B", "labelColor": "white",
+      "label": "drawOutline() · drawMultiOutlines() · drawHandles() · commitResize()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-selection-overlay"
+    },
+
+    {
+      "id": "grp-edge-handle",
+      "bounds": { "x": 1100, "y": 1160, "width": 440, "height": 260 },
+      "nodeColor": "#880E4F",
+      "label": "Edge Handle Overlay"
+    },
+    {
+      "id": "eh-class",
+      "bounds": { "x": 1120, "y": 1200, "width": 200, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "EdgeHandleOverlay\nclass",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-handle",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "class EdgeHandleOverlay" }
+    },
+    {
+      "id": "eh-getOverride",
+      "bounds": { "x": 1340, "y": 1200, "width": 180, "height": 50 },
+      "nodeColor": "#E91E63", "labelColor": "white",
+      "label": "getEndpointOverride()\nlive preview",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-handle",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "getEndpointOverride" }
+    },
+    {
+      "id": "eh-wpOverride",
+      "bounds": { "x": 1120, "y": 1270, "width": 200, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "getWaypointOverrides()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-handle",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "getWaypointOverrides" }
+    },
+    {
+      "id": "eh-insertWp",
+      "bounds": { "x": 1340, "y": 1270, "width": 180, "height": 40 },
+      "nodeColor": "#AD1457", "labelColor": "white",
+      "label": "insertWaypoint()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-handle",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "insertWaypoint" }
+    },
+    {
+      "id": "eh-privates",
+      "bounds": { "x": 1120, "y": 1330, "width": 400, "height": 40 },
+      "nodeColor": "#C2185B", "labelColor": "white",
+      "label": "startDrag() · startWaypointDrag() · removeWaypoint() · drawHandle()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-edge-handle"
+    },
+
+    {
+      "id": "grp-interactions",
+      "bounds": { "x": 20, "y": 1580, "width": 760, "height": 460 },
+      "nodeColor": "#311B92",
+      "label": "Interactions"
+    },
+    {
+      "id": "int-panZoom",
+      "bounds": { "x": 40, "y": 1620, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "setupPanZoom()\ndrag pan + wheel zoom",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "function setupPanZoom" }
+    },
+    {
+      "id": "int-selBox",
+      "bounds": { "x": 280, "y": 1620, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "setupSelectionBox()\nshift+drag rubber-band",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/selectionBox.ts", "match": "function setupSelectionBox" }
+    },
+    {
+      "id": "int-keyboard",
+      "bounds": { "x": 540, "y": 1620, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "setupKeyboard()\nDel + Ctrl+C/V",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "function setupKeyboard" }
+    },
+    {
+      "id": "int-edgeMode",
+      "bounds": { "x": 40, "y": 1700, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "setupEdgeMode()\ntwo-click workflow",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "function setupEdgeMode" }
+    },
+    {
+      "id": "int-edgeMode-visual",
+      "bounds": { "x": 40, "y": 1770, "width": 220, "height": 40 },
+      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "label": "updateVisual()\nensureCursorDot()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "int-groupStatus",
+      "bounds": { "x": 280, "y": 1700, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "setupGroupStatus()\n\"In group: X — Remove\"",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/groupStatus.ts", "match": "function setupGroupStatus" }
+    },
+    {
+      "id": "int-groupDragMsg",
+      "bounds": { "x": 280, "y": 1770, "width": 220, "height": 40 },
+      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "label": "showGroupDragMessage()\nhideGroupDragMessage()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/groupStatus.ts", "match": "function showGroupDragMessage" }
+    },
+    {
+      "id": "int-labelEditor",
+      "bounds": { "x": 540, "y": 1700, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "startLabelEdit()\nDOM textarea overlay",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startLabelEdit" }
+    },
+    {
+      "id": "int-edgeLabelEdit",
+      "bounds": { "x": 540, "y": 1770, "width": 220, "height": 50 },
+      "nodeColor": "#8E24AA", "labelColor": "white",
+      "label": "startEdgeLabelEdit()\nfixed-size at midpoint",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startEdgeLabelEdit" }
+    },
+    {
+      "id": "int-cursorMgr",
+      "bounds": { "x": 40, "y": 1850, "width": 220, "height": 50 },
+      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "label": "createCursorManager()\npriority: set() · clear()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/cursorManager.ts", "match": "function createCursorManager" }
+    },
+    {
+      "id": "int-selBox-helpers",
+      "bounds": { "x": 280, "y": 1850, "width": 220, "height": 50 },
+      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "label": "drawSelectionRect()\nclearSelectionRect()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "int-keyboard-copy",
+      "bounds": { "x": 540, "y": 1850, "width": 220, "height": 70 },
+      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "label": "clipboard state\ncopy: nodes + descendants\npaste: remap IDs +20,+20",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+
+    {
+      "id": "grp-controls",
+      "bounds": { "x": 820, "y": 1580, "width": 500, "height": 260 },
+      "nodeColor": "#004D40",
+      "label": "Controls"
+    },
+    {
+      "id": "ctrl-sidebar",
+      "bounds": { "x": 840, "y": 1620, "width": 220, "height": 50 },
+      "nodeColor": "#00897B", "labelColor": "white",
+      "label": "setupSidebar()\nfill/text color · shape · dir",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "function setupSidebar" }
+    },
+    {
+      "id": "ctrl-sidebar-helpers",
+      "bounds": { "x": 840, "y": 1690, "width": 220, "height": 50 },
+      "nodeColor": "#00695C", "labelColor": "white",
+      "label": "applyNodeChanges()\napplyEdgeChanges()\nupdateTextPreview()",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls"
+    },
+    {
+      "id": "ctrl-lock",
+      "bounds": { "x": 1080, "y": 1620, "width": 220, "height": 50 },
+      "nodeColor": "#00897B", "labelColor": "white",
+      "label": "setupLockToggle()\npencil ↔ padlock SVG",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "function setupLockToggle" }
+    },
+    {
+      "id": "ctrl-gridSnap",
+      "bounds": { "x": 1080, "y": 1690, "width": 220, "height": 50 },
+      "nodeColor": "#00897B", "labelColor": "white",
+      "label": "setupGridSnap()\nsnap() · GRID_SIZE=20",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function setupGridSnap" }
+    },
+    {
+      "id": "ctrl-snap-fn",
+      "bounds": { "x": 840, "y": 1760, "width": 460, "height": 40 },
+      "nodeColor": "#00695C", "labelColor": "white",
+      "label": "snap(value) → nearest GRID_SIZE multiple — used by canvasNode, edgeUtils, edgeHandleOverlay, selectionOverlay",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function snap" }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-activate-provider",
+      "from": { "nodeId": "ext-activate", "anchor": [1, 0.5] },
+      "to": { "nodeId": "provider-class", "anchor": [0, 0.5] },
+      "arrow": "end", "label": "registers",
+      "fileLink": { "path": "src/extension.ts", "match": "VscpEditorProvider.register" }
+    },
+    {
+      "id": "e-activate-linkCmd",
+      "from": { "nodeId": "ext-activate", "anchor": [0.5, 1] },
+      "to": { "nodeId": "ext-linkToNode", "anchor": [0.5, 0] },
+      "arrow": "end", "label": "registers cmd",
+      "fileLink": { "path": "src/extension.ts", "match": "perspective.linkToNode" }
+    },
+    {
+      "id": "e-provider-resolve",
+      "from": { "nodeId": "provider-class", "anchor": [0.5, 1] },
+      "to": { "nodeId": "provider-resolve", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "resolveCustomTextEditor" }
+    },
+    {
+      "id": "e-resolve-html",
+      "from": { "nodeId": "provider-resolve", "anchor": [0.5, 1] },
+      "to": { "nodeId": "provider-html", "anchor": [0.5, 0] },
+      "arrow": "end", "label": "calls",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "getHtmlForWebview" }
+    },
+    {
+      "id": "e-provider-schema",
+      "from": { "nodeId": "provider-resolve", "anchor": [1, 0.5] },
+      "to": { "nodeId": "schema-box", "anchor": [0, 0.5] },
+      "style": "dashed", "arrow": "end", "label": "validates",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "documentSchema.parse" }
+    },
+    {
+      "id": "e-provider-messages",
+      "from": { "nodeId": "provider-resolve", "anchor": [1, 0.8] },
+      "to": { "nodeId": "messages-box", "anchor": [0, 0.5] },
+      "style": "dashed", "arrow": "end", "label": "IPC types",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "ExtensionToWebviewMessage" }
+    },
+
+    {
+      "id": "e-provider-main",
+      "from": { "nodeId": "provider-resolve", "anchor": [0.5, 1] },
+      "to": { "nodeId": "main-fn", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 400, "y": 330 }, { "x": 150, "y": 330 }],
+      "style": "dashed", "arrow": "both", "label": "postMessage",
+      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "postMessage" }
+    },
+
+    {
+      "id": "e-main-postmsg",
+      "from": { "nodeId": "main-fn", "anchor": [1, 0.5] },
+      "to": { "nodeId": "main-postmsg", "anchor": [0, 0.5] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "function postMessage" }
+    },
+    {
+      "id": "e-postmsg-debounce",
+      "from": { "nodeId": "main-postmsg", "anchor": [1, 0.5] },
+      "to": { "nodeId": "main-debounce", "anchor": [0, 0.5] },
+      "arrow": "start", "label": "wraps",
+      "fileLink": { "path": "src/webview/main.ts", "match": "sendEditDebounced" }
+    },
+    {
+      "id": "e-main-listener",
+      "from": { "nodeId": "main-fn", "anchor": [0.5, 1] },
+      "to": { "nodeId": "main-msglistener", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "addEventListener" }
+    },
+
+    {
+      "id": "e-main-state",
+      "from": { "nodeId": "main-fn", "anchor": [1, 0.3] },
+      "to": { "nodeId": "state-setDoc", "anchor": [0, 0.5] },
+      "waypoints": [{ "x": 800, "y": 415 }],
+      "arrow": "end", "label": "initializes",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setDocument" }
+    },
+
+    {
+      "id": "e-main-renderer",
+      "from": { "nodeId": "main-fn", "anchor": [0.3, 1] },
+      "to": { "nodeId": "renderer-create", "anchor": [0.3, 0] },
+      "waypoints": [{ "x": 110, "y": 580 }, { "x": 110, "y": 580 }],
+      "arrow": "end", "label": "creates",
+      "fileLink": { "path": "src/webview/main.ts", "match": "createRenderer" }
+    },
+
+    {
+      "id": "e-state-subscribe-renderer",
+      "from": { "nodeId": "state-subscribe", "anchor": [0.5, 1] },
+      "to": { "nodeId": "renderer-render", "anchor": [1, 0] },
+      "waypoints": [{ "x": 1230, "y": 760 }, { "x": 780, "y": 760 }, { "x": 520, "y": 640 }],
+      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "label": "notify → render()",
+      "fileLink": { "path": "src/webview/main.ts", "match": "subscribe" }
+    },
+
+    {
+      "id": "e-renderer-render-edges",
+      "from": { "nodeId": "renderer-render", "anchor": [1, 0.5] },
+      "to": { "nodeId": "renderer-renderEdges", "anchor": [0, 0.5] },
+      "arrow": "end", "label": "calls",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "renderEdges" }
+    },
+    {
+      "id": "e-renderer-buildNodeMap",
+      "from": { "nodeId": "renderer-render", "anchor": [0, 1] },
+      "to": { "nodeId": "renderer-buildNodeMap", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "buildNodeMap" }
+    },
+    {
+      "id": "e-renderer-edgeZ",
+      "from": { "nodeId": "renderer-renderEdges", "anchor": [0.3, 1] },
+      "to": { "nodeId": "renderer-edgeZIndex", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "computeEdgeZIndex" }
+    },
+    {
+      "id": "e-renderer-selOv",
+      "from": { "nodeId": "renderer-render", "anchor": [1, 1] },
+      "to": { "nodeId": "renderer-selOverlay", "anchor": [0, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "selectionOverlay.update" }
+    },
+    {
+      "id": "e-renderer-edgeHdl",
+      "from": { "nodeId": "renderer-renderEdges", "anchor": [1, 1] },
+      "to": { "nodeId": "renderer-edgeHdlOverlay", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "edgeHandleOverlay.update" }
+    },
+
+    {
+      "id": "e-render-createNode",
+      "from": { "nodeId": "renderer-render", "anchor": [0.3, 1] },
+      "to": { "nodeId": "cn-create", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 360, "y": 930 }, { "x": 150, "y": 930 }],
+      "arrow": "end", "label": "creates",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "createCanvasNode" }
+    },
+    {
+      "id": "e-render-updateNode",
+      "from": { "nodeId": "renderer-render", "anchor": [0.5, 1] },
+      "to": { "nodeId": "cn-update", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 410, "y": 940 }, { "x": 390, "y": 940 }],
+      "arrow": "end", "label": "updates",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "updateCanvasNode" }
+    },
+    {
+      "id": "e-render-createEdge",
+      "from": { "nodeId": "renderer-renderEdges", "anchor": [0.3, 1] },
+      "to": { "nodeId": "ce-create", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 600, "y": 940 }, { "x": 690, "y": 940 }],
+      "arrow": "end", "label": "creates",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "createCanvasEdge" }
+    },
+    {
+      "id": "e-render-updateEdge",
+      "from": { "nodeId": "renderer-renderEdges", "anchor": [0.7, 1] },
+      "to": { "nodeId": "ce-update", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 694, "y": 950 }, { "x": 930, "y": 950 }],
+      "arrow": "end", "label": "updates",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "updateCanvasEdge" }
+    },
+
+    {
+      "id": "e-cn-drawShape",
+      "from": { "nodeId": "cn-create", "anchor": [0.3, 1] },
+      "to": { "nodeId": "sd-drawShape", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 106, "y": 1290 }, { "x": 150, "y": 1290 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "drawShape" }
+    },
+    {
+      "id": "e-cn-labelEdit",
+      "from": { "nodeId": "cn-create", "anchor": [1, 1] },
+      "to": { "nodeId": "int-labelEditor", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 260, "y": 1260 }, { "x": 650, "y": 1550 }],
+      "arrow": "end", "label": "dblclick",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "startLabelEdit" }
+    },
+    {
+      "id": "e-cn-groupDrag",
+      "from": { "nodeId": "cn-create", "anchor": [1, 0.5] },
+      "to": { "nodeId": "int-groupDragMsg", "anchor": [0, 0] },
+      "waypoints": [{ "x": 510, "y": 1025 }, { "x": 510, "y": 1550 }, { "x": 280, "y": 1750 }],
+      "style": "dashed", "arrow": "end", "label": "drag hint",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "showGroupDragMessage" }
+    },
+    {
+      "id": "e-cn-findNode",
+      "from": { "nodeId": "cn-create", "anchor": [0.5, 1] },
+      "to": { "nodeId": "eu-findNode", "anchor": [0, 0] },
+      "waypoints": [{ "x": 150, "y": 1300 }, { "x": 580, "y": 1300 }],
+      "style": "dashed", "arrow": "end", "label": "group drop",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "findNodeAtPoint" }
+    },
+
+    {
+      "id": "e-ce-resolve",
+      "from": { "nodeId": "ce-update", "anchor": [0, 1] },
+      "to": { "nodeId": "ce-resolve", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "resolveEndpoint" }
+    },
+    {
+      "id": "e-ce-polyline",
+      "from": { "nodeId": "ce-update", "anchor": [0.5, 1] },
+      "to": { "nodeId": "ce-polyline", "anchor": [1, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "buildPolylinePoints" }
+    },
+    {
+      "id": "e-ce-midpoint",
+      "from": { "nodeId": "ce-update", "anchor": [1, 1] },
+      "to": { "nodeId": "ce-midpoint", "anchor": [0.5, 0] },
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "computePolylineMidpoint" }
+    },
+
+    {
+      "id": "e-eh-edgeUtils",
+      "from": { "nodeId": "eh-class", "anchor": [0, 1] },
+      "to": { "nodeId": "eu-findNode", "anchor": [1, 0] },
+      "waypoints": [{ "x": 1100, "y": 1300 }, { "x": 800, "y": 1300 }],
+      "style": "dashed", "arrow": "end", "label": "uses",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "findNodeAtPoint" }
+    },
+    {
+      "id": "e-eh-resolve",
+      "from": { "nodeId": "eh-class", "anchor": [0, 0.5] },
+      "to": { "nodeId": "ce-resolve", "anchor": [1, 0.5] },
+      "waypoints": [{ "x": 1090, "y": 1225 }, { "x": 1090, "y": 1090 }],
+      "style": "dashed", "arrow": "end",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "resolveEndpoint" }
+    },
+
+    {
+      "id": "e-so-canvasNode",
+      "from": { "nodeId": "so-class", "anchor": [0, 1] },
+      "to": { "nodeId": "cn-setBounds", "anchor": [1, 0] },
+      "waypoints": [{ "x": 1090, "y": 1040 }, { "x": 510, "y": 1040 }],
+      "style": "dashed", "arrow": "end", "label": "setContainerBounds",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "setContainerBounds" }
+    },
+    {
+      "id": "e-so-snap",
+      "from": { "nodeId": "so-resize", "anchor": [1, 0.5] },
+      "to": { "nodeId": "ctrl-snap-fn", "anchor": [0, 0] },
+      "waypoints": [{ "x": 1560, "y": 990 }, { "x": 1560, "y": 1540 }, { "x": 830, "y": 1540 }, { "x": 830, "y": 1760 }],
+      "style": "dotted", "arrow": "end", "label": "snap()",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "snap(" }
+    },
+
+    {
+      "id": "e-edgeMode-edgeUtils",
+      "from": { "nodeId": "int-edgeMode", "anchor": [0.5, 1] },
+      "to": { "nodeId": "eu-buildEndpoint", "anchor": [0, 1] },
+      "waypoints": [{ "x": 150, "y": 1880 }, { "x": 150, "y": 1960 }, { "x": 580, "y": 1960 }, { "x": 580, "y": 1480 }],
+      "style": "dashed", "arrow": "end", "label": "buildEndpoint",
+      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "buildEndpoint" }
+    },
+
+    {
+      "id": "e-main-panZoom",
+      "from": { "nodeId": "main-fn", "anchor": [0, 1] },
+      "to": { "nodeId": "int-panZoom", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 40, "y": 560 }, { "x": 40, "y": 1560 }, { "x": 150, "y": 1560 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupPanZoom" }
+    },
+    {
+      "id": "e-main-selBox",
+      "from": { "nodeId": "main-fn", "anchor": [0.1, 1] },
+      "to": { "nodeId": "int-selBox", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 62, "y": 570 }, { "x": 30, "y": 570 }, { "x": 30, "y": 1570 }, { "x": 390, "y": 1570 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupSelectionBox" }
+    },
+    {
+      "id": "e-main-keyboard",
+      "from": { "nodeId": "main-fn", "anchor": [0.9, 1] },
+      "to": { "nodeId": "int-keyboard", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 238, "y": 570 }, { "x": 790, "y": 570 }, { "x": 790, "y": 1560 }, { "x": 650, "y": 1560 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupKeyboard" }
+    },
+    {
+      "id": "e-main-edgeMode",
+      "from": { "nodeId": "main-fn", "anchor": [0, 0.5] },
+      "to": { "nodeId": "int-edgeMode", "anchor": [0, 0] },
+      "waypoints": [{ "x": 20, "y": 425 }, { "x": 20, "y": 1700 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupEdgeMode" }
+    },
+    {
+      "id": "e-main-groupStatus",
+      "from": { "nodeId": "main-fn", "anchor": [0.7, 1] },
+      "to": { "nodeId": "int-groupStatus", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 194, "y": 560 }, { "x": 780, "y": 560 }, { "x": 780, "y": 1560 }, { "x": 390, "y": 1560 }, { "x": 390, "y": 1700 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupGroupStatus" }
+    },
+    {
+      "id": "e-main-sidebar",
+      "from": { "nodeId": "main-debounce", "anchor": [1, 0.5] },
+      "to": { "nodeId": "ctrl-sidebar", "anchor": [0, 0] },
+      "waypoints": [{ "x": 800, "y": 425 }, { "x": 800, "y": 1560 }, { "x": 840, "y": 1560 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupSidebar" }
+    },
+    {
+      "id": "e-main-lock",
+      "from": { "nodeId": "main-debounce", "anchor": [1, 1] },
+      "to": { "nodeId": "ctrl-lock", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 810, "y": 460 }, { "x": 810, "y": 1560 }, { "x": 1190, "y": 1560 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupLockToggle" }
+    },
+    {
+      "id": "e-main-gridSnap",
+      "from": { "nodeId": "main-fn", "anchor": [0.5, 1] },
+      "to": { "nodeId": "ctrl-gridSnap", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 150, "y": 550 }, { "x": 790, "y": 550 }, { "x": 790, "y": 1580 }, { "x": 1190, "y": 1580 }],
+      "arrow": "end",
+      "fileLink": { "path": "src/webview/main.ts", "match": "setupGridSnap" }
+    },
+
+    {
+      "id": "e-panZoom-cursor",
+      "from": { "nodeId": "int-panZoom", "anchor": [0.5, 1] },
+      "to": { "nodeId": "int-cursorMgr", "anchor": [0.5, 0] },
+      "waypoints": [{ "x": 150, "y": 1690 }, { "x": 80, "y": 1690 }, { "x": 80, "y": 1830 }, { "x": 150, "y": 1830 }],
+      "style": "dashed", "arrow": "end", "label": "priority 1",
+      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "cursorManager" }
+    },
+    {
+      "id": "e-selBox-cursor",
+      "from": { "nodeId": "int-selBox", "anchor": [0, 1] },
+      "to": { "nodeId": "int-cursorMgr", "anchor": [1, 0] },
+      "waypoints": [{ "x": 270, "y": 1830 }, { "x": 260, "y": 1830 }],
+      "style": "dashed", "arrow": "end", "label": "priority 2",
+      "fileLink": { "path": "src/webview/interactions/selectionBox.ts", "match": "cursorManager" }
+    },
+
+    {
+      "id": "e-keyboard-deleteNodes",
+      "from": { "nodeId": "int-keyboard", "anchor": [1, 0.3] },
+      "to": { "nodeId": "state-deleteNodes", "anchor": [0, 1] },
+      "waypoints": [{ "x": 790, "y": 1630 }, { "x": 790, "y": 1960 }, { "x": 1580, "y": 1960 }, { "x": 1580, "y": 760 }, { "x": 1000, "y": 760 }, { "x": 1000, "y": 680 }],
+      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "deleteNodes" }
+    },
+
+    {
+      "id": "e-sidebar-updateNode",
+      "from": { "nodeId": "ctrl-sidebar", "anchor": [1, 0.5] },
+      "to": { "nodeId": "state-updateNode", "anchor": [0, 1] },
+      "waypoints": [{ "x": 1340, "y": 1645 }, { "x": 1340, "y": 1560 }, { "x": 1580, "y": 1560 }, { "x": 1580, "y": 760 }, { "x": 830, "y": 760 }, { "x": 830, "y": 620 }],
+      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "label": "mutates state",
+      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "onNodeChanged" }
+    },
+
+    {
+      "id": "e-lock-setLocked",
+      "from": { "nodeId": "ctrl-lock", "anchor": [0.5, 1] },
+      "to": { "nodeId": "state-getState", "anchor": [1, 0.5] },
+      "waypoints": [{ "x": 1190, "y": 1880 }, { "x": 1600, "y": 1880 }, { "x": 1600, "y": 420 }, { "x": 1060, "y": 420 }],
+      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "label": "setLocked()",
+      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "setLocked" }
+    },
+
+    {
+      "id": "e-edgeLabelEdit-canvasEdge",
+      "from": { "nodeId": "int-edgeLabelEdit", "anchor": [1, 0] },
+      "to": { "nodeId": "ce-midpoint", "anchor": [1, 1] },
+      "waypoints": [{ "x": 780, "y": 1560 }, { "x": 1070, "y": 1560 }, { "x": 1070, "y": 1170 }],
+      "style": "dashed", "arrow": "end",
+      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "startEdgeLabelEdit" }
+    }
+  ]
+}

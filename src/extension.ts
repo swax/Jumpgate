@@ -59,30 +59,62 @@ async function linkToNodeCommand(): Promise<void> {
     return;
   }
 
-  if (parsed.nodes.length === 0) {
-    vscode.window.showErrorMessage("No nodes found in .vscp file.");
+  if (parsed.nodes.length === 0 && parsed.edges.length === 0) {
+    vscode.window.showErrorMessage("No nodes or edges found in .vscp file.");
     return;
   }
 
-  // Pick a node
-  const nodePick = await vscode.window.showQuickPick(
-    parsed.nodes.map((n) => ({
-      label: n.label || n.id,
-      description: n.label ? n.id : undefined,
-      nodeId: n.id,
-    })),
-    { placeHolder: "Choose a node to link" }
-  );
-  if (!nodePick) return;
+  // Build quick pick items for nodes and edges
+  const nodeMap = new Map(parsed.nodes.map((n) => [n.id, n]));
 
-  // Update the node's fileLink in the JSON
+  type LinkPickItem = vscode.QuickPickItem & { targetId: string; targetKind: "node" | "edge" };
+
+  const nodeItems: LinkPickItem[] = parsed.nodes.map((n) => ({
+    label: n.label || n.id,
+    description: n.label ? `Node: ${n.id}` : "Node",
+    targetId: n.id,
+    targetKind: "node" as const,
+  }));
+
+  function edgeEndpointLabel(ep: { nodeId?: string; x?: number; y?: number }): string {
+    if ("nodeId" in ep && ep.nodeId) {
+      const n = nodeMap.get(ep.nodeId);
+      return n?.label || ep.nodeId;
+    }
+    return `(${ep.x}, ${ep.y})`;
+  }
+
+  const edgeItems: LinkPickItem[] = parsed.edges.map((e) => ({
+    label: e.label || `${edgeEndpointLabel(e.from as any)} → ${edgeEndpointLabel(e.to as any)}`,
+    description: e.label ? `Edge: ${e.id}` : "Edge",
+    targetId: e.id,
+    targetKind: "edge" as const,
+  }));
+
+  const items: LinkPickItem[] = [...nodeItems, ...edgeItems];
+
+  const pick = await vscode.window.showQuickPick(items, {
+    placeHolder: "Choose a node or edge to link",
+  });
+  if (!pick) return;
+
+  // Update the target's fileLink in the JSON
   const fullJson = JSON.parse(vscpDoc.getText());
-  const targetNode = fullJson.nodes.find(
-    (n: { id: string }) => n.id === nodePick.nodeId
-  );
-  if (!targetNode) return;
+  const fileLink = { path: filePath, ...(selection ? { match: selection } : {}) };
 
-  targetNode.fileLink = { path: filePath, ...(selection ? { match: selection } : {}) };
+  if (pick.targetKind === "node") {
+    const targetNode = fullJson.nodes.find(
+      (n: { id: string }) => n.id === pick.targetId
+    );
+    if (!targetNode) return;
+    targetNode.fileLink = fileLink;
+  } else {
+    const targetEdge = fullJson.edges?.find(
+      (e: { id: string }) => e.id === pick.targetId
+    );
+    if (!targetEdge) return;
+    targetEdge.fileLink = fileLink;
+  }
 
   const newContent = JSON.stringify(fullJson, null, 2) + "\n";
   const edit = new vscode.WorkspaceEdit();

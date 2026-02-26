@@ -7,6 +7,7 @@ import { getNodeDepth, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
 import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
+import { MIN_TEXT_RESOLUTION } from "./canvas/textDefaults";
 
 type NodeChanges = {
   bounds?: Partial<Node["bounds"]>;
@@ -22,7 +23,7 @@ export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
   onSelect: (id: string, shiftKey: boolean) => void;
-  onOpenFileLink: (id: string) => void;
+  onOpenFileLink: (id: string, kind: "node" | "edge") => void;
   onEdgeSelect: (edgeId: string) => void;
   onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to" | "label" | "waypoints">>) => void;
 }
@@ -82,7 +83,7 @@ export function createRenderer(
     onNodeChanged: callbacks.onNodeChanged,
     onNodesChanged: callbacks.onNodesChanged,
     onSelect: callbacks.onSelect,
-    onOpenFileLink: callbacks.onOpenFileLink,
+    onOpenFileLink: (id) => callbacks.onOpenFileLink(id, "node"),
     getSelectedNodeIds: () => selectedNodeIds,
     isLocked: () => isLocked,
     isEdgeMode: () => isEdgeMode,
@@ -121,10 +122,10 @@ export function createRenderer(
   let lastState: EditorState | null = null;
 
   // Keep text crisp during zoom by updating resolution when viewport scale changes
-  let lastTextRes = 2;
+  let lastTextRes = MIN_TEXT_RESOLUTION;
   app.ticker.add(() => {
     if (!lastState) return;
-    const textRes = Math.max(2, Math.ceil(viewport.scale.x * window.devicePixelRatio));
+    const textRes = Math.max(MIN_TEXT_RESOLUTION, Math.ceil(viewport.scale.x * window.devicePixelRatio));
     if (textRes === lastTextRes) return;
     lastTextRes = textRes;
     for (const node of lastState.document.nodes) {
@@ -191,6 +192,8 @@ export function createRenderer(
       if (!edgeContainer) {
         edgeContainer = createCanvasEdge(edge, labelColor, {
           onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
+          onOpenFileLink: (edgeId) => callbacks.onOpenFileLink(edgeId, "edge"),
+          isLocked: () => isLocked,
           onDoubleClick: (edgeId, container, worldPos, ctrlKey) => {
             if (isLocked) return;
 
@@ -233,6 +236,14 @@ export function createRenderer(
       }
 
       edgeContainer.zIndex = (handleOverride && edge.id === handleOverride.edgeId) ? 8999 : computeEdgeZIndex(edge);
+
+      // Keep edges with file links interactive in locked mode
+      const edgeGfx = edgeContainer.getChildByLabel("edge-line");
+      if (edgeGfx) {
+        const hasEdgeFileLink = !!edge.fileLink;
+        edgeGfx.eventMode = (isLocked && !hasEdgeFileLink) ? "none" : "static";
+      }
+
       updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor);
     }
 
@@ -293,8 +304,8 @@ export function createRenderer(
       }
     }
 
-    // Update text resolution for crisp rendering at current zoom
-    const textRes = Math.max(2, Math.ceil(viewport.scale.x * window.devicePixelRatio));
+    // Update text resolution and scale for crisp rendering at current zoom
+    const textRes = Math.max(MIN_TEXT_RESOLUTION, Math.ceil(viewport.scale.x * window.devicePixelRatio));
     for (const node of doc.nodes) {
       const group = viewport.getChildByLabel(node.id) as Container | null;
       if (group) updateNodeTextResolution(group, textRes);

@@ -1,5 +1,8 @@
 import "pixi.js/unsafe-eval";
-import { Application, Container } from "pixi.js";
+import { Application, Container, TextureSource } from "pixi.js";
+
+// Enable mipmaps so text stays crisp when the viewport is zoomed out
+TextureSource.defaultOptions.autoGenerateMipmaps = true;
 import type { ExtensionToWebviewMessage } from "../messages";
 import type { WebviewToExtensionMessage } from "../messages";
 import {
@@ -101,10 +104,13 @@ async function main(): Promise<void> {
         setSelectedNodeIds([id]);
       }
     },
-    onOpenFileLink: (id) => {
-      const node = getState().document.nodes.find((n) => n.id === id);
-      if (node?.fileLink) {
-        postMessage({ type: "openFileLink", path: node.fileLink.path, match: node.fileLink.match });
+    onOpenFileLink: (id, kind) => {
+      const doc = getState().document;
+      const fileLink = kind === "edge"
+        ? doc.edges.find((e) => e.id === id)?.fileLink
+        : doc.nodes.find((n) => n.id === id)?.fileLink;
+      if (fileLink) {
+        postMessage({ type: "openFileLink", path: fileLink.path, match: fileLink.match });
       }
     },
     onEdgeSelect: (edgeId) => {

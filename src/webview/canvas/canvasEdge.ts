@@ -1,6 +1,7 @@
 import { Container, Graphics, Polygon, Text as PixiText, TextStyle } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 import type { LabelEditContext } from "../interactions/labelEditor";
+import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
 const SELECTED_EDGE_COLOR = 0x4488ff;
@@ -113,6 +114,8 @@ export function pointToSegmentDistance(
 export interface CanvasEdgeCallbacks {
   onSelect: (edgeId: string) => void;
   onDoubleClick: (edgeId: string, container: Container, worldPos?: Point, ctrlKey?: boolean) => void;
+  onOpenFileLink: (edgeId: string) => void;
+  isLocked: () => boolean;
 }
 
 export function createCanvasEdge(
@@ -131,13 +134,14 @@ export function createCanvasEdge(
 
   const text = new PixiText({
     text: edge.label || "",
-    resolution: 2,
+    resolution: MIN_TEXT_RESOLUTION,
     style: new TextStyle({
-      fontSize: 14,
+      fontSize: BASE_FONT_SIZE,
       fontFamily: "sans-serif",
       fill: labelColor,
       align: "center",
     }),
+    textureStyle: { scaleMode: "linear" },
   });
   text.label = "edge-label";
   text.anchor.set(0.5, 0.5);
@@ -147,12 +151,43 @@ export function createCanvasEdge(
   group.addChild(gfx);
   group.addChild(text);
 
+  (group as any)._hasFileLink = !!edge.fileLink;
+  (group as any)._fileLinkPath = edge.fileLink?.path ?? null;
+
+  // Tooltip on linked edge hover
+  gfx.on("pointerover", () => {
+    const path = (group as any)._fileLinkPath;
+    if (path) {
+      const canvas = document.querySelector("canvas");
+      if (canvas) canvas.title = `${path} (Ctrl+Click)`;
+    }
+  });
+  gfx.on("pointerout", () => {
+    if ((group as any)._fileLinkPath) {
+      const canvas = document.querySelector("canvas");
+      if (canvas) canvas.title = "";
+    }
+  });
+
   let lastClickTime = 0;
   let lastPointerWorldPos: Point | undefined;
   let lastCtrlKey = false;
 
   gfx.on("pointerdown", (e) => {
     e.stopPropagation();
+
+    // In locked mode, click on linked edges opens the file link
+    if (callbacks.isLocked()) {
+      if (!(group as any)._hasFileLink) return;
+      const onUpLocked = () => {
+        gfx.off("pointerup", onUpLocked);
+        gfx.off("pointerupoutside", onUpLocked);
+        callbacks.onOpenFileLink(edge.id);
+      };
+      gfx.on("pointerup", onUpLocked);
+      gfx.on("pointerupoutside", onUpLocked);
+      return;
+    }
 
     // Capture world position and modifier keys for double-click
     lastPointerWorldPos = gfx.toLocal(e.global);
@@ -168,7 +203,13 @@ export function createCanvasEdge(
         callbacks.onDoubleClick(edge.id, group, lastPointerWorldPos, lastCtrlKey);
       } else {
         lastClickTime = now;
-        callbacks.onSelect(edge.id);
+
+        // Ctrl+Click on linked edge — open file
+        if ((lastCtrlKey) && (group as any)._hasFileLink) {
+          callbacks.onOpenFileLink(edge.id);
+        } else {
+          callbacks.onSelect(edge.id);
+        }
       }
     };
 
@@ -192,6 +233,8 @@ export function updateCanvasEdge(
 
   gfx.clear();
   gfx.cursor = edge.fileLink ? "pointer" : "default";
+  (group as any)._hasFileLink = !!edge.fileLink;
+  (group as any)._fileLinkPath = edge.fileLink?.path ?? null;
 
   const from = resolveEndpoint(edge.from, nodeMap);
   const to = resolveEndpoint(edge.to, nodeMap);

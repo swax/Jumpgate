@@ -1,7 +1,7 @@
 import { Application, Container, FederatedPointerEvent } from "pixi.js";
 import type { CursorManager } from "./cursorManager";
 
-const SCALE_BY = 1.2;
+const SCALE_BY = 1.1;
 
 export function setupPanZoom(
   app: Application,
