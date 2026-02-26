@@ -181,6 +181,8 @@ type NodeChanges = {
   nodeColor?: string;
   labelColor?: string;
   label?: string;
+  shape?: string;
+  direction?: Node["direction"];
 };
 
 function applyNodeChanges(node: Node, changes: NodeChanges): Node {

@@ -1,5 +1,26 @@
 import { z } from "zod";
 
+export const directionValues = ["up", "right", "down", "left"] as const;
+export type NodeDirection = (typeof directionValues)[number];
+
+export const shapeValues = [
+  "rectangle",
+  "rounded-rectangle",
+  "ellipse",
+  "diamond",
+  "parallelogram",
+  "trapezoid",
+  "triangle",
+  "cylinder",
+  "pill",
+  "half-ellipse",
+  "half-pill",
+  "document",
+  "text",
+] as const;
+
+export type NodeShape = (typeof shapeValues)[number];
+
 export const boundsSchema = z.object({
   x: z.number(),
   y: z.number(),
@@ -19,6 +40,8 @@ export const nodeSchema = z.object({
   labelColor: z.string().optional(),
   label: z.string().optional(),
   fileLink: fileLinkSchema.optional(),
+  shape: z.enum(shapeValues).optional(),
+  direction: z.enum(directionValues).optional(),
 });
 
 export type Bounds = z.infer<typeof boundsSchema>;

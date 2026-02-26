@@ -12,6 +12,8 @@ type NodeChanges = {
   nodeColor?: string;
   labelColor?: string;
   label?: string;
+  shape?: string;
+  direction?: Node["direction"];
 };
 
 export interface RendererCallbacks {

@@ -2,6 +2,7 @@ import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds } from "../../schema";
 import { snap, GRID_SIZE } from "../controls/gridSnap";
 import { setContainerBounds } from "./canvasNode";
+import { drawShape } from "./shapeDrawing";
 
 type NodeChanges = {
   bounds?: Partial<Bounds>;
@@ -159,6 +160,7 @@ export class SelectionOverlay {
     const dx = x2 - x1;
     const dy = y2 - y1;
     const len = Math.sqrt(dx * dx + dy * dy);
+    if (len === 0) return;
     const ux = dx / len;
     const uy = dy / len;
     let pos = 0;
@@ -214,7 +216,7 @@ export class SelectionOverlay {
     const { x, y, width, height } = this.bbox;
     const hs = HANDLE_SIZE / viewportScale;
 
-    const positions: Record<HandleId, { x: number; y: number }> = {
+    const rawPositions: Record<HandleId, { x: number; y: number }> = {
       "top-left": { x, y },
       "top-center": { x: x + width / 2, y },
       "top-right": { x: x + width, y },
@@ -226,7 +228,7 @@ export class SelectionOverlay {
     };
 
     for (const [hid, handle] of this.handles) {
-      const pos = positions[hid];
+      const pos = rawPositions[hid];
       handle.clear();
       handle.rect(-hs / 2, -hs / 2, hs, hs).fill(HANDLE_COLOR).stroke({ width: 1 / viewportScale, color: 0xffffff });
       handle.position.set(pos.x, pos.y);
@@ -239,6 +241,7 @@ export class SelectionOverlay {
   private onHandleMove(pointerX: number, pointerY: number): void {
     const dx = pointerX - this.dragStartPointer.x;
     const dy = pointerY - this.dragStartPointer.y;
+
     const sb = this.dragStartBbox;
 
     let newX = sb.x;
@@ -324,9 +327,11 @@ export class SelectionOverlay {
         const text = container.getChildByLabel("node-label") as any;
         if (rect) {
           const fill = (rect as any)._fillColor ?? 0x888888;
-          const strokeColor = (rect as any)._strokeColor ?? 0x333333;
+          const strokeClr = (rect as any)._strokeColor ?? 0x333333;
+          const shape = (rect as any)._nodeShape;
+          const dir = (rect as any)._nodeDirection;
           rect.clear();
-          rect.rect(0, 0, newW, newH).fill(fill).stroke({ width: 2, color: strokeColor });
+          drawShape(rect, newW, newH, shape, fill, strokeClr, dir);
         }
         if (text) {
           text.style.wordWrapWidth = newW;
@@ -363,9 +368,11 @@ export class SelectionOverlay {
           const text = container.getChildByLabel("node-label") as any;
           if (rect) {
             const fill = (rect as any)._fillColor ?? 0x888888;
-            const strokeColor = (rect as any)._strokeColor ?? 0x333333;
+            const strokeClr = (rect as any)._strokeColor ?? 0x333333;
+            const shape = (rect as any)._nodeShape;
+            const dir = (rect as any)._nodeDirection;
             rect.clear();
-            rect.rect(0, 0, newBounds.width, newBounds.height).fill(fill).stroke({ width: 2, color: strokeColor });
+            drawShape(rect, newBounds.width, newBounds.height, shape, fill, strokeClr, dir);
           }
           if (text) {
             text.style.wordWrapWidth = newBounds.width;

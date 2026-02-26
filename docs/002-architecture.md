@@ -19,7 +19,7 @@ Edits from the canvas apply via `WorkspaceEdit` which marks the tab dirty (does 
 ```
 src/
   extension.ts            Activation: registers VscpEditorProvider + perspective.linkToNode command
-  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types
+  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum) and direction ("up"|"right"|"down"|"left", omitted when "up")
   messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink
   vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler
   webview/
@@ -28,7 +28,8 @@ src/
     renderer.ts           Reconciles PixiJS containers against state, manages selection + edge handle overlays
     globals.d.ts          acquireVsCodeApi type declaration
     canvas/
-      canvasNode.ts       Node container factory (Graphics rect + Text label) + drag/click/dblclick handlers
+      canvasNode.ts       Node container factory (shape Graphics + Text label) + drag/click/dblclick handlers
+      shapeDrawing.ts     Centralized drawShape() + directionToDeg() — 12 shape types, direction-based orientation within bounding box
       canvasEdge.ts       Edge Graphics factory + line/arrowhead rendering + endpoint resolution
       edgeUtils.ts        Shared edge utilities: findNodeAtPoint, computeAnchor, buildEndpoint, dot constants
       selectionOverlay.ts Dashed bounding box + 8 resize handles for selected nodes
@@ -36,7 +37,7 @@ src/
     controls/
       lockToggle.ts       Lock button UI — toggles editing, hides sidebar, disables interactions
       gridSnap.ts         Snap-to-grid toggle button and snap() utility (GRID_SIZE = 20)
-      sidebar.ts          Color picker controls for node fill and label color
+      sidebar.ts          Sidebar controls for node fill color, label color, shape dropdown, and direction rotate button
     interactions/
       panZoom.ts          Viewport panning and mouse-wheel zoom-to-cursor
       keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state
@@ -53,8 +54,8 @@ app.stage                         (background click-to-deselect)
   └─ viewport                     (Container — pan/zoom transform)
       ├─ edge layer               (Container at index 0 — all edge Graphics)
       ├─ node containers          (Container per node, eventMode: "static")
-      │   ├─ Graphics "node-rect" (filled rectangle + stroke)
-      │   └─ Text "node-label"    (centered, word-wrapped)
+      │   ├─ Graphics "node-rect" (shape graphic, optionally rotated via pivot)
+      │   └─ Text "node-label"    (centered, word-wrapped, stays horizontal)
       ├─ SelectionOverlay         (Container, eventMode: "passive")
       │   ├─ Graphics             (dashed outline)
       │   └─ Graphics × 8         (resize handles)

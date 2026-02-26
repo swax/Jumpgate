@@ -1,18 +1,22 @@
-import type { Node } from "../../schema";
+import { directionValues, type Node } from "../../schema";
 import { getState, subscribe } from "../state";
 
 const DEFAULT_FILL = "#888888";
 const DEFAULT_TEXT = "#cccccc";
 
+export interface SidebarChanges extends Partial<Pick<Node, "nodeColor" | "labelColor" | "shape" | "direction">> {
+  bounds?: Partial<Node["bounds"]>;
+}
+
 export interface SidebarCallbacks {
   onNodeChanged: (
     id: string,
-    changes: Partial<Pick<Node, "nodeColor" | "labelColor">>
+    changes: SidebarChanges
   ) => void;
   onNodesChanged?: (
     updates: {
       id: string;
-      changes: Partial<Pick<Node, "nodeColor" | "labelColor">>;
+      changes: SidebarChanges;
     }[]
   ) => void;
 }
@@ -25,6 +29,8 @@ export function setupSidebar(
   const textInput = container.querySelector<HTMLInputElement>("#text-color")!;
   const textWrapper = container.querySelector<HTMLElement>("#text-color-wrapper")!;
   const textLabel = container.querySelector<HTMLElement>("#text-color-label")!;
+  const shapeSelect = container.querySelector<HTMLSelectElement>("#shape-select")!;
+  const rotateBtn = container.querySelector<HTMLButtonElement>("#rotate-btn")!;
 
   let targetIds: string[] = [];
   let currentFill = DEFAULT_FILL;
@@ -43,9 +49,7 @@ export function setupSidebar(
     updateTextPreview();
   }
 
-  function applyChanges(
-    changes: Partial<Pick<Node, "nodeColor" | "labelColor">>
-  ): void {
+  function applyChanges(changes: SidebarChanges): void {
     if (targetIds.length === 0) return;
     if (callbacks.onNodesChanged) {
       callbacks.onNodesChanged(
@@ -73,6 +77,53 @@ export function setupSidebar(
     updateTextPreview();
   });
 
+  shapeSelect.addEventListener("change", () => {
+    const value = shapeSelect.value;
+    applyChanges({ shape: (value || undefined) as Node["shape"] });
+  });
+
+  rotateBtn.addEventListener("click", () => {
+    if (targetIds.length === 0) return;
+    const { document: doc } = getState();
+    if (callbacks.onNodesChanged) {
+      const updates = targetIds.map((id) => {
+        const node = doc.nodes.find((n) => n.id === id)!;
+        const curIdx = directionValues.indexOf(node.direction ?? "up");
+        const newDirection = directionValues[(curIdx + 1) % directionValues.length];
+        const { x, y, width, height } = node.bounds;
+        return {
+          id,
+          changes: {
+            direction: newDirection === "up" ? undefined : newDirection,
+            bounds: {
+              x: x + (width - height) / 2,
+              y: y + (height - width) / 2,
+              width: height,
+              height: width,
+            },
+          } as SidebarChanges,
+        };
+      });
+      callbacks.onNodesChanged(updates);
+    } else {
+      for (const id of targetIds) {
+        const node = doc.nodes.find((n) => n.id === id)!;
+        const curIdx = directionValues.indexOf(node.direction ?? "up");
+        const newDirection = directionValues[(curIdx + 1) % directionValues.length];
+        const { x, y, width, height } = node.bounds;
+        callbacks.onNodeChanged(id, {
+          direction: newDirection === "up" ? undefined : newDirection,
+          bounds: {
+            x: x + (width - height) / 2,
+            y: y + (height - width) / 2,
+            width: height,
+            height: width,
+          },
+        });
+      }
+    }
+  });
+
   setColors(DEFAULT_FILL, DEFAULT_TEXT);
 
   subscribe(() => {
@@ -85,6 +136,7 @@ export function setupSidebar(
       if (node) {
         targetIds = selectedNodeIds;
         setColors(node.nodeColor ?? DEFAULT_FILL, node.labelColor ?? DEFAULT_TEXT);
+        shapeSelect.value = node.shape ?? "";
       }
     } else {
       targetIds = [];

@@ -1,7 +1,8 @@
 import { Container, Graphics, Text as PixiText, TextStyle, FederatedPointerEvent } from "pixi.js";
-import type { Bounds, Node } from "../../schema";
+import type { Bounds, Node, NodeDirection } from "../../schema";
 import { startLabelEdit, type LabelEditContext } from "../interactions/labelEditor";
 import { snap } from "../controls/gridSnap";
+import { drawShape } from "./shapeDrawing";
 
 const DEFAULT_NODE_COLOR = 0x888888;
 const STROKE_COLOR = 0x333333;
@@ -37,6 +38,8 @@ type NodeChanges = {
   nodeColor?: string;
   labelColor?: string;
   label?: string;
+  shape?: string;
+  direction?: NodeDirection;
 };
 
 export interface CanvasNodeCallbacks {
@@ -67,9 +70,11 @@ export function createCanvasNode(
   const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
   const rect = new Graphics();
   rect.label = "node-rect";
-  rect.rect(0, 0, node.bounds.width, node.bounds.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
+  drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, STROKE_COLOR, node.direction);
   (rect as any)._fillColor = fillColor;
   (rect as any)._strokeColor = STROKE_COLOR;
+  (rect as any)._nodeShape = node.shape;
+  (rect as any)._nodeDirection = node.direction;
   rect.eventMode = "passive";
 
   const textFill = node.labelColor ?? labelColor;
@@ -94,6 +99,7 @@ export function createCanvasNode(
 
   group.addChild(rect);
   group.addChild(text);
+  (group as any)._nodeDirection = node.direction;
   (group as any)._hasFileLink = !!node.fileLink;
   (group as any)._fileLinkPath = node.fileLink?.path ?? null;
 
@@ -284,9 +290,12 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
 
   const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
   rect.clear();
-  rect.rect(0, 0, node.bounds.width, node.bounds.height).fill(fillColor).stroke({ width: 2, color: STROKE_COLOR });
+  drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, STROKE_COLOR, node.direction);
   (rect as any)._fillColor = fillColor;
   (rect as any)._strokeColor = STROKE_COLOR;
+  (rect as any)._nodeShape = node.shape;
+  (rect as any)._nodeDirection = node.direction;
+  (group as any)._nodeDirection = node.direction;
 
   const textFill = node.labelColor ?? labelColor;
   text.text = node.label || "";

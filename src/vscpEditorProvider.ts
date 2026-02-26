@@ -147,6 +147,12 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       overflow: hidden;
       background: var(--vscode-editor-background);
     }
+    body.vscode-dark, body.vscode-high-contrast {
+      color-scheme: dark;
+    }
+    body.vscode-light, body.vscode-high-contrast-light {
+      color-scheme: light;
+    }
     #canvas-container {
       width: 100%;
       height: 100%;
@@ -158,19 +164,17 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       height: 32px;
       border: none;
       border-radius: 4px;
-      background: var(--vscode-button-secondaryBackground, #3a3d41);
-      color: var(--vscode-button-secondaryForeground, #cccccc);
+      background: var(--vscode-dropdown-background, #3a3d41);
+      color: var(--vscode-dropdown-foreground, #cccccc);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 10;
       padding: 4px;
-      opacity: 0.7;
     }
     .toolbar-btn:hover {
-      opacity: 1 !important;
-      background: var(--vscode-button-secondaryHoverBackground, #45494e);
+      background: var(--vscode-dropdown-background, #45494e);
     }
     .toolbar-btn svg {
       width: 20px;
@@ -189,15 +193,15 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     #sidebar {
       position: fixed;
       top: 48px;
-      right: 11px;
+      right: 8px;
       z-index: 10;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
     .color-field {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
       padding: 0;
       border: 1px solid #000;
       border-radius: 4px;
@@ -217,8 +221,8 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     }
     #text-color-wrapper {
       position: relative;
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
       border: 1px solid #000;
       border-radius: 4px;
       cursor: pointer;
@@ -241,6 +245,44 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       font-weight: bold;
       font-size: 16px;
       pointer-events: none;
+    }
+    #shape-select {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid #000;
+      border-radius: 4px;
+      background: var(--vscode-dropdown-background, #3a3d41);
+      color: var(--vscode-dropdown-foreground, #cccccc);
+      cursor: pointer;
+      font-size: 16px;
+      text-align: center;
+      text-align-last: center;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    #shape-select option {
+      background: var(--vscode-dropdown-background, #3a3d41);
+      color: var(--vscode-dropdown-foreground, #cccccc);
+      text-align: center;
+    }
+    #rotate-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid #000;
+      border-radius: 4px;
+      background: var(--vscode-dropdown-background, #3a3d41);
+      color: var(--vscode-dropdown-foreground, #cccccc);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #rotate-btn:hover {
+      background: var(--vscode-button-secondaryHoverBackground, #45494e);
     }
     #edge-mode-status {
       display: none;
@@ -273,6 +315,22 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       <span id="text-color-label">T</span>
       <input type="color" id="text-color" class="color-field">
     </div>
+    <select id="shape-select" title="Shape">
+      <option value="">▭</option>
+      <option value="rounded-rectangle">▢</option>
+      <option value="ellipse">⬭</option>
+      <option value="diamond">◇</option>
+      <option value="parallelogram">▱</option>
+      <option value="trapezoid">⏢</option>
+      <option value="triangle">△</option>
+      <option value="cylinder">⌭</option>
+      <option value="pill">⊖</option>
+      <option value="half-ellipse">⌓</option>
+      <option value="half-pill">◗</option>
+      <option value="document">⎵</option>
+      <option value="text">T</option>
+    </select>
+    <button id="rotate-btn" title="Rotate 90°">⟳</button>
   </div>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
