@@ -1,10 +1,12 @@
-import { Graphics, Polygon } from "pixi.js";
+import { Container, Graphics, Polygon, Text as PixiText, TextStyle } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
+import type { LabelEditContext } from "../interactions/labelEditor";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
 const SELECTED_EDGE_COLOR = 0x4488ff;
 const HIT_TOLERANCE = 8;
 const ARROWHEAD_SIZE = 10;
+const DOUBLE_CLICK_MS = 400;
 
 function colorToHex(color: string | undefined, fallback: number): number {
   if (!color) return fallback;
@@ -36,29 +38,78 @@ export function resolveEndpoint(
 
 export interface CanvasEdgeCallbacks {
   onSelect: (edgeId: string) => void;
+  onDoubleClick: (edgeId: string, container: Container) => void;
 }
 
-export function createCanvasEdge(edge: Edge, callbacks: CanvasEdgeCallbacks): Graphics {
+export function createCanvasEdge(
+  edge: Edge,
+  labelColor: string,
+  callbacks: CanvasEdgeCallbacks
+): Container {
+  const group = new Container();
+  group.label = edge.id;
+  group.eventMode = "auto";
+
   const gfx = new Graphics();
-  gfx.label = edge.id;
+  gfx.label = "edge-line";
   gfx.eventMode = "static";
   gfx.cursor = edge.fileLink ? "pointer" : "default";
 
+  const text = new PixiText({
+    text: edge.label || "",
+    resolution: 2,
+    style: new TextStyle({
+      fontSize: 14,
+      fontFamily: "sans-serif",
+      fill: labelColor,
+      align: "center",
+    }),
+  });
+  text.label = "edge-label";
+  text.anchor.set(0.5, 0.5);
+  text.eventMode = "none";
+  if (!edge.label) text.visible = false;
+
+  group.addChild(gfx);
+  group.addChild(text);
+
+  let lastClickTime = 0;
+
   gfx.on("pointerdown", (e) => {
     e.stopPropagation();
-    callbacks.onSelect(edge.id);
+
+    const onUp = () => {
+      gfx.off("pointerup", onUp);
+      gfx.off("pointerupoutside", onUp);
+
+      const now = Date.now();
+      if (now - lastClickTime < DOUBLE_CLICK_MS) {
+        lastClickTime = 0;
+        callbacks.onDoubleClick(edge.id, group);
+      } else {
+        lastClickTime = now;
+        callbacks.onSelect(edge.id);
+      }
+    };
+
+    gfx.on("pointerup", onUp);
+    gfx.on("pointerupoutside", onUp);
   });
 
-  return gfx;
+  return group;
 }
 
 export function updateCanvasEdge(
-  gfx: Graphics,
+  group: Container,
   edge: Edge,
   nodeMap: Map<string, Bounds>,
   isSelected: boolean,
-  viewportScale: number
+  viewportScale: number,
+  labelColor: string
 ): void {
+  const gfx = group.getChildByLabel("edge-line") as Graphics;
+  const text = group.getChildByLabel("edge-label") as PixiText;
+
   gfx.clear();
   gfx.cursor = edge.fileLink ? "pointer" : "default";
 
@@ -66,8 +117,8 @@ export function updateCanvasEdge(
   const to = resolveEndpoint(edge.to, nodeMap);
   if (!from || !to) return;
 
-  const color = isSelected ? SELECTED_EDGE_COLOR : colorToHex(edge.color, DEFAULT_EDGE_COLOR);
-  const lineWidth = isSelected ? 3 : 2;
+  const color = colorToHex(edge.color, DEFAULT_EDGE_COLOR);
+  const lineWidth = 2;
   const style = edge.style ?? "solid";
   const arrow = edge.arrow ?? "end";
 
@@ -86,9 +137,32 @@ export function updateCanvasEdge(
     drawArrowhead(gfx, to, from, color);
   }
 
+  // Draw selection overlay
+  if (isSelected) {
+    drawDashedLine(gfx, from.x, from.y, to.x, to.y, 3, SELECTED_EDGE_COLOR, "dashed");
+  }
+
   // Hit area for click detection (wider than the visual line)
   const tolerance = HIT_TOLERANCE / viewportScale;
   gfx.hitArea = new LineHitArea(from.x, from.y, to.x, to.y, Math.max(tolerance, HIT_TOLERANCE));
+
+  // Update label — always position at midpoint so toGlobal works for editing
+  text.position.set((from.x + to.x) / 2, (from.y + to.y) / 2);
+  const labelText = edge.label || "";
+  if (labelText) {
+    text.text = labelText;
+    text.style.fill = edge.labelColor ?? labelColor;
+    text.visible = true;
+  } else {
+    text.visible = false;
+  }
+}
+
+export function updateEdgeTextResolution(group: Container, resolution: number): void {
+  const text = group.getChildByLabel("edge-label") as PixiText | null;
+  if (text && text.resolution !== resolution) {
+    text.resolution = resolution;
+  }
 }
 
 function drawDashedLine(

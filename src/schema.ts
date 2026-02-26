@@ -59,6 +59,7 @@ export const edgeSchema = z.object({
   to: edgeEndpointSchema,
   label: z.string().optional(),
   color: z.string().optional(),
+  labelColor: z.string().optional(),
   style: z.enum(["solid", "dashed", "dotted"]).optional(),
   arrow: z.enum(["none", "end", "start", "both"]).optional(),
   fileLink: fileLinkSchema.optional(),

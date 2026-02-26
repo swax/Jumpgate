@@ -65,6 +65,10 @@ async function main(): Promise<void> {
       updateNodes(updates);
       sendEditDebounced();
     },
+    onEdgeChanged: (id, changes) => {
+      updateEdge(id, changes);
+      sendEditDebounced();
+    },
   });
 
   // Debounced edit sender

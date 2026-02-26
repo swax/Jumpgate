@@ -1,4 +1,4 @@
-import { directionValues, type Node } from "../../schema";
+import { directionValues, type Edge, type Node } from "../../schema";
 import { getState, subscribe } from "../state";
 
 const DEFAULT_FILL = "#888888";
@@ -7,6 +7,8 @@ const DEFAULT_TEXT = "#cccccc";
 export interface SidebarChanges extends Partial<Pick<Node, "nodeColor" | "labelColor" | "shape" | "direction">> {
   bounds?: Partial<Node["bounds"]>;
 }
+
+export type EdgeSidebarChanges = Partial<Pick<Edge, "color" | "labelColor">>;
 
 export interface SidebarCallbacks {
   onNodeChanged: (
@@ -18,6 +20,10 @@ export interface SidebarCallbacks {
       id: string;
       changes: SidebarChanges;
     }[]
+  ) => void;
+  onEdgeChanged: (
+    id: string,
+    changes: EdgeSidebarChanges
   ) => void;
 }
 
@@ -33,6 +39,7 @@ export function setupSidebar(
   const rotateBtn = container.querySelector<HTMLButtonElement>("#rotate-btn")!;
 
   let targetIds: string[] = [];
+  let targetType: "node" | "edge" = "node";
   let currentFill = DEFAULT_FILL;
   let currentText = DEFAULT_TEXT;
 
@@ -49,7 +56,7 @@ export function setupSidebar(
     updateTextPreview();
   }
 
-  function applyChanges(changes: SidebarChanges): void {
+  function applyNodeChanges(changes: SidebarChanges): void {
     if (targetIds.length === 0) return;
     if (callbacks.onNodesChanged) {
       callbacks.onNodesChanged(
@@ -65,21 +72,35 @@ export function setupSidebar(
     }
   }
 
+  function applyEdgeChanges(changes: EdgeSidebarChanges): void {
+    for (const id of targetIds) {
+      callbacks.onEdgeChanged(id, changes);
+    }
+  }
+
   fillInput.addEventListener("input", () => {
     currentFill = fillInput.value;
-    applyChanges({ nodeColor: currentFill });
+    if (targetType === "edge") {
+      applyEdgeChanges({ color: currentFill });
+    } else {
+      applyNodeChanges({ nodeColor: currentFill });
+    }
     updateTextPreview();
   });
 
   textInput.addEventListener("input", () => {
     currentText = textInput.value;
-    applyChanges({ labelColor: currentText });
+    if (targetType === "edge") {
+      applyEdgeChanges({ labelColor: currentText });
+    } else {
+      applyNodeChanges({ labelColor: currentText });
+    }
     updateTextPreview();
   });
 
   shapeSelect.addEventListener("change", () => {
     const value = shapeSelect.value;
-    applyChanges({ shape: (value || undefined) as Node["shape"] });
+    applyNodeChanges({ shape: (value || undefined) as Node["shape"] });
   });
 
   rotateBtn.addEventListener("click", () => {
@@ -127,7 +148,7 @@ export function setupSidebar(
   setColors(DEFAULT_FILL, DEFAULT_TEXT);
 
   subscribe(() => {
-    const { document: doc, selectedNodeIds, locked } = getState();
+    const { document: doc, selectedNodeIds, selectedEdgeIds, locked } = getState();
     const sidebar = container.querySelector<HTMLElement>("#sidebar")!;
     sidebar.style.display = locked ? "none" : "";
 
@@ -135,8 +156,21 @@ export function setupSidebar(
       const node = doc.nodes.find((n) => n.id === selectedNodeIds[0]);
       if (node) {
         targetIds = selectedNodeIds;
+        targetType = "node";
         setColors(node.nodeColor ?? DEFAULT_FILL, node.labelColor ?? DEFAULT_TEXT);
         shapeSelect.value = node.shape ?? "";
+        shapeSelect.disabled = false;
+        rotateBtn.disabled = false;
+      }
+    } else if (selectedEdgeIds.length > 0) {
+      const edge = doc.edges.find((e) => e.id === selectedEdgeIds[0]);
+      if (edge) {
+        targetIds = selectedEdgeIds;
+        targetType = "edge";
+        setColors(edge.color ?? DEFAULT_FILL, edge.labelColor ?? DEFAULT_TEXT);
+        shapeSelect.value = "";
+        shapeSelect.disabled = true;
+        rotateBtn.disabled = true;
       }
     } else {
       targetIds = [];

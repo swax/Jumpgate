@@ -1,8 +1,8 @@
 import { Application, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
 import { createCanvasNode, updateCanvasNode, updateNodeTextResolution, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
-import { createCanvasEdge, updateCanvasEdge, resolveEndpoint } from "./canvas/canvasEdge";
-import type { LabelEditContext } from "./interactions/labelEditor";
+import { createCanvasEdge, updateCanvasEdge, updateEdgeTextResolution, resolveEndpoint } from "./canvas/canvasEdge";
+import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
 import { getNodeDepth, type EditorState } from "./state";
 import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
@@ -23,7 +23,7 @@ export interface RendererCallbacks {
   onSelect: (id: string, shiftKey: boolean) => void;
   onOpenFileLink: (id: string) => void;
   onEdgeSelect: (edgeId: string) => void;
-  onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to">>) => void;
+  onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to" | "label">>) => void;
 }
 
 export function createRenderer(
@@ -50,6 +50,7 @@ export function createRenderer(
     viewport,
     labelColor,
     onLabelChanged: (nodeId, label) => callbacks.onNodeChanged(nodeId, { label }),
+    onEdgeLabelChanged: (edgeId, label) => callbacks.onEdgeChanged(edgeId, { label }),
   };
 
   let selectedNodeIds: string[] = [];
@@ -129,6 +130,10 @@ export function createRenderer(
       const group = viewport.getChildByLabel(node.id) as Container | null;
       if (group) updateNodeTextResolution(group, textRes);
     }
+    for (const edge of lastState.document.edges) {
+      const group = viewport.getChildByLabel(edge.id) as Container | null;
+      if (group) updateEdgeTextResolution(group, textRes);
+    }
   });
 
   /** Build a nodeMap using live container positions/sizes (covers both drag and resize previews). */
@@ -175,16 +180,21 @@ export function createRenderer(
       const to = resolveEndpoint(renderEdge.to, nodeMap);
       if (!from || !to) continue;
 
-      let gfx = viewport.getChildByLabel(edge.id) as Graphics | null;
-      if (!gfx) {
-        gfx = createCanvasEdge(edge, {
+      let edgeContainer = viewport.getChildByLabel(edge.id) as Container | null;
+      if (!edgeContainer) {
+        edgeContainer = createCanvasEdge(edge, labelColor, {
           onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
+          onDoubleClick: (edgeId, container) => {
+            if (!isLocked) {
+              startEdgeLabelEdit(labelEditCtx, container, edgeId);
+            }
+          },
         });
-        viewport.addChild(gfx);
+        viewport.addChild(edgeContainer);
       }
 
-      gfx.zIndex = (handleOverride && edge.id === handleOverride.edgeId) ? 8999 : computeEdgeZIndex(edge);
-      updateCanvasEdge(gfx, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x);
+      edgeContainer.zIndex = (handleOverride && edge.id === handleOverride.edgeId) ? 8999 : computeEdgeZIndex(edge);
+      updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor);
     }
 
     prevEdgeIds = currentEdgeIds;
@@ -249,6 +259,10 @@ export function createRenderer(
     for (const node of doc.nodes) {
       const group = viewport.getChildByLabel(node.id) as Container | null;
       if (group) updateNodeTextResolution(group, textRes);
+    }
+    for (const edge of doc.edges) {
+      const group = viewport.getChildByLabel(edge.id) as Container | null;
+      if (group) updateEdgeTextResolution(group, textRes);
     }
 
     // Update selection overlay

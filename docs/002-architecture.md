@@ -19,7 +19,7 @@ Edits from the canvas apply via `WorkspaceEdit` which marks the tab dirty (does 
 ```
 src/
   extension.ts            Activation: registers VscpEditorProvider + perspective.linkToNode command
-  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum), direction ("up"|"right"|"down"|"left", omitted when "up"), and parentId (string, for node grouping)
+  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum), direction ("up"|"right"|"down"|"left", omitted when "up"), and parentId (string, for node grouping); edgeSchema includes optional label, color, labelColor, style, arrow, and fileLink
   messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink
   vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler
   webview/
@@ -30,20 +30,20 @@ src/
     canvas/
       canvasNode.ts       Node container factory (shape Graphics + Text label) + drag/click/dblclick handlers
       shapeDrawing.ts     Centralized drawShape() + directionToDeg() — 12 shape types, direction-based orientation within bounding box
-      canvasEdge.ts       Edge Graphics factory + line/arrowhead rendering + endpoint resolution
+      canvasEdge.ts       Edge container factory (Graphics "edge-line" + Text "edge-label") + line/arrowhead rendering + endpoint resolution + double-click label editing
       edgeUtils.ts        Shared edge utilities: findNodeAtPoint (with optional excludeIds), computeAnchor, buildEndpoint, dot constants
       selectionOverlay.ts Dashed bounding box + 8 resize handles for selected nodes
       edgeHandleOverlay.ts Draggable endpoint handles on selected edges — drag to reposition from/to
     controls/
       lockToggle.ts       Lock button UI — toggles editing, hides sidebar, disables interactions
       gridSnap.ts         Snap-to-grid toggle button and snap() utility (GRID_SIZE = 20)
-      sidebar.ts          Sidebar controls for node fill color, label color, shape dropdown, and direction rotate button
+      sidebar.ts          Sidebar controls for fill color, label color, shape dropdown, and direction rotate button — works for both nodes (nodeColor/labelColor) and edges (color/labelColor); shape and rotate disabled for edges
     interactions/
       panZoom.ts          Viewport panning and mouse-wheel zoom-to-cursor
       keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state — copy/paste includes descendants
       edgeMode.ts         Edge creation mode — toolbar toggle, two-click workflow, preview line + cursor dot
       groupStatus.ts      Group status bar — shows parent info on selection, drag-to-group messages, remove-from-group link
-      labelEditor.ts      DOM textarea overlay for inline label editing on double-click
+      labelEditor.ts      DOM textarea overlay for inline label editing on double-click (nodes and edges); Enter commits, Shift+Enter for newline, Escape cancels
       selectionBox.ts     Shift+drag rubber-band selection box + click-off deselect
       cursorManager.ts    Centralized cursor priority manager (pan/select)
 ```
@@ -53,11 +53,12 @@ src/
 ```
 app.stage                         (background click-to-deselect)
   └─ viewport                     (sortableChildren — pan/zoom transform)
-      ├─ edge layer               (zIndex 0, sortableChildren — all edge Graphics)
-      ├─ node containers          (zIndex 1000+i per node, eventMode: "static")
+      ├─ edge containers          (zIndex derived from connected nodes — see below)
+      │   ├─ Graphics "edge-line" (line/arrows, eventMode: "static", owns hitArea)
+      │   └─ Text "edge-label"   (centered at edge midpoint, stays horizontal)
+      ├─ node containers          (zIndex depth-based, eventMode: "static")
       │   ├─ Graphics "node-rect" (shape graphic, optionally rotated via pivot)
       │   └─ Text "node-label"    (centered, word-wrapped, stays horizontal)
-      ├─ text-shape nodes         (zIndex 2000+i — nodes with shape: "text")
       ├─ SelectionOverlay         (zIndex 9000, eventMode: "passive")
       │   ├─ Graphics             (dashed outline)
       │   └─ Graphics × 8         (resize handles)
@@ -65,7 +66,7 @@ app.stage                         (background click-to-deselect)
           └─ Graphics × 2         (from/to endpoint handles)
 ```
 
-Z-index layers (bottom to top): edges (0+i), depth-0 nodes (1000+i), depth-0 text nodes (1500+i), depth-1 nodes (2000+i), depth-1 text nodes (2500+i), etc. Overlays at 9000+. Depth is determined by `parentId` ancestry chain — children render above parents.
+Z-index layers (bottom to top): depth-0 nodes (1000+i), depth-0 text nodes (1500+i), depth-1 nodes (2000+i), depth-1 text nodes (2500+i), etc. Edges sit just below the higher of their two connected nodes (max node zIndex − 0.5). Dragged nodes temporarily boost to 8900+. Overlays at 9000+. Depth is determined by `parentId` ancestry chain — children render above parents.
 
 ## Build
 
@@ -90,8 +91,9 @@ Two esbuild bundles (`npm run build`):
 - **Delete** (`keyboard.ts`): Delete/Backspace removes selected nodes.
 - **Snap to grid** (`gridSnap.ts`): Optional grid snapping (20px) applied during drag and resize. Toggled via toolbar button.
 - **Lock mode** (`lockToggle.ts`): Toggles all interactions off — deselects nodes, hides sidebar, disables dragging and transforms. Linked nodes remain clickable to follow file links.
-- **Label editing** (`labelEditor.ts`): Overlays an HTML `<textarea>` at the node's screen position on double-click, scaled with viewport zoom. Commits on blur/Enter, cancels on Escape.
+- **Label editing** (`labelEditor.ts`): Overlays an HTML `<textarea>` at the element's screen position on double-click, scaled with viewport zoom. Works for both nodes (`startLabelEdit`) and edges (`startEdgeLabelEdit`). Enter commits, Shift+Enter inserts a newline, Escape cancels, blur commits.
 - **Edge creation** (`edgeMode.ts`): Toggle via toolbar button. Two-click workflow: first click sets source endpoint, second click creates the edge. Preview line + cursor dot follow the mouse. ESC exits edge mode.
+- **Edge labels** (`canvasEdge.ts`, `labelEditor.ts`): Edges support optional labels rendered as `PixiText` at the edge midpoint. Double-click an edge to edit its label. Selected edges show a blue dashed overlay rather than changing the edge color.
 - **Edge endpoints** (`canvasEdge.ts`): An endpoint is either node-anchored (`nodeId` + proportional `anchor`) or a free-point (`x`, `y`). `resolveEndpoint` converts both forms to world coordinates using a `nodeMap`.
 - **Live edge following** (`renderer.ts`): `buildNodeMap` always reads live container positions/sizes, so edges follow during both node drag (`onDragUpdate` from `canvasNode`) and node resize (`onDragUpdate` from `selectionOverlay`). During edge handle drags, `renderEdges` applies the overlay's endpoint override to draw the edge at the in-flight position.
 - **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick flow. Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Ctrl+Click)". Ctrl+Click opens the file and jumps to the matched text. In locked mode, a plain click follows the link. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.
