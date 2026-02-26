@@ -36,9 +36,14 @@ export function createRenderer(
   let snapEnabled = true;
   let isEdgeMode = false;
 
-  // Edge layer sits at the bottom of the viewport
+  // Enable z-index sorting on the viewport and edge layer
+  viewport.sortableChildren = true;
+
+  // Edge layer sits in the middle (between regular nodes and text-shape nodes)
   const edgeLayer = new Container();
   edgeLayer.label = "__edge-layer";
+  edgeLayer.zIndex = 0;
+  edgeLayer.sortableChildren = true;
   viewport.addChildAt(edgeLayer, 0);
 
   const labelColor =
@@ -64,6 +69,7 @@ export function createRenderer(
       onDragUpdate: () => renderEdges(lastState),
     }
   );
+  selectionOverlay.container.zIndex = 9000;
   viewport.addChild(selectionOverlay.container);
 
   const edgeHandleOverlay = new EdgeHandleOverlay(
@@ -73,6 +79,7 @@ export function createRenderer(
       onDragMove: () => renderEdges(lastState),
     }
   );
+  edgeHandleOverlay.container.zIndex = 9001;
   viewport.addChild(edgeHandleOverlay.container);
 
   const nodeCallbacks: CanvasNodeCallbacks = {
@@ -148,7 +155,8 @@ export function createRenderer(
     const handleOverride = edgeHandleOverlay.getEndpointOverride();
 
     // Create or update edges
-    for (const edge of doc.edges) {
+    for (let i = 0; i < doc.edges.length; i++) {
+      const edge = doc.edges[i];
       // Apply endpoint override during handle drag
       const renderEdge = (handleOverride && edge.id === handleOverride.edgeId)
         ? { ...edge, [handleOverride.which]: handleOverride.endpoint }
@@ -167,6 +175,7 @@ export function createRenderer(
         edgeLayer.addChild(gfx);
       }
 
+      gfx.zIndex = i;
       updateCanvasEdge(gfx, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x);
     }
 
@@ -203,15 +212,17 @@ export function createRenderer(
     }
 
     // Create or update nodes
-    for (const node of doc.nodes) {
+    for (let i = 0; i < doc.nodes.length; i++) {
+      const node = doc.nodes[i];
       let group = viewport.getChildByLabel(node.id) as Container | null;
 
       if (!group) {
         group = createCanvasNode(node, labelColor, labelEditCtx, nodeCallbacks);
-        // Insert before selection overlay so overlay renders on top
-        const overlayIndex = viewport.getChildIndex(selectionOverlay.container);
-        viewport.addChildAt(group, overlayIndex);
+        viewport.addChild(group);
       }
+
+      // Regular nodes: 1000+, text-shape nodes: 2000+
+      group.zIndex = node.shape === "text" ? 2000 + i : 1000 + i;
 
       const hasFileLink = !!node.fileLink;
       group.eventMode = (isLocked && !hasFileLink) ? "none" : "static";

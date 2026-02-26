@@ -51,17 +51,20 @@ src/
 
 ```
 app.stage                         (background click-to-deselect)
-  └─ viewport                     (Container — pan/zoom transform)
-      ├─ edge layer               (Container at index 0 — all edge Graphics)
-      ├─ node containers          (Container per node, eventMode: "static")
+  └─ viewport                     (sortableChildren — pan/zoom transform)
+      ├─ edge layer               (zIndex 0, sortableChildren — all edge Graphics)
+      ├─ node containers          (zIndex 1000+i per node, eventMode: "static")
       │   ├─ Graphics "node-rect" (shape graphic, optionally rotated via pivot)
       │   └─ Text "node-label"    (centered, word-wrapped, stays horizontal)
-      ├─ SelectionOverlay         (Container, eventMode: "passive")
+      ├─ text-shape nodes         (zIndex 2000+i — nodes with shape: "text")
+      ├─ SelectionOverlay         (zIndex 9000, eventMode: "passive")
       │   ├─ Graphics             (dashed outline)
       │   └─ Graphics × 8         (resize handles)
-      └─ EdgeHandleOverlay        (Container, eventMode: "passive")
+      └─ EdgeHandleOverlay        (zIndex 9001, eventMode: "passive")
           └─ Graphics × 2         (from/to endpoint handles)
 ```
+
+Z-index layers (bottom to top): edges (0+i), regular nodes (1000+i), text-shape nodes (2000+i), overlays (9000+).
 
 ## Build
 
