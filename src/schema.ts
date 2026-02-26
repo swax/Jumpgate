@@ -57,6 +57,7 @@ export const edgeSchema = z.object({
   id: z.string(),
   from: edgeEndpointSchema,
   to: edgeEndpointSchema,
+  waypoints: z.array(z.object({ x: z.number(), y: z.number() })).optional(),
   label: z.string().optional(),
   color: z.string().optional(),
   labelColor: z.string().optional(),

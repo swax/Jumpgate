@@ -1,9 +1,10 @@
 import { Application, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
 import { createCanvasNode, updateCanvasNode, updateNodeTextResolution, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
-import { createCanvasEdge, updateCanvasEdge, updateEdgeTextResolution, resolveEndpoint } from "./canvas/canvasEdge";
+import { createCanvasEdge, updateCanvasEdge, updateEdgeTextResolution, resolveEndpoint, buildPolylinePoints, pointToSegmentDistance } from "./canvas/canvasEdge";
 import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
 import { getNodeDepth, type EditorState } from "./state";
+import { snap } from "./controls/gridSnap";
 import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
 
@@ -23,7 +24,7 @@ export interface RendererCallbacks {
   onSelect: (id: string, shiftKey: boolean) => void;
   onOpenFileLink: (id: string) => void;
   onEdgeSelect: (edgeId: string) => void;
-  onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to" | "label">>) => void;
+  onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to" | "label" | "waypoints">>) => void;
 }
 
 export function createRenderer(
@@ -164,16 +165,22 @@ export function createRenderer(
       }
     }
 
-    // Check for in-flight edge handle drag override
+    // Check for in-flight edge handle drag overrides
     const handleOverride = edgeHandleOverlay.getEndpointOverride();
+    const wpOverride = edgeHandleOverlay.getWaypointOverrides();
 
     // Create or update edges
     for (let i = 0; i < doc.edges.length; i++) {
       const edge = doc.edges[i];
       // Apply endpoint override during handle drag
-      const renderEdge = (handleOverride && edge.id === handleOverride.edgeId)
+      let renderEdge = (handleOverride && edge.id === handleOverride.edgeId)
         ? { ...edge, [handleOverride.which]: handleOverride.endpoint }
         : edge;
+
+      // Apply waypoint override during waypoint drag
+      if (wpOverride && edge.id === wpOverride.edgeId) {
+        renderEdge = { ...renderEdge, waypoints: wpOverride.waypoints };
+      }
 
       // Skip edges with missing node references
       const from = resolveEndpoint(renderEdge.from, nodeMap);
@@ -184,10 +191,42 @@ export function createRenderer(
       if (!edgeContainer) {
         edgeContainer = createCanvasEdge(edge, labelColor, {
           onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
-          onDoubleClick: (edgeId, container) => {
-            if (!isLocked) {
-              startEdgeLabelEdit(labelEditCtx, container, edgeId);
+          onDoubleClick: (edgeId, container, worldPos, ctrlKey) => {
+            if (isLocked) return;
+
+            // Ctrl+double-click: insert a waypoint at the clicked segment
+            if (ctrlKey && worldPos) {
+              const currentEdge = lastState?.document.edges.find((e) => e.id === edgeId);
+              if (!currentEdge) return;
+
+              const from = resolveEndpoint(currentEdge.from, buildNodeMap(lastState!));
+              const to = resolveEndpoint(currentEdge.to, buildNodeMap(lastState!));
+              if (from && to) {
+                const pts = buildPolylinePoints(from, to, currentEdge.waypoints);
+                let bestDist = Infinity;
+                let bestIdx = 0;
+                for (let s = 1; s < pts.length; s++) {
+                  const d = pointToSegmentDistance(
+                    worldPos.x, worldPos.y,
+                    pts[s - 1].x, pts[s - 1].y,
+                    pts[s].x, pts[s].y
+                  );
+                  if (d < bestDist) {
+                    bestDist = d;
+                    bestIdx = s - 1;
+                  }
+                }
+
+                const sx = snapEnabled ? snap(worldPos.x) : worldPos.x;
+                const sy = snapEnabled ? snap(worldPos.y) : worldPos.y;
+
+                edgeHandleOverlay.insertWaypoint(edgeId, bestIdx, { x: sx, y: sy });
+                return;
+              }
             }
+
+            // Plain double-click: edit label
+            startEdgeLabelEdit(labelEditCtx, container, edgeId);
           },
         });
         viewport.addChild(edgeContainer);

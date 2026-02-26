@@ -8,6 +8,8 @@ const HIT_TOLERANCE = 8;
 const ARROWHEAD_SIZE = 10;
 const DOUBLE_CLICK_MS = 400;
 
+type Point = { x: number; y: number };
+
 function colorToHex(color: string | undefined, fallback: number): number {
   if (!color) return fallback;
   return parseInt(color.replace("#", ""), 16);
@@ -36,9 +38,81 @@ export function resolveEndpoint(
   return { x: endpoint.x, y: endpoint.y };
 }
 
+/** Build the full polyline: [from, ...waypoints, to]. */
+export function buildPolylinePoints(
+  from: Point,
+  to: Point,
+  waypoints?: Point[]
+): Point[] {
+  if (!waypoints || waypoints.length === 0) return [from, to];
+  return [from, ...waypoints, to];
+}
+
+/** Walk 50% of total arc length to find the midpoint for label placement. */
+export function computePolylineMidpoint(points: Point[]): Point {
+  if (points.length < 2) return points[0] ?? { x: 0, y: 0 };
+
+  // Compute total length
+  let totalLen = 0;
+  for (let i = 1; i < points.length; i++) {
+    const dx = points[i].x - points[i - 1].x;
+    const dy = points[i].y - points[i - 1].y;
+    totalLen += Math.sqrt(dx * dx + dy * dy);
+  }
+
+  const halfLen = totalLen / 2;
+  let walked = 0;
+  for (let i = 1; i < points.length; i++) {
+    const dx = points[i].x - points[i - 1].x;
+    const dy = points[i].y - points[i - 1].y;
+    const segLen = Math.sqrt(dx * dx + dy * dy);
+    if (walked + segLen >= halfLen) {
+      const remaining = halfLen - walked;
+      const t = segLen > 0 ? remaining / segLen : 0;
+      return {
+        x: points[i - 1].x + dx * t,
+        y: points[i - 1].y + dy * t,
+      };
+    }
+    walked += segLen;
+  }
+
+  // Fallback: last point
+  return points[points.length - 1];
+}
+
+/** Point-to-segment distance (exported for hit-testing in renderer). */
+export function pointToSegmentDistance(
+  px: number,
+  py: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): number {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const lenSq = dx * dx + dy * dy;
+
+  if (lenSq === 0) {
+    const ex = px - x1;
+    const ey = py - y1;
+    return Math.sqrt(ex * ex + ey * ey);
+  }
+
+  let t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
+  t = Math.max(0, Math.min(1, t));
+
+  const closestX = x1 + t * dx;
+  const closestY = y1 + t * dy;
+  const ex = px - closestX;
+  const ey = py - closestY;
+  return Math.sqrt(ex * ex + ey * ey);
+}
+
 export interface CanvasEdgeCallbacks {
   onSelect: (edgeId: string) => void;
-  onDoubleClick: (edgeId: string, container: Container) => void;
+  onDoubleClick: (edgeId: string, container: Container, worldPos?: Point, ctrlKey?: boolean) => void;
 }
 
 export function createCanvasEdge(
@@ -74,9 +148,15 @@ export function createCanvasEdge(
   group.addChild(text);
 
   let lastClickTime = 0;
+  let lastPointerWorldPos: Point | undefined;
+  let lastCtrlKey = false;
 
   gfx.on("pointerdown", (e) => {
     e.stopPropagation();
+
+    // Capture world position and modifier keys for double-click
+    lastPointerWorldPos = gfx.toLocal(e.global);
+    lastCtrlKey = e.ctrlKey || e.metaKey;
 
     const onUp = () => {
       gfx.off("pointerup", onUp);
@@ -85,7 +165,7 @@ export function createCanvasEdge(
       const now = Date.now();
       if (now - lastClickTime < DOUBLE_CLICK_MS) {
         lastClickTime = 0;
-        callbacks.onDoubleClick(edge.id, group);
+        callbacks.onDoubleClick(edge.id, group, lastPointerWorldPos, lastCtrlKey);
       } else {
         lastClickTime = now;
         callbacks.onSelect(edge.id);
@@ -117,37 +197,49 @@ export function updateCanvasEdge(
   const to = resolveEndpoint(edge.to, nodeMap);
   if (!from || !to) return;
 
+  const points = buildPolylinePoints(from, to, edge.waypoints);
+
   const color = colorToHex(edge.color, DEFAULT_EDGE_COLOR);
   const lineWidth = 2;
   const style = edge.style ?? "solid";
   const arrow = edge.arrow ?? "end";
 
-  // Draw line
+  // Draw line through all points
   if (style === "solid") {
-    gfx.moveTo(from.x, from.y).lineTo(to.x, to.y).stroke({ width: lineWidth, color });
+    gfx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      gfx.lineTo(points[i].x, points[i].y);
+    }
+    gfx.stroke({ width: lineWidth, color });
   } else {
-    drawDashedLine(gfx, from.x, from.y, to.x, to.y, lineWidth, color, style);
+    for (let i = 1; i < points.length; i++) {
+      drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, lineWidth, color, style);
+    }
   }
 
-  // Draw arrowheads
+  // Draw arrowheads using first/last segment directions
   if (arrow === "end" || arrow === "both") {
-    drawArrowhead(gfx, from, to, color);
+    const n = points.length;
+    drawArrowhead(gfx, points[n - 2], points[n - 1], color);
   }
   if (arrow === "start" || arrow === "both") {
-    drawArrowhead(gfx, to, from, color);
+    drawArrowhead(gfx, points[1], points[0], color);
   }
 
-  // Draw selection overlay
+  // Draw selection overlay along all segments
   if (isSelected) {
-    drawDashedLine(gfx, from.x, from.y, to.x, to.y, 3, SELECTED_EDGE_COLOR, "dashed");
+    for (let i = 1; i < points.length; i++) {
+      drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, 3, SELECTED_EDGE_COLOR, "dashed");
+    }
   }
 
   // Hit area for click detection (wider than the visual line)
   const tolerance = HIT_TOLERANCE / viewportScale;
-  gfx.hitArea = new LineHitArea(from.x, from.y, to.x, to.y, Math.max(tolerance, HIT_TOLERANCE));
+  gfx.hitArea = new PolylineHitArea(points, Math.max(tolerance, HIT_TOLERANCE));
 
-  // Update label — always position at midpoint so toGlobal works for editing
-  text.position.set((from.x + to.x) / 2, (from.y + to.y) / 2);
+  // Update label — position at polyline midpoint
+  const mid = computePolylineMidpoint(points);
+  text.position.set(mid.x, mid.y);
   const labelText = edge.label || "";
   if (labelText) {
     text.text = labelText;
@@ -199,8 +291,8 @@ function drawDashedLine(
 
 function drawArrowhead(
   gfx: Graphics,
-  from: { x: number; y: number },
-  to: { x: number; y: number },
+  from: Point,
+  to: Point,
   color: number
 ): void {
   const dx = to.x - from.x;
@@ -229,48 +321,22 @@ function drawArrowhead(
   ]).fill(color);
 }
 
-/** Custom hit area using point-to-segment distance. */
-class LineHitArea {
-  constructor(
-    private x1: number,
-    private y1: number,
-    private x2: number,
-    private y2: number,
-    private tolerance: number
-  ) {}
+/** Custom hit area checking point-to-segment distance across all polyline segments. */
+class PolylineHitArea {
+  constructor(private points: Point[], private tolerance: number) {}
 
   contains(x: number, y: number): boolean {
-    return pointToSegmentDistance(x, y, this.x1, this.y1, this.x2, this.y2) <= this.tolerance;
+    for (let i = 1; i < this.points.length; i++) {
+      const dist = pointToSegmentDistance(
+        x, y,
+        this.points[i - 1].x, this.points[i - 1].y,
+        this.points[i].x, this.points[i].y
+      );
+      if (dist <= this.tolerance) return true;
+    }
+    return false;
   }
 }
 
-// Make LineHitArea compatible with PixiJS IHitArea
-(LineHitArea.prototype as any).constructor = LineHitArea;
-
-function pointToSegmentDistance(
-  px: number,
-  py: number,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number
-): number {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const lenSq = dx * dx + dy * dy;
-
-  if (lenSq === 0) {
-    const ex = px - x1;
-    const ey = py - y1;
-    return Math.sqrt(ex * ex + ey * ey);
-  }
-
-  let t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
-  t = Math.max(0, Math.min(1, t));
-
-  const closestX = x1 + t * dx;
-  const closestY = y1 + t * dy;
-  const ex = px - closestX;
-  const ey = py - closestY;
-  return Math.sqrt(ex * ex + ey * ey);
-}
+// Make PolylineHitArea compatible with PixiJS IHitArea
+(PolylineHitArea.prototype as any).constructor = PolylineHitArea;
