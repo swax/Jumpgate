@@ -12,10 +12,11 @@ export const DOT_COLOR_NODE = 0xff4444;
 export type HitNodeInfo = Bounds & { nodeId: string };
 
 /** Hit-test all document nodes at a world coordinate, returning the topmost match. */
-export function findNodeAtPoint(worldX: number, worldY: number, viewport: Container): HitNodeInfo | null {
+export function findNodeAtPoint(worldX: number, worldY: number, viewport: Container, excludeIds?: Set<string>): HitNodeInfo | null {
   const doc = getState().document;
   for (let i = doc.nodes.length - 1; i >= 0; i--) {
     const n = doc.nodes[i];
+    if (excludeIds?.has(n.id)) continue;
     const container = viewport.getChildByLabel(n.id) as Container | null;
     const b = container ? getContainerBounds(container) : n.bounds;
     if (worldX >= b.x && worldX <= b.x + b.width && worldY >= b.y && worldY <= b.y + b.height) {

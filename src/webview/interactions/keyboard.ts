@@ -6,6 +6,7 @@ import {
   deleteNodes,
   deleteEdges,
   generateNodeId,
+  getDescendantIds,
 } from "../state";
 
 export function setupKeyboard(onEdit: () => void): void {
@@ -31,9 +32,15 @@ export function setupKeyboard(onEdit: () => void): void {
 
     if ((e.ctrlKey || e.metaKey) && e.key === "c") {
       if (state.selectedNodeIds.length > 0) {
-        const idSet = new Set(state.selectedNodeIds);
+        // Expand selection to include all descendants
+        const expandedIds = new Set(state.selectedNodeIds);
+        for (const id of state.selectedNodeIds) {
+          for (const descId of getDescendantIds(id)) {
+            expandedIds.add(descId);
+          }
+        }
         clipboard = state.document.nodes
-          .filter((n) => idSet.has(n.id))
+          .filter((n) => expandedIds.has(n.id))
           .map((n) => ({ ...n }));
       }
       return;
@@ -41,13 +48,32 @@ export function setupKeyboard(onEdit: () => void): void {
 
     if ((e.ctrlKey || e.metaKey) && e.key === "v") {
       if (clipboard.length > 0) {
-        const pastedNodes = clipboard.map((n) => ({
-          ...n,
-          id: generateNodeId(),
-          bounds: { ...n.bounds, x: n.bounds.x + 20, y: n.bounds.y + 20 },
-        }));
+        // Build old→new ID map
+        const idMap = new Map<string, string>();
+        for (const n of clipboard) {
+          idMap.set(n.id, generateNodeId());
+        }
+        const pastedNodes: Node[] = clipboard.map((n) => {
+          const pasted: Node = {
+            ...n,
+            id: idMap.get(n.id)!,
+            bounds: { ...n.bounds, x: n.bounds.x + 20, y: n.bounds.y + 20 },
+          };
+          // Remap parentId if parent is in the paste set
+          if (n.parentId && idMap.has(n.parentId)) {
+            pasted.parentId = idMap.get(n.parentId);
+          } else {
+            delete pasted.parentId;
+          }
+          return pasted;
+        });
         addNodes(pastedNodes);
-        setSelectedNodeIds(pastedNodes.map((n) => n.id));
+        // Select only root pasted nodes (those without a parentId in the paste set)
+        const pastedIdSet = new Set(pastedNodes.map((n) => n.id));
+        const rootNodes = pastedNodes.filter(
+          (n) => !n.parentId || !pastedIdSet.has(n.parentId)
+        );
+        setSelectedNodeIds(rootNodes.map((n) => n.id));
         // Update clipboard positions for cascading paste
         clipboard = pastedNodes.map((n) => ({ ...n }));
         onEdit();

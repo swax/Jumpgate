@@ -42,6 +42,7 @@ export const nodeSchema = z.object({
   fileLink: fileLinkSchema.optional(),
   shape: z.enum(shapeValues).optional(),
   direction: z.enum(directionValues).optional(),
+  parentId: z.string().optional(),
 });
 
 export type Bounds = z.infer<typeof boundsSchema>;

@@ -92,7 +92,15 @@ export function deleteNodes(ids: string[]): void {
     ...state,
     document: {
       ...state.document,
-      nodes: state.document.nodes.filter((n) => !idSet.has(n.id)),
+      nodes: state.document.nodes
+        .filter((n) => !idSet.has(n.id))
+        .map((n) => {
+          if (n.parentId && idSet.has(n.parentId)) {
+            const { parentId, ...rest } = n;
+            return rest as Node;
+          }
+          return n;
+        }),
       edges: state.document.edges.filter(
         (e) =>
           !("nodeId" in e.from && idSet.has(e.from.nodeId)) &&
@@ -183,15 +191,22 @@ type NodeChanges = {
   label?: string;
   shape?: string;
   direction?: Node["direction"];
+  parentId?: string | null;
 };
 
 function applyNodeChanges(node: Node, changes: NodeChanges): Node {
-  const { bounds: boundsChanges, ...rest } = changes;
-  return {
+  const { bounds: boundsChanges, parentId, ...rest } = changes;
+  const updated: Node = {
     ...node,
     ...rest,
     ...(boundsChanges ? { bounds: { ...node.bounds, ...boundsChanges } } : {}),
   };
+  if (parentId === null) {
+    delete updated.parentId;
+  } else if (parentId !== undefined) {
+    updated.parentId = parentId;
+  }
+  return updated;
 }
 
 export function updateNode(id: string, changes: NodeChanges): void {
@@ -220,6 +235,34 @@ export function updateNodes(updates: { id: string; changes: NodeChanges }[]): vo
     },
   };
   notify();
+}
+
+export function getChildNodeIds(parentId: string): string[] {
+  return state.document.nodes.filter((n) => n.parentId === parentId).map((n) => n.id);
+}
+
+export function getDescendantIds(nodeId: string): string[] {
+  const result: string[] = [];
+  const stack = [nodeId];
+  while (stack.length > 0) {
+    const id = stack.pop()!;
+    const children = getChildNodeIds(id);
+    for (const childId of children) {
+      result.push(childId);
+      stack.push(childId);
+    }
+  }
+  return result;
+}
+
+export function getNodeDepth(nodeId: string): number {
+  let depth = 0;
+  let current = state.document.nodes.find((n) => n.id === nodeId);
+  while (current?.parentId) {
+    depth++;
+    current = state.document.nodes.find((n) => n.id === current!.parentId);
+  }
+  return depth;
 }
 
 export function subscribe(listener: Listener): () => void {

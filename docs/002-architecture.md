@@ -19,7 +19,7 @@ Edits from the canvas apply via `WorkspaceEdit` which marks the tab dirty (does 
 ```
 src/
   extension.ts            Activation: registers VscpEditorProvider + perspective.linkToNode command
-  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum) and direction ("up"|"right"|"down"|"left", omitted when "up")
+  schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum), direction ("up"|"right"|"down"|"left", omitted when "up"), and parentId (string, for node grouping)
   messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink
   vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler
   webview/
@@ -31,7 +31,7 @@ src/
       canvasNode.ts       Node container factory (shape Graphics + Text label) + drag/click/dblclick handlers
       shapeDrawing.ts     Centralized drawShape() + directionToDeg() — 12 shape types, direction-based orientation within bounding box
       canvasEdge.ts       Edge Graphics factory + line/arrowhead rendering + endpoint resolution
-      edgeUtils.ts        Shared edge utilities: findNodeAtPoint, computeAnchor, buildEndpoint, dot constants
+      edgeUtils.ts        Shared edge utilities: findNodeAtPoint (with optional excludeIds), computeAnchor, buildEndpoint, dot constants
       selectionOverlay.ts Dashed bounding box + 8 resize handles for selected nodes
       edgeHandleOverlay.ts Draggable endpoint handles on selected edges — drag to reposition from/to
     controls/
@@ -40,8 +40,9 @@ src/
       sidebar.ts          Sidebar controls for node fill color, label color, shape dropdown, and direction rotate button
     interactions/
       panZoom.ts          Viewport panning and mouse-wheel zoom-to-cursor
-      keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state
+      keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state — copy/paste includes descendants
       edgeMode.ts         Edge creation mode — toolbar toggle, two-click workflow, preview line + cursor dot
+      groupStatus.ts      Group status bar — shows parent info on selection, drag-to-group messages, remove-from-group link
       labelEditor.ts      DOM textarea overlay for inline label editing on double-click
       selectionBox.ts     Shift+drag rubber-band selection box + click-off deselect
       cursorManager.ts    Centralized cursor priority manager (pan/select)
@@ -64,7 +65,7 @@ app.stage                         (background click-to-deselect)
           └─ Graphics × 2         (from/to endpoint handles)
 ```
 
-Z-index layers (bottom to top): edges (0+i), regular nodes (1000+i), text-shape nodes (2000+i), overlays (9000+).
+Z-index layers (bottom to top): edges (0+i), depth-0 nodes (1000+i), depth-0 text nodes (1500+i), depth-1 nodes (2000+i), depth-1 text nodes (2500+i), etc. Overlays at 9000+. Depth is determined by `parentId` ancestry chain — children render above parents.
 
 ## Build
 
@@ -84,7 +85,8 @@ Two esbuild bundles (`npm run build`):
 - **Multi-select** (`canvasNode.ts`): Shift+click toggles nodes in/out of selection. Multi-drag uses absolute positioning from recorded start positions to avoid delta accumulation drift. A `groupDraggingIds` set prevents re-renders from resetting companion nodes mid-drag.
 - **Selection box** (`selectionBox.ts`): Shift+drag on empty space draws a rubber-band box. Nodes are selected on overlap (not full containment). Drag-select unions with existing selection; click on empty space without Shift clears selection.
 - **Cursor management** (`cursorManager.ts`): Simple priority-based cursor stack so pan (grab/grabbing) and selection (crosshair) cues don’t fight.
-- **Copy/paste** (`keyboard.ts`): Ctrl+C snapshots selected nodes; Ctrl+V pastes with new IDs and +20,+20 offset. Repeated paste cascades diagonally.
+- **Node grouping** (`state.ts`, `canvasNode.ts`, `groupStatus.ts`): Any node can be a parent via `parentId`. Drag a node onto another to group; drag off to ungroup. Parent nodes render at lower z-index (depth-based). Dragging a parent cascades movement to all descendants. Deleting a parent orphans children (clears their `parentId`). Copy/paste preserves group relationships within the clipboard set. Status bar shows current group and a clickable "Remove" link.
+- **Copy/paste** (`keyboard.ts`): Ctrl+C snapshots selected nodes plus all descendants; Ctrl+V pastes with new IDs, +20,+20 offset, and remapped `parentId` references. Only root pasted nodes are selected. Repeated paste cascades diagonally.
 - **Delete** (`keyboard.ts`): Delete/Backspace removes selected nodes.
 - **Snap to grid** (`gridSnap.ts`): Optional grid snapping (20px) applied during drag and resize. Toggled via toolbar button.
 - **Lock mode** (`lockToggle.ts`): Toggles all interactions off — deselects nodes, hides sidebar, disables dragging and transforms. Linked nodes remain clickable to follow file links.

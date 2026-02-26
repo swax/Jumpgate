@@ -24,6 +24,7 @@ import { setupKeyboard } from "./interactions/keyboard";
 import { setupEdgeMode } from "./interactions/edgeMode";
 import { setupSelectionBox } from "./interactions/selectionBox";
 import { createCursorManager } from "./interactions/cursorManager";
+import { setupGroupStatus } from "./interactions/groupStatus";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -117,6 +118,7 @@ async function main(): Promise<void> {
   });
 
   setupKeyboard(sendEditDebounced);
+  setupGroupStatus(sendEditDebounced);
   setupEdgeMode(
     document.getElementById("edge-btn") as HTMLButtonElement,
     viewport,

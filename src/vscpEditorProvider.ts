@@ -301,6 +301,31 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       pointer-events: none;
       white-space: nowrap;
     }
+    #group-status {
+      display: none;
+      position: fixed;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 12px;
+      border-radius: 4px;
+      background: var(--vscode-editorWidget-background, #252526);
+      color: var(--vscode-editorWidget-foreground, #cccccc);
+      border: 1px solid var(--vscode-editorWidget-border, #454545);
+      font-family: var(--vscode-font-family, sans-serif);
+      font-size: 12px;
+      z-index: 20;
+      pointer-events: auto;
+      white-space: nowrap;
+    }
+    #group-status a {
+      color: var(--vscode-textLink-foreground, #3794ff);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    #group-status a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -309,6 +334,7 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   <button id="snap-btn" class="toolbar-btn" title="Snap to grid (on)"></button>
   <button id="lock-btn" class="toolbar-btn" title="Lock editing"></button>
   <div id="edge-mode-status"></div>
+  <div id="group-status"></div>
   <div id="sidebar">
     <input type="color" id="fill-color" class="color-field" title="Node color">
     <div id="text-color-wrapper" title="Label color">

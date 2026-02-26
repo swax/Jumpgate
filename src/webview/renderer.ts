@@ -3,7 +3,7 @@ import type { Bounds, Edge, Node } from "../schema";
 import { createCanvasNode, updateCanvasNode, updateNodeTextResolution, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
 import { createCanvasEdge, updateCanvasEdge, resolveEndpoint } from "./canvas/canvasEdge";
 import type { LabelEditContext } from "./interactions/labelEditor";
-import type { EditorState } from "./state";
+import { getNodeDepth, type EditorState } from "./state";
 import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
 
@@ -14,6 +14,7 @@ type NodeChanges = {
   label?: string;
   shape?: string;
   direction?: Node["direction"];
+  parentId?: string | null;
 };
 
 export interface RendererCallbacks {
@@ -36,15 +37,8 @@ export function createRenderer(
   let snapEnabled = true;
   let isEdgeMode = false;
 
-  // Enable z-index sorting on the viewport and edge layer
+  // Enable z-index sorting on the viewport
   viewport.sortableChildren = true;
-
-  // Edge layer sits in the middle (between regular nodes and text-shape nodes)
-  const edgeLayer = new Container();
-  edgeLayer.label = "__edge-layer";
-  edgeLayer.zIndex = 0;
-  edgeLayer.sortableChildren = true;
-  viewport.addChildAt(edgeLayer, 0);
 
   const labelColor =
     getComputedStyle(document.documentElement)
@@ -108,6 +102,20 @@ export function createRenderer(
     },
   };
 
+  const nodeZIndexMap = new Map<string, number>();
+
+  function computeEdgeZIndex(edge: Edge): number {
+    const fromId = "nodeId" in edge.from ? edge.from.nodeId : null;
+    const toId = "nodeId" in edge.to ? edge.to.nodeId : null;
+    const fromZ = fromId ? nodeZIndexMap.get(fromId) : undefined;
+    const toZ = toId ? nodeZIndexMap.get(toId) : undefined;
+
+    if (fromZ !== undefined && toZ !== undefined) return Math.max(fromZ, toZ) - 0.5;
+    if (fromZ !== undefined) return fromZ - 0.5;
+    if (toZ !== undefined) return toZ - 0.5;
+    return 8999; // free-floating: above all nodes, below overlays
+  }
+
   let lastState: EditorState | null = null;
 
   // Keep text crisp during zoom by updating resolution when viewport scale changes
@@ -143,9 +151,9 @@ export function createRenderer(
     // Remove edges for deleted items
     for (const id of prevEdgeIds) {
       if (!currentEdgeIds.has(id)) {
-        const gfx = edgeLayer.getChildByLabel(id);
+        const gfx = viewport.getChildByLabel(id);
         if (gfx) {
-          edgeLayer.removeChild(gfx);
+          viewport.removeChild(gfx);
           gfx.destroy();
         }
       }
@@ -167,15 +175,15 @@ export function createRenderer(
       const to = resolveEndpoint(renderEdge.to, nodeMap);
       if (!from || !to) continue;
 
-      let gfx = edgeLayer.getChildByLabel(edge.id) as Graphics | null;
+      let gfx = viewport.getChildByLabel(edge.id) as Graphics | null;
       if (!gfx) {
         gfx = createCanvasEdge(edge, {
           onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
         });
-        edgeLayer.addChild(gfx);
+        viewport.addChild(gfx);
       }
 
-      gfx.zIndex = i;
+      gfx.zIndex = (handleOverride && edge.id === handleOverride.edgeId) ? 8999 : computeEdgeZIndex(edge);
       updateCanvasEdge(gfx, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x);
     }
 
@@ -221,8 +229,12 @@ export function createRenderer(
         viewport.addChild(group);
       }
 
-      // Regular nodes: 1000+, text-shape nodes: 2000+
-      group.zIndex = node.shape === "text" ? 2000 + i : 1000 + i;
+      if (!isDraggingNode(node.id)) {
+        const depth = getNodeDepth(node.id);
+        const textOffset = node.shape === "text" ? 500 : 0;
+        group.zIndex = 1000 + depth * 1000 + textOffset + i;
+      }
+      nodeZIndexMap.set(node.id, group.zIndex);
 
       const hasFileLink = !!node.fileLink;
       group.eventMode = (isLocked && !hasFileLink) ? "none" : "static";
