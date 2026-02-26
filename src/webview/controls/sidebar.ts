@@ -1,5 +1,5 @@
 import { directionValues, type Edge, type Node } from "../../schema";
-import { getState, subscribe } from "../state";
+import { getState, subscribe, getNodeById, getEdgeById } from "../state";
 
 const DEFAULT_FILL = "#888888";
 const DEFAULT_TEXT = "#cccccc";
@@ -108,7 +108,7 @@ export function setupSidebar(
     const { document: doc } = getState();
     if (callbacks.onNodesChanged) {
       const updates = targetIds.map((id) => {
-        const node = doc.nodes.find((n) => n.id === id)!;
+        const node = getNodeById(id)!;
         const curIdx = directionValues.indexOf(node.direction ?? "up");
         const newDirection = directionValues[(curIdx + 1) % directionValues.length];
         const { x, y, width, height } = node.bounds;
@@ -128,7 +128,7 @@ export function setupSidebar(
       callbacks.onNodesChanged(updates);
     } else {
       for (const id of targetIds) {
-        const node = doc.nodes.find((n) => n.id === id)!;
+        const node = getNodeById(id)!;
         const curIdx = directionValues.indexOf(node.direction ?? "up");
         const newDirection = directionValues[(curIdx + 1) % directionValues.length];
         const { x, y, width, height } = node.bounds;
@@ -153,7 +153,7 @@ export function setupSidebar(
     sidebar.style.display = locked ? "none" : "";
 
     if (selectedNodeIds.length > 0) {
-      const node = doc.nodes.find((n) => n.id === selectedNodeIds[0]);
+      const node = getNodeById(selectedNodeIds[0]);
       if (node) {
         targetIds = selectedNodeIds;
         targetType = "node";
@@ -163,7 +163,7 @@ export function setupSidebar(
         rotateBtn.disabled = false;
       }
     } else if (selectedEdgeIds.length > 0) {
-      const edge = doc.edges.find((e) => e.id === selectedEdgeIds[0]);
+      const edge = getEdgeById(selectedEdgeIds[0]);
       if (edge) {
         targetIds = selectedEdgeIds;
         targetType = "edge";

@@ -1,4 +1,4 @@
-import { getState, subscribe, updateNode } from "../state";
+import { getState, subscribe, updateNode, getNodeById } from "../state";
 
 let statusEl: HTMLElement;
 let onEditCallback: () => void;
@@ -18,9 +18,9 @@ export function setupGroupStatus(onEdit: () => void): void {
 function updateSelectionMessage(): void {
   const state = getState();
   if (state.selectedNodeIds.length === 1) {
-    const node = state.document.nodes.find((n) => n.id === state.selectedNodeIds[0]);
+    const node = getNodeById(state.selectedNodeIds[0]);
     if (node?.parentId) {
-      const parent = state.document.nodes.find((n) => n.id === node.parentId);
+      const parent = getNodeById(node.parentId);
       const parentLabel = parent?.label || parent?.id || node.parentId;
       statusEl.innerHTML = `In group: ${escapeHtml(parentLabel)} \u2014 <a id="group-remove-link">Remove</a>`;
       statusEl.style.display = "block";

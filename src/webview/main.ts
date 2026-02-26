@@ -17,7 +17,10 @@ import {
   addEdge,
   updateEdge,
   generateEdgeId,
+  getNodeById,
+  getEdgeById,
 } from "./state";
+import type { NodeChanges } from "./shared";
 import { createRenderer } from "./renderer";
 import { setupPanZoom } from "./interactions/panZoom";
 import { setupLockToggle } from "./controls/lockToggle";
@@ -56,24 +59,6 @@ async function main(): Promise<void> {
 
   setupSelectionBox(app, viewport, cursorManager);
 
-  setupPanZoom(app, viewport, cursorManager);
-  setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
-  setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
-  setupSidebar(document.documentElement, {
-    onNodeChanged: (id, changes) => {
-      updateNode(id, changes);
-      sendEditDebounced();
-    },
-    onNodesChanged: (updates) => {
-      updateNodes(updates);
-      sendEditDebounced();
-    },
-    onEdgeChanged: (id, changes) => {
-      updateEdge(id, changes);
-      sendEditDebounced();
-    },
-  });
-
   // Debounced edit sender
   let editTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -87,16 +72,24 @@ async function main(): Promise<void> {
     }, 100);
   }
 
+  // Helper wrappers: update state + send edit in one call
+  const nodeChanged = (id: string, changes: NodeChanges) => { updateNode(id, changes); sendEditDebounced(); };
+  const nodesChanged = (updates: { id: string; changes: NodeChanges }[]) => { updateNodes(updates); sendEditDebounced(); };
+  const edgeChanged = (id: string, changes: Partial<import("../schema").Edge>) => { updateEdge(id, changes); sendEditDebounced(); };
+
+  setupPanZoom(app, viewport, cursorManager);
+  setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
+  setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
+  setupSidebar(document.documentElement, {
+    onNodeChanged: nodeChanged,
+    onNodesChanged: nodesChanged,
+    onEdgeChanged: edgeChanged,
+  });
+
   // Create renderer and wire up state subscription
   const renderer = createRenderer(app, viewport, {
-    onNodeChanged: (id, changes) => {
-      updateNode(id, changes);
-      sendEditDebounced();
-    },
-    onNodesChanged: (updates) => {
-      updateNodes(updates);
-      sendEditDebounced();
-    },
+    onNodeChanged: nodeChanged,
+    onNodesChanged: nodesChanged,
     onSelect: (id, shiftKey) => {
       if (shiftKey) {
         toggleSelectedNodeId(id);
@@ -105,10 +98,9 @@ async function main(): Promise<void> {
       }
     },
     onOpenFileLink: (id, kind) => {
-      const doc = getState().document;
       const fileLink = kind === "edge"
-        ? doc.edges.find((e) => e.id === id)?.fileLink
-        : doc.nodes.find((n) => n.id === id)?.fileLink;
+        ? getEdgeById(id)?.fileLink
+        : getNodeById(id)?.fileLink;
       if (fileLink) {
         postMessage({ type: "openFileLink", path: fileLink.path, match: fileLink.match });
       }
@@ -116,10 +108,7 @@ async function main(): Promise<void> {
     onEdgeSelect: (edgeId) => {
       setSelectedEdgeIds([edgeId]);
     },
-    onEdgeChanged: (id, changes) => {
-      updateEdge(id, changes);
-      sendEditDebounced();
-    },
+    onEdgeChanged: edgeChanged,
   });
 
 

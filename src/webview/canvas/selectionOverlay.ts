@@ -1,12 +1,10 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds } from "../../schema";
+import type { NodeChanges } from "../shared";
 import { snap, GRID_SIZE } from "../controls/gridSnap";
 import { setContainerBounds } from "./canvasNode";
 import { drawShape } from "./shapeDrawing";
-
-type NodeChanges = {
-  bounds?: Partial<Bounds>;
-};
+import { getNodeRectMeta } from "./metadata";
 
 export interface SelectionOverlayCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
@@ -326,10 +324,11 @@ export class SelectionOverlay {
         const rect = container.getChildByLabel("node-rect") as Graphics;
         const text = container.getChildByLabel("node-label") as any;
         if (rect) {
-          const fill = (rect as any)._fillColor ?? 0x888888;
-          const strokeClr = (rect as any)._strokeColor ?? 0x333333;
-          const shape = (rect as any)._nodeShape;
-          const dir = (rect as any)._nodeDirection;
+          const rectMeta = getNodeRectMeta(rect);
+          const fill = rectMeta?.fillColor ?? 0x888888;
+          const strokeClr = rectMeta?.strokeColor ?? 0x333333;
+          const shape = rectMeta?.nodeShape;
+          const dir = rectMeta?.nodeDirection;
           rect.clear();
           drawShape(rect, newW, newH, shape, fill, strokeClr, dir);
         }
@@ -367,10 +366,11 @@ export class SelectionOverlay {
           const rect = container.getChildByLabel("node-rect") as Graphics;
           const text = container.getChildByLabel("node-label") as any;
           if (rect) {
-            const fill = (rect as any)._fillColor ?? 0x888888;
-            const strokeClr = (rect as any)._strokeColor ?? 0x333333;
-            const shape = (rect as any)._nodeShape;
-            const dir = (rect as any)._nodeDirection;
+            const rectMeta = getNodeRectMeta(rect);
+            const fill = rectMeta?.fillColor ?? 0x888888;
+            const strokeClr = rectMeta?.strokeColor ?? 0x333333;
+            const shape = rectMeta?.nodeShape;
+            const dir = rectMeta?.nodeDirection;
             rect.clear();
             drawShape(rect, newBounds.width, newBounds.height, shape, fill, strokeClr, dir);
           }

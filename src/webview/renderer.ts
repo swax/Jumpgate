@@ -1,23 +1,14 @@
 import { Application, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
+import type { NodeChanges } from "./shared";
 import { createCanvasNode, updateCanvasNode, updateNodeTextResolution, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
 import { createCanvasEdge, updateCanvasEdge, updateEdgeTextResolution, resolveEndpoint, buildPolylinePoints, pointToSegmentDistance } from "./canvas/canvasEdge";
 import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
-import { getNodeDepth, type EditorState } from "./state";
+import { getNodeDepth, getNodeById, getEdgeById, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
 import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
 import { MIN_TEXT_RESOLUTION } from "./canvas/textDefaults";
-
-type NodeChanges = {
-  bounds?: Partial<Node["bounds"]>;
-  nodeColor?: string;
-  labelColor?: string;
-  label?: string;
-  shape?: string;
-  direction?: Node["direction"];
-  parentId?: string | null;
-};
 
 export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
@@ -199,7 +190,7 @@ export function createRenderer(
 
             // Ctrl+double-click: insert a waypoint at the clicked segment
             if (ctrlKey && worldPos) {
-              const currentEdge = lastState?.document.edges.find((e) => e.id === edgeId);
+              const currentEdge = getEdgeById(edgeId);
               if (!currentEdge) return;
 
               const from = resolveEndpoint(currentEdge.from, buildNodeMap(lastState!));
@@ -319,7 +310,7 @@ export function createRenderer(
     if (stateSelectedNodeIds.length > 0 && !locked) {
       const nodeInfos = stateSelectedNodeIds
         .map((id) => {
-          const n = doc.nodes.find((n) => n.id === id);
+          const n = getNodeById(id);
           if (!n) return null;
           return { id: n.id, ...n.bounds };
         })

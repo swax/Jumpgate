@@ -1,4 +1,5 @@
 import { Application, Container, Graphics, FederatedPointerEvent } from "pixi.js";
+import { DRAG_THRESHOLD } from "../shared";
 import { getState, setSelectedEdgeIds, setSelectedNodeIds } from "../state";
 import { getContainerBounds } from "../canvas/canvasNode";
 import type { CursorManager } from "./cursorManager";
@@ -6,7 +7,6 @@ import type { CursorManager } from "./cursorManager";
 const SELECTION_COLOR = 0x3399ff;
 const SELECTION_ALPHA = 0.15;
 const SELECTION_STROKE_ALPHA = 0.8;
-const DRAG_THRESHOLD = 4;
 
 export function setupSelectionBox(
   app: Application,

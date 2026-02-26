@@ -1,34 +1,45 @@
 import { Container, Graphics, Text as PixiText, TextStyle, FederatedPointerEvent } from "pixi.js";
-import type { Bounds, Node, NodeDirection } from "../../schema";
+import type { Bounds, Node } from "../../schema";
+import type { NodeChanges } from "../shared";
+import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
 import { startLabelEdit, type LabelEditContext } from "../interactions/labelEditor";
 import { showGroupDragMessage, hideGroupDragMessage } from "../interactions/groupStatus";
-import { getState, getDescendantIds, getChildNodeIds } from "../state";
+import { getState, getDescendantIds, getChildNodeIds, getNodeById } from "../state";
 import { snap } from "../controls/gridSnap";
 import { drawShape } from "./shapeDrawing";
 import { findNodeAtPoint } from "./edgeUtils";
 import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
+import { getNodeMeta, setNodeMeta, setNodeRectMeta } from "./metadata";
 
 const DEFAULT_NODE_COLOR = 0x888888;
 const STROKE_COLOR = 0x333333;
 
 export function getContainerBounds(container: Container): Bounds {
+  const meta = getNodeMeta(container);
   return {
     x: container.position.x,
     y: container.position.y,
-    width: (container as any)._nodeWidth ?? 100,
-    height: (container as any)._nodeHeight ?? 100,
+    width: meta?.nodeWidth ?? 100,
+    height: meta?.nodeHeight ?? 100,
   };
 }
 
 export function setContainerBounds(container: Container, bounds: Bounds): void {
   container.position.set(bounds.x, bounds.y);
-  (container as any)._nodeWidth = bounds.width;
-  (container as any)._nodeHeight = bounds.height;
-}
-
-function colorToHex(color: string | undefined, fallback: number): number {
-  if (!color) return fallback;
-  return parseInt(color.replace("#", ""), 16);
+  const meta = getNodeMeta(container);
+  if (meta) {
+    meta.nodeWidth = bounds.width;
+    meta.nodeHeight = bounds.height;
+  } else {
+    setNodeMeta(container, {
+      fillColor: 0x888888,
+      strokeColor: 0x333333,
+      nodeWidth: bounds.width,
+      nodeHeight: bounds.height,
+      hasFileLink: false,
+      fileLinkPath: null,
+    });
+  }
 }
 
 /** IDs of nodes currently being moved as part of a multi-drag. */
@@ -36,16 +47,6 @@ const groupDraggingIds = new Set<string>();
 
 /** IDs of nodes currently being dragged (including single drag). */
 const draggingIds = new Set<string>();
-
-type NodeChanges = {
-  bounds?: Partial<Node["bounds"]>;
-  nodeColor?: string;
-  labelColor?: string;
-  label?: string;
-  shape?: string;
-  direction?: NodeDirection;
-  parentId?: string | null;
-};
 
 export interface CanvasNodeCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
@@ -76,10 +77,6 @@ export function createCanvasNode(
   const rect = new Graphics();
   rect.label = "node-rect";
   drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, STROKE_COLOR, node.direction);
-  (rect as any)._fillColor = fillColor;
-  (rect as any)._strokeColor = STROKE_COLOR;
-  (rect as any)._nodeShape = node.shape;
-  (rect as any)._nodeDirection = node.direction;
   rect.eventMode = "passive";
 
   const textFill = node.labelColor ?? labelColor;
@@ -105,20 +102,31 @@ export function createCanvasNode(
 
   group.addChild(rect);
   group.addChild(text);
-  (group as any)._nodeDirection = node.direction;
-  (group as any)._hasFileLink = !!node.fileLink;
-  (group as any)._fileLinkPath = node.fileLink?.path ?? null;
+
+  const meta = {
+    fillColor,
+    strokeColor: STROKE_COLOR,
+    nodeShape: node.shape,
+    nodeDirection: node.direction,
+    nodeWidth: node.bounds.width,
+    nodeHeight: node.bounds.height,
+    hasFileLink: !!node.fileLink,
+    fileLinkPath: node.fileLink?.path ?? null,
+  };
+  setNodeMeta(group, meta);
+  setNodeRectMeta(rect, meta);
 
   // Tooltip on linked node hover
   group.on("pointerover", () => {
-    const path = (group as any)._fileLinkPath;
-    if (path) {
+    const m = getNodeMeta(group);
+    if (m?.fileLinkPath) {
       const canvas = document.querySelector("canvas");
-      if (canvas) canvas.title = `${path} (Ctrl+Click)`;
+      if (canvas) canvas.title = `${m.fileLinkPath} (Ctrl+Click)`;
     }
   });
   group.on("pointerout", () => {
-    if ((group as any)._fileLinkPath) {
+    const m = getNodeMeta(group);
+    if (m?.fileLinkPath) {
       const canvas = document.querySelector("canvas");
       if (canvas) canvas.title = "";
     }
@@ -129,8 +137,6 @@ export function createCanvasNode(
   // --- Click / double-click detection ---
   let pointerDownPos: { x: number; y: number } | null = null;
   let lastClickTime = 0;
-  const DOUBLE_CLICK_MS = 400;
-  const DRAG_THRESHOLD = 4;
 
   // --- Drag state ---
   let isDragging = false;
@@ -140,7 +146,7 @@ export function createCanvasNode(
   group.on("pointerdown", (e: FederatedPointerEvent) => {
     // In locked mode, click on linked nodes opens the file link
     if (callbacks.isLocked()) {
-      if (!(group as any)._hasFileLink) return;
+      if (!getNodeMeta(group)?.hasFileLink) return;
       e.stopPropagation();
       const onUpLocked = () => {
         group.off("pointerup", onUpLocked);
@@ -261,8 +267,9 @@ export function createCanvasNode(
       dropTargetId = null;
       removeFromGroup = false;
       if (startPositions.size <= 1) {
-        const nodeWidth = (group as any)._nodeWidth ?? 100;
-        const nodeHeight = (group as any)._nodeHeight ?? 100;
+        const groupMeta = getNodeMeta(group);
+        const nodeWidth = groupMeta?.nodeWidth ?? 100;
+        const nodeHeight = groupMeta?.nodeHeight ?? 100;
         const centerX = group.position.x + nodeWidth / 2;
         const centerY = group.position.y + nodeHeight / 2;
 
@@ -270,12 +277,12 @@ export function createCanvasNode(
         const excludeIds = new Set([nodeId, ...getDescendantIds(nodeId)]);
         const hitNode = findNodeAtPoint(centerX, centerY, viewport, excludeIds);
 
-        const currentNode = getState().document.nodes.find((n) => n.id === nodeId);
+        const currentNode = getNodeById(nodeId);
         const currentParentId = currentNode?.parentId;
 
         if (hitNode) {
           dropTargetId = hitNode.nodeId;
-          const targetNode = getState().document.nodes.find((n) => n.id === hitNode.nodeId);
+          const targetNode = getNodeById(hitNode.nodeId);
           const targetLabel = targetNode?.label || targetNode?.id || hitNode.nodeId;
           if (currentParentId && currentParentId !== hitNode.nodeId) {
             showGroupDragMessage(`Move to ${targetLabel}`);
@@ -290,7 +297,7 @@ export function createCanvasNode(
           if (parentContainer) {
             const pb = getContainerBounds(parentContainer);
             if (centerX < pb.x || centerX > pb.x + pb.width || centerY < pb.y || centerY > pb.y + pb.height) {
-              const parentNode = getState().document.nodes.find((n) => n.id === currentParentId);
+              const parentNode = getNodeById(currentParentId);
               const parentLabel = parentNode?.label || parentNode?.id || currentParentId;
               showGroupDragMessage(`Remove from ${parentLabel}`);
               removeFromGroup = true;
@@ -368,7 +375,7 @@ export function createCanvasNode(
         cascadePositions.clear();
 
         const now = Date.now();
-        if ((group as any)._hasFileLink && ue.ctrlKey) {
+        if (getNodeMeta(group)?.hasFileLink && ue.ctrlKey) {
           // Ctrl+Click on linked node — open file
           callbacks.onSelect(nodeId, false);
           callbacks.onOpenFileLink(nodeId);
@@ -416,11 +423,19 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
   rect.clear();
   drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, STROKE_COLOR, node.direction);
-  (rect as any)._fillColor = fillColor;
-  (rect as any)._strokeColor = STROKE_COLOR;
-  (rect as any)._nodeShape = node.shape;
-  (rect as any)._nodeDirection = node.direction;
-  (group as any)._nodeDirection = node.direction;
+
+  const updatedMeta = {
+    fillColor,
+    strokeColor: STROKE_COLOR,
+    nodeShape: node.shape,
+    nodeDirection: node.direction,
+    nodeWidth: node.bounds.width,
+    nodeHeight: node.bounds.height,
+    hasFileLink: !!node.fileLink,
+    fileLinkPath: node.fileLink?.path ?? null,
+  };
+  setNodeMeta(group, updatedMeta);
+  setNodeRectMeta(rect, updatedMeta);
 
   const textFill = node.labelColor ?? labelColor;
   text.text = node.label || "";
@@ -430,8 +445,5 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   const hasChildren = getChildNodeIds(node.id).length > 0;
   text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
 
-  const hasLink = !!node.fileLink;
-  group.cursor = hasLink ? "pointer" : "default";
-  (group as any)._hasFileLink = hasLink;
-  (group as any)._fileLinkPath = node.fileLink?.path ?? null;
+  group.cursor = updatedMeta.hasFileLink ? "pointer" : "default";
 }

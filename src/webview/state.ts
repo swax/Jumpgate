@@ -1,4 +1,5 @@
 import type { Edge, Node, VscpDocument } from "../schema";
+import type { NodeChanges } from "./shared";
 
 let usedNodeIds = new Set<string>();
 let usedEdgeIds = new Set<string>();
@@ -184,16 +185,6 @@ export function setSnapToGrid(snapToGrid: boolean): void {
   notify();
 }
 
-type NodeChanges = {
-  bounds?: Partial<Node["bounds"]>;
-  nodeColor?: string;
-  labelColor?: string;
-  label?: string;
-  shape?: string;
-  direction?: Node["direction"];
-  parentId?: string | null;
-};
-
 function applyNodeChanges(node: Node, changes: NodeChanges): Node {
   const { bounds: boundsChanges, parentId, ...rest } = changes;
   const updated: Node = {
@@ -237,6 +228,24 @@ export function updateNodes(updates: { id: string; changes: NodeChanges }[]): vo
   notify();
 }
 
+// Lazily-computed lookup maps, invalidated on any state mutation
+let nodeMap: Map<string, Node> | null = null;
+let edgeMap: Map<string, Edge> | null = null;
+
+export function getNodeById(id: string): Node | undefined {
+  if (!nodeMap) {
+    nodeMap = new Map(state.document.nodes.map((n) => [n.id, n]));
+  }
+  return nodeMap.get(id);
+}
+
+export function getEdgeById(id: string): Edge | undefined {
+  if (!edgeMap) {
+    edgeMap = new Map(state.document.edges.map((e) => [e.id, e]));
+  }
+  return edgeMap.get(id);
+}
+
 export function getChildNodeIds(parentId: string): string[] {
   return state.document.nodes.filter((n) => n.parentId === parentId).map((n) => n.id);
 }
@@ -257,10 +266,10 @@ export function getDescendantIds(nodeId: string): string[] {
 
 export function getNodeDepth(nodeId: string): number {
   let depth = 0;
-  let current = state.document.nodes.find((n) => n.id === nodeId);
+  let current = getNodeById(nodeId);
   while (current?.parentId) {
     depth++;
-    current = state.document.nodes.find((n) => n.id === current!.parentId);
+    current = getNodeById(current.parentId);
   }
   return depth;
 }
@@ -271,6 +280,8 @@ export function subscribe(listener: Listener): () => void {
 }
 
 function notify(): void {
+  nodeMap = null;
+  edgeMap = null;
   for (const listener of listeners) {
     listener();
   }

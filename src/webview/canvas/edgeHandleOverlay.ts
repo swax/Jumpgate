@@ -1,12 +1,12 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
+import { DOUBLE_CLICK_MS } from "../shared";
 import { resolveEndpoint } from "./canvasEdge";
 import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "./edgeUtils";
 import { resolveAnchor } from "./canvasEdge";
-import { getState } from "../state";
+import { getState, getEdgeById } from "../state";
 import { snap } from "../controls/gridSnap";
-
-const DOUBLE_CLICK_MS = 400;
+import { getEdgeHandleMeta, setEdgeHandleMeta, getWaypointMeta, setWaypointMeta } from "./metadata";
 const MERGE_DISTANCE = 15;
 
 export interface EdgeHandleCallbacks {
@@ -31,6 +31,10 @@ export class EdgeHandleOverlay {
   private dragWaypointEdgeId: string | null = null;
   private dragWaypoints: { x: number; y: number }[] | null = null;
   private isDraggingWaypoint = false;
+
+  // Current edge context for waypoint listeners (updated each render cycle)
+  private currentEdgeId: string | null = null;
+  private currentNodeMap: Map<string, Bounds> | null = null;
 
   constructor(viewportGetter: () => Container, callbacks: EdgeHandleCallbacks) {
     this.viewportGetter = viewportGetter;
@@ -76,8 +80,7 @@ export class EdgeHandleOverlay {
 
   /** Insert a waypoint at the given segment index and position. */
   insertWaypoint(edgeId: string, segmentIndex: number, point: { x: number; y: number }): void {
-    const doc = getState().document;
-    const edge = doc.edges.find((e) => e.id === edgeId);
+    const edge = getEdgeById(edgeId);
     if (!edge) return;
 
     const existing = edge.waypoints ? [...edge.waypoints] : [];
@@ -90,7 +93,7 @@ export class EdgeHandleOverlay {
     handle.cursor = "grabbing";
 
     const viewport = this.viewportGetter();
-    const edgeId = (this.container as any)._activeEdgeId as string;
+    const edgeId = getEdgeHandleMeta(this.container)!.activeEdgeId;
     this.dragEdgeId = edgeId;
     this.dragWhich = which;
 
@@ -154,7 +157,7 @@ export class EdgeHandleOverlay {
   }
 
   private ensureWaypointHandles(count: number): void {
-    // Create handles as needed
+    // Create handles as needed, attaching listener once
     while (this.waypointHandles.length < count) {
       const handle = new Graphics();
       handle.label = `edge-handle-wp-${this.waypointHandles.length}`;
@@ -163,6 +166,34 @@ export class EdgeHandleOverlay {
       handle.visible = false;
       this.container.addChild(handle);
       this.waypointHandles.push(handle);
+
+      // Attach listener once — reads metadata dynamically
+      handle.on("pointerdown", (e: FederatedPointerEvent) => {
+        e.stopPropagation();
+        const wpMeta = getWaypointMeta(handle);
+        if (!wpMeta) return;
+        const wpIndex = wpMeta.wpIndex;
+        const edgeId = this.currentEdgeId;
+        if (!edgeId) return;
+        const edge = getEdgeById(edgeId);
+        if (!edge) return;
+
+        const isCtrl = e.ctrlKey || e.metaKey;
+
+        if (isCtrl) {
+          const lastCtrl = wpMeta.lastCtrlClickTime;
+          const now = Date.now();
+          if (now - lastCtrl < DOUBLE_CLICK_MS) {
+            setWaypointMeta(handle, { wpIndex, lastCtrlClickTime: 0 });
+            this.removeWaypoint(edgeId, wpIndex);
+          } else {
+            setWaypointMeta(handle, { wpIndex, lastCtrlClickTime: now });
+          }
+          return;
+        }
+
+        this.startWaypointDrag(handle, wpIndex, edge, this.currentNodeMap!, e);
+      });
     }
 
     // Show/hide handles
@@ -177,45 +208,15 @@ export class EdgeHandleOverlay {
     }
   }
 
-  private setupWaypointHandle(
-    handle: Graphics,
-    wpIndex: number,
-    edge: Edge,
-    nodeMap: Map<string, Bounds>,
-    viewportScale: number
-  ): void {
-    // Store index for dynamic lookup
-    (handle as any)._wpIndex = wpIndex;
-
-    // Remove old listeners to avoid stacking
-    handle.removeAllListeners();
-
-    handle.on("pointerdown", (e: FederatedPointerEvent) => {
-      e.stopPropagation();
-
-      const isCtrl = e.ctrlKey || e.metaKey;
-
-      if (isCtrl) {
-        // Ctrl+click: track timing on the handle object so it survives re-setup
-        const lastCtrl = (handle as any)._lastCtrlClickTime ?? 0;
-        const now = Date.now();
-        if (now - lastCtrl < DOUBLE_CLICK_MS) {
-          // Ctrl+double-click: remove this waypoint
-          (handle as any)._lastCtrlClickTime = 0;
-          this.removeWaypoint(edge.id, wpIndex);
-        } else {
-          (handle as any)._lastCtrlClickTime = now;
-        }
-        return;
-      }
-
-      this.startWaypointDrag(handle, wpIndex, edge, nodeMap, e);
+  private updateWaypointMeta(handle: Graphics, wpIndex: number): void {
+    setWaypointMeta(handle, {
+      wpIndex,
+      lastCtrlClickTime: getWaypointMeta(handle)?.lastCtrlClickTime ?? 0,
     });
   }
 
   private removeWaypoint(edgeId: string, wpIndex: number): void {
-    const doc = getState().document;
-    const edge = doc.edges.find((e) => e.id === edgeId);
+    const edge = getEdgeById(edgeId);
     if (!edge || !edge.waypoints) return;
 
     const updated = [...edge.waypoints];
@@ -341,7 +342,9 @@ export class EdgeHandleOverlay {
       return;
     }
 
-    (this.container as any)._activeEdgeId = edgeId;
+    setEdgeHandleMeta(this.container, { activeEdgeId: edgeId });
+    this.currentEdgeId = edgeId;
+    this.currentNodeMap = nodeMap;
 
     const fromPos = resolveEndpoint(edge.from, nodeMap);
     const toPos = resolveEndpoint(edge.to, nodeMap);
@@ -352,8 +355,10 @@ export class EdgeHandleOverlay {
       return;
     }
 
-    this.drawHandle(this.fromHandle, fromPos.x, fromPos.y, edge.from, viewportScale);
-    this.drawHandle(this.toHandle, toPos.x, toPos.y, edge.to, viewportScale);
+    const fromColor = "nodeId" in edge.from ? DOT_COLOR_NODE : DOT_COLOR_EMPTY;
+    const toColor = "nodeId" in edge.to ? DOT_COLOR_NODE : DOT_COLOR_EMPTY;
+    this.drawDot(this.fromHandle, fromPos.x, fromPos.y, fromColor, viewportScale);
+    this.drawDot(this.toHandle, toPos.x, toPos.y, toColor, viewportScale);
 
     // Draw waypoint handles
     const waypoints = edge.waypoints ?? [];
@@ -366,42 +371,16 @@ export class EdgeHandleOverlay {
     for (let i = 0; i < waypoints.length; i++) {
       const wp = waypoints[i];
       const handle = this.waypointHandles[i];
-      this.drawWaypointHandle(handle, wp.x, wp.y, viewportScale);
-      this.setupWaypointHandle(handle, i, edge, nodeMap, viewportScale);
+      this.drawDot(handle, wp.x, wp.y, DOT_COLOR_EMPTY, viewportScale);
+      this.updateWaypointMeta(handle, i);
     }
   }
 
-  private drawHandle(
-    handle: Graphics,
-    x: number,
-    y: number,
-    endpoint: EdgeEndpoint,
-    viewportScale: number
-  ): void {
+  private drawDot(handle: Graphics, x: number, y: number, color: number, viewportScale: number): void {
     const r = DOT_RADIUS / viewportScale;
-    const color = "nodeId" in endpoint ? DOT_COLOR_NODE : DOT_COLOR_EMPTY;
 
     handle.clear();
     handle.circle(0, 0, r).fill(color).stroke({ width: 1.5 / viewportScale, color: 0xffffff });
-    handle.position.set(x, y);
-    handle.visible = true;
-
-    const hitR = r * 3;
-    handle.hitArea = {
-      contains: (px: number, py: number) => px * px + py * py <= hitR * hitR,
-    };
-  }
-
-  private drawWaypointHandle(
-    handle: Graphics,
-    x: number,
-    y: number,
-    viewportScale: number
-  ): void {
-    const r = DOT_RADIUS / viewportScale;
-
-    handle.clear();
-    handle.circle(0, 0, r).fill(DOT_COLOR_EMPTY).stroke({ width: 1.5 / viewportScale, color: 0xffffff });
     handle.position.set(x, y);
     handle.visible = true;
 

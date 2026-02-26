@@ -1,20 +1,16 @@
 import { Container, Graphics, Polygon, Text as PixiText, TextStyle } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
+import { colorToHex, DOUBLE_CLICK_MS } from "../shared";
 import type { LabelEditContext } from "../interactions/labelEditor";
 import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
+import { getEdgeGroupMeta, setEdgeGroupMeta } from "./metadata";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
 const SELECTED_EDGE_COLOR = 0x4488ff;
 const HIT_TOLERANCE = 8;
 const ARROWHEAD_SIZE = 10;
-const DOUBLE_CLICK_MS = 400;
 
 type Point = { x: number; y: number };
-
-function colorToHex(color: string | undefined, fallback: number): number {
-  if (!color) return fallback;
-  return parseInt(color.replace("#", ""), 16);
-}
 
 /** Convert a proportional anchor [0..1, 0..1] to world coordinates. */
 export function resolveAnchor(node: Bounds, anchor?: [number, number]): { x: number; y: number } {
@@ -151,19 +147,22 @@ export function createCanvasEdge(
   group.addChild(gfx);
   group.addChild(text);
 
-  (group as any)._hasFileLink = !!edge.fileLink;
-  (group as any)._fileLinkPath = edge.fileLink?.path ?? null;
+  setEdgeGroupMeta(group, {
+    hasFileLink: !!edge.fileLink,
+    fileLinkPath: edge.fileLink?.path ?? null,
+  });
 
   // Tooltip on linked edge hover
   gfx.on("pointerover", () => {
-    const path = (group as any)._fileLinkPath;
-    if (path) {
+    const m = getEdgeGroupMeta(group);
+    if (m?.fileLinkPath) {
       const canvas = document.querySelector("canvas");
-      if (canvas) canvas.title = `${path} (Ctrl+Click)`;
+      if (canvas) canvas.title = `${m.fileLinkPath} (Ctrl+Click)`;
     }
   });
   gfx.on("pointerout", () => {
-    if ((group as any)._fileLinkPath) {
+    const m = getEdgeGroupMeta(group);
+    if (m?.fileLinkPath) {
       const canvas = document.querySelector("canvas");
       if (canvas) canvas.title = "";
     }
@@ -178,7 +177,7 @@ export function createCanvasEdge(
 
     // In locked mode, click on linked edges opens the file link
     if (callbacks.isLocked()) {
-      if (!(group as any)._hasFileLink) return;
+      if (!getEdgeGroupMeta(group)?.hasFileLink) return;
       const onUpLocked = () => {
         gfx.off("pointerup", onUpLocked);
         gfx.off("pointerupoutside", onUpLocked);
@@ -205,7 +204,7 @@ export function createCanvasEdge(
         lastClickTime = now;
 
         // Ctrl+Click on linked edge — open file
-        if ((lastCtrlKey) && (group as any)._hasFileLink) {
+        if ((lastCtrlKey) && getEdgeGroupMeta(group)?.hasFileLink) {
           callbacks.onOpenFileLink(edge.id);
         } else {
           callbacks.onSelect(edge.id);
@@ -233,8 +232,10 @@ export function updateCanvasEdge(
 
   gfx.clear();
   gfx.cursor = edge.fileLink ? "pointer" : "default";
-  (group as any)._hasFileLink = !!edge.fileLink;
-  (group as any)._fileLinkPath = edge.fileLink?.path ?? null;
+  setEdgeGroupMeta(group, {
+    hasFileLink: !!edge.fileLink,
+    fileLinkPath: edge.fileLink?.path ?? null,
+  });
 
   const from = resolveEndpoint(edge.from, nodeMap);
   const to = resolveEndpoint(edge.to, nodeMap);
@@ -380,6 +381,3 @@ class PolylineHitArea {
     return false;
   }
 }
-
-// Make PolylineHitArea compatible with PixiJS IHitArea
-(PolylineHitArea.prototype as any).constructor = PolylineHitArea;
