@@ -2,7 +2,40 @@ import { directionValues, type Edge, type Node } from "../../schema";
 import { getState, subscribe, getNodeById, getEdgeById } from "../state";
 
 const DEFAULT_FILL = "#888888";
+const SPACE_FILL = "#44BBDD";
 const DEFAULT_TEXT = "#cccccc";
+
+const STANDARD_SHAPE_OPTIONS: [string, string][] = [
+  ["", "▭"],
+  ["rounded-rectangle", "▢"],
+  ["ellipse", "⬭"],
+  ["diamond", "◇"],
+  ["parallelogram", "▱"],
+  ["trapezoid", "⏢"],
+  ["triangle", "△"],
+  ["cylinder", "⌭"],
+  ["pill", "⊖"],
+  ["half-ellipse", "⌓"],
+  ["half-pill", "◗"],
+  ["document", "⎵"],
+  ["text", "T"],
+];
+
+const SPACE_SHAPE_OPTIONS: [string, string][] = [
+  ["", "✦"],
+  ["rounded-rectangle", "✶"],
+  ["ellipse", "●"],
+  ["diamond", "✸"],
+  ["parallelogram", "☄"],
+  ["trapezoid", "⬣"],
+  ["triangle", "▲"],
+  ["cylinder", "◎"],
+  ["pill", "☁"],
+  ["half-ellipse", "☾"],
+  ["half-pill", "◈"],
+  ["document", "☷"],
+  ["text", "T"],
+];
 
 export interface SidebarChanges extends Partial<Pick<Node, "nodeColor" | "labelColor" | "shape" | "direction">> {
   bounds?: Partial<Node["bounds"]>;
@@ -38,10 +71,28 @@ export function setupSidebar(
   const shapeSelect = container.querySelector<HTMLSelectElement>("#shape-select")!;
   const rotateBtn = container.querySelector<HTMLButtonElement>("#rotate-btn")!;
 
+  const themeBtn = container.querySelector<HTMLButtonElement>("#theme-btn");
+
   let targetIds: string[] = [];
   let targetType: "node" | "edge" = "node";
   let currentFill = DEFAULT_FILL;
   let currentText = DEFAULT_TEXT;
+  let currentShapeTheme: string | undefined;
+
+  function rebuildShapeOptions(theme: string | undefined): void {
+    if (theme === currentShapeTheme) return;
+    currentShapeTheme = theme;
+    const savedValue = shapeSelect.value;
+    shapeSelect.innerHTML = "";
+    const options = theme === "space" ? SPACE_SHAPE_OPTIONS : STANDARD_SHAPE_OPTIONS;
+    for (const [value, label] of options) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = label;
+      shapeSelect.appendChild(opt);
+    }
+    shapeSelect.value = savedValue;
+  }
 
   function updateTextPreview(): void {
     textWrapper.style.backgroundColor = currentFill;
@@ -151,13 +202,17 @@ export function setupSidebar(
     const { document: doc, selectedNodeIds, selectedEdgeIds, locked } = getState();
     const sidebar = container.querySelector<HTMLElement>("#sidebar")!;
     sidebar.style.display = locked ? "none" : "";
+    if (themeBtn) themeBtn.style.display = locked ? "none" : "";
+    rebuildShapeOptions(doc.theme);
+
+    const themeFill = doc.theme === "space" ? SPACE_FILL : DEFAULT_FILL;
 
     if (selectedNodeIds.length > 0) {
       const node = getNodeById(selectedNodeIds[0]);
       if (node) {
         targetIds = selectedNodeIds;
         targetType = "node";
-        setColors(node.nodeColor ?? DEFAULT_FILL, node.labelColor ?? DEFAULT_TEXT);
+        setColors(node.nodeColor ?? themeFill, node.labelColor ?? DEFAULT_TEXT);
         shapeSelect.value = node.shape ?? "";
         shapeSelect.disabled = false;
         rotateBtn.disabled = false;
@@ -167,7 +222,7 @@ export function setupSidebar(
       if (edge) {
         targetIds = selectedEdgeIds;
         targetType = "edge";
-        setColors(edge.color ?? DEFAULT_FILL, edge.labelColor ?? DEFAULT_TEXT);
+        setColors(edge.color ?? themeFill, edge.labelColor ?? DEFAULT_TEXT);
         shapeSelect.value = "";
         shapeSelect.disabled = true;
         rotateBtn.disabled = true;

@@ -7,6 +7,8 @@ import { getEdgeGroupMeta, setEdgeGroupMeta } from "./metadata";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
 const SELECTED_EDGE_COLOR = 0x4488ff;
+const SPACE_EDGE_COLOR = 0x335577;
+const SPACE_SELECTED_COLOR = 0x44CCFF;
 const HIT_TOLERANCE = 8;
 const ARROWHEAD_SIZE = 10;
 
@@ -117,7 +119,8 @@ export interface CanvasEdgeCallbacks {
 export function createCanvasEdge(
   edge: Edge,
   labelColor: string,
-  callbacks: CanvasEdgeCallbacks
+  callbacks: CanvasEdgeCallbacks,
+  theme?: string
 ): Container {
   const group = new Container();
   group.label = edge.id;
@@ -133,7 +136,7 @@ export function createCanvasEdge(
     resolution: MIN_TEXT_RESOLUTION,
     style: new TextStyle({
       fontSize: BASE_FONT_SIZE,
-      fontFamily: "sans-serif",
+      fontFamily: theme === "space" ? "Consolas, 'Courier New', monospace" : "sans-serif",
       fill: labelColor,
       align: "center",
     }),
@@ -225,7 +228,8 @@ export function updateCanvasEdge(
   nodeMap: Map<string, Bounds>,
   isSelected: boolean,
   viewportScale: number,
-  labelColor: string
+  labelColor: string,
+  theme?: string
 ): void {
   const gfx = group.getChildByLabel("edge-line") as Graphics;
   const text = group.getChildByLabel("edge-label") as PixiText;
@@ -243,12 +247,22 @@ export function updateCanvasEdge(
 
   const points = buildPolylinePoints(from, to, edge.waypoints);
 
-  const color = colorToHex(edge.color, DEFAULT_EDGE_COLOR);
-  const lineWidth = 2;
+  const isSpace = theme === "space";
+  const color = colorToHex(edge.color, isSpace ? SPACE_EDGE_COLOR : DEFAULT_EDGE_COLOR);
+  const lineWidth = isSpace ? 1.5 : 2;
   const style = edge.style ?? "solid";
   const arrow = edge.arrow ?? "end";
 
-  // Draw line through all points
+  // Glow pass — wider low-alpha stroke behind the main line (space theme only)
+  if (isSpace && style === "solid") {
+    gfx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      gfx.lineTo(points[i].x, points[i].y);
+    }
+    gfx.stroke({ width: 4, color, alpha: 0.12 });
+  }
+
+  // Draw main line through all points
   if (style === "solid") {
     gfx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
@@ -273,7 +287,7 @@ export function updateCanvasEdge(
   // Draw selection overlay along all segments
   if (isSelected) {
     for (let i = 1; i < points.length; i++) {
-      drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, 3, SELECTED_EDGE_COLOR, "dashed");
+      drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, 3, isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR, "dashed");
     }
   }
 
@@ -288,6 +302,7 @@ export function updateCanvasEdge(
   if (labelText) {
     text.text = labelText;
     text.style.fill = edge.labelColor ?? labelColor;
+    text.style.fontFamily = isSpace ? "Consolas, 'Courier New', monospace" : "sans-serif";
     text.visible = true;
   } else {
     text.visible = false;

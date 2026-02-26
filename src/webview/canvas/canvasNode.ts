@@ -6,13 +6,21 @@ import { startLabelEdit, type LabelEditContext } from "../interactions/labelEdit
 import { showGroupDragMessage, hideGroupDragMessage } from "../interactions/groupStatus";
 import { getState, getDescendantIds, getChildNodeIds, getNodeById } from "../state";
 import { snap } from "../controls/gridSnap";
-import { drawShape } from "./shapeDrawing";
+import { drawShape, drawGlowLayer, drawNebulaBg, glyphRadius } from "./shapeDrawing";
 import { findNodeAtPoint } from "./edgeUtils";
 import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
 import { getNodeMeta, setNodeMeta, setNodeRectMeta } from "./metadata";
 
 const DEFAULT_NODE_COLOR = 0x888888;
 const STROKE_COLOR = 0x333333;
+const SPACE_NODE_COLOR = 0x44BBDD;
+const SPACE_STROKE_COLOR = 0x88CCFF;
+
+function getNodeColors(theme?: string) {
+  return theme === "space"
+    ? { defaultColor: SPACE_NODE_COLOR, strokeColor: SPACE_STROKE_COLOR }
+    : { defaultColor: DEFAULT_NODE_COLOR, strokeColor: STROKE_COLOR };
+}
 
 export function getContainerBounds(container: Container): Bounds {
   const meta = getNodeMeta(container);
@@ -32,8 +40,8 @@ export function setContainerBounds(container: Container, bounds: Bounds): void {
     meta.nodeHeight = bounds.height;
   } else {
     setNodeMeta(container, {
-      fillColor: 0x888888,
-      strokeColor: 0x333333,
+      fillColor: DEFAULT_NODE_COLOR,
+      strokeColor: STROKE_COLOR,
       nodeWidth: bounds.width,
       nodeHeight: bounds.height,
       hasFileLink: false,
@@ -65,7 +73,8 @@ export function createCanvasNode(
   node: Node,
   labelColor: string,
   labelEditCtx: LabelEditContext,
-  callbacks: CanvasNodeCallbacks
+  callbacks: CanvasNodeCallbacks,
+  theme?: string
 ): Container {
   const group = new Container();
   group.label = node.id;
@@ -73,10 +82,29 @@ export function createCanvasNode(
   group.eventMode = "static";
   group.cursor = node.fileLink ? "pointer" : "default";
 
-  const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
+  const { defaultColor, strokeColor: themeStroke } = getNodeColors(theme);
+  const fillColor = colorToHex(node.nodeColor, defaultColor);
+  const hasChildren = getChildNodeIds(node.id).length > 0;
+  const isSpace = theme === "space";
+
+  // Glow layer — only for space theme
+  const glow = new Graphics();
+  glow.label = "node-glow";
+  (glow as any).__isGroup = hasChildren;
+  if (isSpace) {
+    if (hasChildren || node.shape !== "text") {
+      drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
+    }
+  }
+  glow.eventMode = "none";
+
   const rect = new Graphics();
   rect.label = "node-rect";
-  drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, STROKE_COLOR, node.direction);
+  if (hasChildren && isSpace) {
+    drawNebulaBg(rect, node.bounds.width, node.bounds.height, fillColor);
+  } else {
+    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, themeStroke, node.direction, theme);
+  }
   rect.eventMode = "passive";
 
   const textFill = node.labelColor ?? labelColor;
@@ -85,27 +113,32 @@ export function createCanvasNode(
     resolution: MIN_TEXT_RESOLUTION,
     style: new TextStyle({
       fontSize: BASE_FONT_SIZE,
-      fontFamily: "sans-serif",
+      fontFamily: isSpace ? "Consolas, 'Courier New', monospace" : "sans-serif",
       fill: textFill,
       align: "center",
       wordWrap: true,
-      wordWrapWidth: node.bounds.width,
+      wordWrapWidth: isSpace ? node.bounds.width * 1.5 : node.bounds.width,
     }),
     textureStyle: { scaleMode: "linear" },
   });
   text.label = "node-label";
   text.anchor.set(0.5, 0);
   text.x = node.bounds.width / 2;
-  const hasChildren = getChildNodeIds(node.id).length > 0;
-  text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
+  if (isSpace) {
+    const gr = glyphRadius(node.bounds.width, node.bounds.height);
+    text.y = hasChildren ? 4 : node.bounds.height / 2 + gr + 4;
+  } else {
+    text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
+  }
   text.eventMode = "none";
 
+  group.addChild(glow);
   group.addChild(rect);
   group.addChild(text);
 
   const meta = {
     fillColor,
-    strokeColor: STROKE_COLOR,
+    strokeColor: themeStroke,
     nodeShape: node.shape,
     nodeDirection: node.direction,
     nodeWidth: node.bounds.width,
@@ -412,21 +445,40 @@ export function updateNodeTextResolution(group: Container, resolution: number): 
   }
 }
 
-export function updateCanvasNode(group: Container, node: Node, labelColor: string): void {
+export function updateCanvasNode(group: Container, node: Node, labelColor: string, theme?: string): void {
   if (draggingIds.has(node.id) || groupDraggingIds.has(node.id)) return;
 
+  const glow = group.getChildByLabel("node-glow") as Graphics | null;
   const rect = group.getChildByLabel("node-rect") as Graphics;
   const text = group.getChildByLabel("node-label") as PixiText;
 
   setContainerBounds(group, node.bounds);
 
-  const fillColor = colorToHex(node.nodeColor, DEFAULT_NODE_COLOR);
+  const { defaultColor, strokeColor: themeStroke } = getNodeColors(theme);
+  const fillColor = colorToHex(node.nodeColor, defaultColor);
+  const hasChildren = getChildNodeIds(node.id).length > 0;
+  const isSpace = theme === "space";
+
+  // Rebuild glow layer — only for space theme
+  if (glow) {
+    glow.clear();
+    (glow as any).__isGroup = hasChildren;
+    if (isSpace && (hasChildren || node.shape !== "text")) {
+      drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
+    }
+  }
+
+  // Rebuild rect
   rect.clear();
-  drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, STROKE_COLOR, node.direction);
+  if (hasChildren && isSpace) {
+    drawNebulaBg(rect, node.bounds.width, node.bounds.height, fillColor);
+  } else {
+    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, themeStroke, node.direction, theme);
+  }
 
   const updatedMeta = {
     fillColor,
-    strokeColor: STROKE_COLOR,
+    strokeColor: themeStroke,
     nodeShape: node.shape,
     nodeDirection: node.direction,
     nodeWidth: node.bounds.width,
@@ -440,10 +492,15 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   const textFill = node.labelColor ?? labelColor;
   text.text = node.label || "";
   text.style.fill = textFill;
-  text.style.wordWrapWidth = node.bounds.width;
+  text.style.fontFamily = isSpace ? "Consolas, 'Courier New', monospace" : "sans-serif";
+  text.style.wordWrapWidth = isSpace ? node.bounds.width * 1.5 : node.bounds.width;
   text.x = node.bounds.width / 2;
-  const hasChildren = getChildNodeIds(node.id).length > 0;
-  text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
+  if (isSpace) {
+    const gr = glyphRadius(node.bounds.width, node.bounds.height);
+    text.y = hasChildren ? 4 : node.bounds.height / 2 + gr + 4;
+  } else {
+    text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
+  }
 
   group.cursor = updatedMeta.hasFileLink ? "pointer" : "default";
 }

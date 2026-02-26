@@ -156,6 +156,7 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     #canvas-container {
       width: 100%;
       height: 100%;
+      background: var(--vscode-editor-background);
     }
     .toolbar-btn {
       position: fixed;
@@ -189,6 +190,9 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     }
     #edge-btn {
       right: 88px;
+    }
+    #theme-btn {
+      right: 128px;
     }
     #sidebar {
       position: fixed;
@@ -330,6 +334,7 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
 </head>
 <body>
   <div id="canvas-container"></div>
+  <button id="theme-btn" class="toolbar-btn" title="Theme: Standard"></button>
   <button id="edge-btn" class="toolbar-btn" title="Add Edge"></button>
   <button id="snap-btn" class="toolbar-btn" title="Snap to grid (on)"></button>
   <button id="lock-btn" class="toolbar-btn" title="Lock editing"></button>

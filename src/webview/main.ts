@@ -1,5 +1,5 @@
 import "pixi.js/unsafe-eval";
-import { Application, Container, TextureSource } from "pixi.js";
+import { Application, Container, Graphics, TextureSource } from "pixi.js";
 
 // Enable mipmaps so text stays crisp when the viewport is zoomed out
 TextureSource.defaultOptions.autoGenerateMipmaps = true;
@@ -31,6 +31,7 @@ import { setupEdgeMode } from "./interactions/edgeMode";
 import { setupSelectionBox } from "./interactions/selectionBox";
 import { createCursorManager } from "./interactions/cursorManager";
 import { setupGroupStatus } from "./interactions/groupStatus";
+import { setupThemeToggle } from "./controls/themeToggle";
 
 // VS Code webview API
 const vscode = acquireVsCodeApi();
@@ -44,9 +45,13 @@ async function main(): Promise<void> {
 
   // Set up PixiJS Application
   const app = new Application();
+  const defaultBg = getComputedStyle(document.documentElement)
+    .getPropertyValue("--vscode-editor-background")
+    .trim() || "#1e1e1e";
   await app.init({
     resizeTo: container,
-    backgroundAlpha: 0,
+    backgroundAlpha: 1,
+    background: defaultBg,
     antialias: true,
   });
   container.appendChild(app.canvas);
@@ -56,6 +61,22 @@ async function main(): Promise<void> {
   // Viewport container for pan/zoom
   const viewport = new Container();
   app.stage.addChild(viewport);
+
+  // Starfield background layer — pans/zooms with content
+  const starfield = new Graphics();
+  starfield.zIndex = -1;
+  const STAR_COUNT = 400;
+  const FIELD_SIZE = 10000;
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const sx = Math.random() * FIELD_SIZE - FIELD_SIZE / 2;
+    const sy = Math.random() * FIELD_SIZE - FIELD_SIZE / 2;
+    const sr = 0.3 + Math.random() * 1.5;
+    const sa = 0.2 + Math.random() * 0.6;
+    starfield.circle(sx, sy, sr).fill({ color: 0xffffff, alpha: sa });
+  }
+  starfield.visible = false; // shown only for space theme
+  viewport.addChild(starfield);
+  viewport.sortableChildren = true;
 
   setupSelectionBox(app, viewport, cursorManager);
 
@@ -80,6 +101,7 @@ async function main(): Promise<void> {
   setupPanZoom(app, viewport, cursorManager);
   setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
   setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
+  setupThemeToggle(document.getElementById("theme-btn") as HTMLButtonElement, sendEditDebounced);
   setupSidebar(document.documentElement, {
     onNodeChanged: nodeChanged,
     onNodesChanged: nodesChanged,
@@ -114,6 +136,24 @@ async function main(): Promise<void> {
 
   subscribe(() => {
     renderer.render(getState());
+  });
+
+  // Toggle starfield visibility and background based on theme
+  const canvasContainer = document.getElementById("canvas-container") as HTMLDivElement;
+  subscribe(() => {
+    const theme = getState().document.theme;
+    if (theme === "space") {
+      starfield.visible = true;
+      app.renderer.background.color = 0x020408;
+      canvasContainer.style.background = "radial-gradient(ellipse at center, #0a0e1a 0%, #020408 100%)";
+    } else {
+      starfield.visible = false;
+      const bgColor = getComputedStyle(document.documentElement)
+        .getPropertyValue("--vscode-editor-background")
+        .trim() || "#1e1e1e";
+      app.renderer.background.color = bgColor;
+      canvasContainer.style.background = bgColor;
+    }
   });
 
   setupKeyboard(sendEditDebounced);

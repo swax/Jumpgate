@@ -89,7 +89,7 @@ export function createRenderer(
             return { id, ...getContainerBounds(container) };
           })
           .filter((n): n is NonNullable<typeof n> => n !== null);
-        selectionOverlay.update(nodeInfos, viewport.scale.x);
+        selectionOverlay.update(nodeInfos, viewport.scale.x, lastState?.document.theme);
       }
       // Re-render edges during drag so they follow nodes
       renderEdges(lastState);
@@ -116,17 +116,21 @@ export function createRenderer(
   let lastTextRes = MIN_TEXT_RESOLUTION;
   app.ticker.add(() => {
     if (!lastState) return;
+
+    // --- Text resolution update (only when zoom changes) ---
     const textRes = Math.max(MIN_TEXT_RESOLUTION, Math.ceil(viewport.scale.x * window.devicePixelRatio));
-    if (textRes === lastTextRes) return;
-    lastTextRes = textRes;
-    for (const node of lastState.document.nodes) {
-      const group = viewport.getChildByLabel(node.id) as Container | null;
-      if (group) updateNodeTextResolution(group, textRes);
+    if (textRes !== lastTextRes) {
+      lastTextRes = textRes;
+      for (const node of lastState.document.nodes) {
+        const group = viewport.getChildByLabel(node.id) as Container | null;
+        if (group) updateNodeTextResolution(group, textRes);
+      }
+      for (const edge of lastState.document.edges) {
+        const group = viewport.getChildByLabel(edge.id) as Container | null;
+        if (group) updateEdgeTextResolution(group, textRes);
+      }
     }
-    for (const edge of lastState.document.edges) {
-      const group = viewport.getChildByLabel(edge.id) as Container | null;
-      if (group) updateEdgeTextResolution(group, textRes);
-    }
+
   });
 
   /** Build a nodeMap using live container positions/sizes (covers both drag and resize previews). */
@@ -222,7 +226,7 @@ export function createRenderer(
             // Plain double-click: edit label
             startEdgeLabelEdit(labelEditCtx, container, edgeId);
           },
-        });
+        }, doc.theme);
         viewport.addChild(edgeContainer);
       }
 
@@ -235,7 +239,7 @@ export function createRenderer(
         edgeGfx.eventMode = (isLocked && !hasEdgeFileLink) ? "none" : "static";
       }
 
-      updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor);
+      updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor, doc.theme);
     }
 
     prevEdgeIds = currentEdgeIds;
@@ -276,7 +280,7 @@ export function createRenderer(
       let group = viewport.getChildByLabel(node.id) as Container | null;
 
       if (!group) {
-        group = createCanvasNode(node, labelColor, labelEditCtx, nodeCallbacks);
+        group = createCanvasNode(node, labelColor, labelEditCtx, nodeCallbacks, doc.theme);
         viewport.addChild(group);
       }
 
@@ -291,7 +295,7 @@ export function createRenderer(
       group.eventMode = (isLocked && !hasFileLink) ? "none" : "static";
 
       if (!isDraggingNode(node.id)) {
-        updateCanvasNode(group, node, labelColor);
+        updateCanvasNode(group, node, labelColor, doc.theme);
       }
     }
 
@@ -315,9 +319,9 @@ export function createRenderer(
           return { id: n.id, ...n.bounds };
         })
         .filter((n): n is NonNullable<typeof n> => n !== null);
-      selectionOverlay.update(nodeInfos, viewport.scale.x);
+      selectionOverlay.update(nodeInfos, viewport.scale.x, doc.theme);
     } else {
-      selectionOverlay.update([], viewport.scale.x);
+      selectionOverlay.update([], viewport.scale.x, doc.theme);
     }
 
     // Render edges

@@ -185,6 +185,11 @@ export function setSnapToGrid(snapToGrid: boolean): void {
   notify();
 }
 
+export function setDocumentTheme(theme: string | undefined): void {
+  state = { ...state, document: { ...state.document, theme: theme as any } };
+  notify();
+}
+
 function applyNodeChanges(node: Node, changes: NodeChanges): Node {
   const { bounds: boundsChanges, parentId, ...rest } = changes;
   const updated: Node = {

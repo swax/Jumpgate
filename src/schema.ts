@@ -66,9 +66,13 @@ export const edgeSchema = z.object({
   fileLink: fileLinkSchema.optional(),
 });
 
+export const themeValues = ["standard", "space"] as const;
+export type DocumentTheme = (typeof themeValues)[number];
+
 export const documentSchema = z.object({
   nodes: z.array(nodeSchema),
   edges: z.array(edgeSchema).optional().default([]),
+  theme: z.enum(themeValues).optional(),
 });
 
 export type Node = z.infer<typeof nodeSchema>;

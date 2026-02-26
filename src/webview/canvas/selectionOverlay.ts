@@ -3,7 +3,8 @@ import type { Bounds } from "../../schema";
 import type { NodeChanges } from "../shared";
 import { snap, GRID_SIZE } from "../controls/gridSnap";
 import { setContainerBounds } from "./canvasNode";
-import { drawShape } from "./shapeDrawing";
+import { drawShape, drawGlowLayer, drawNebulaBg, glyphRadius } from "./shapeDrawing";
+
 import { getNodeRectMeta } from "./metadata";
 
 export interface SelectionOverlayCallbacks {
@@ -18,6 +19,8 @@ type NodeInfo = Bounds & { id: string };
 const HANDLE_SIZE = 8;
 const HANDLE_COLOR = 0x4a90d9;
 const OUTLINE_COLOR = 0x4da3ff;
+const SPACE_HANDLE_COLOR = 0x00FFAA;
+const SPACE_OUTLINE_COLOR = 0x00FFAA;
 
 type HandleId =
   | "top-left"
@@ -39,6 +42,7 @@ export class SelectionOverlay {
 
   private selectedNodes: NodeInfo[] = [];
   private bbox = { x: 0, y: 0, width: 0, height: 0 };
+  private theme: string | undefined;
 
   // Drag state for handles
   private activeHandle: HandleId | null = null;
@@ -129,7 +133,8 @@ export class SelectionOverlay {
     }
   }
 
-  update(nodes: NodeInfo[], viewportScale: number): void {
+  update(nodes: NodeInfo[], viewportScale: number, theme?: string): void {
+    this.theme = theme;
     this.selectedNodes = nodes;
 
     if (nodes.length === 0) {
@@ -190,9 +195,10 @@ export class SelectionOverlay {
     const lineWidth = 2.5 / viewportScale;
     const dashLen = 8 / viewportScale;
     const gapLen = 4 / viewportScale;
+    const outlineColor = this.theme === "space" ? SPACE_OUTLINE_COLOR : OUTLINE_COLOR;
 
     this.outline.clear();
-    this.outline.setStrokeStyle({ width: lineWidth, color: OUTLINE_COLOR });
+    this.outline.setStrokeStyle({ width: lineWidth, color: outlineColor });
     this.drawDashedRect(x, y, width, height, dashLen, gapLen);
     this.outline.stroke();
   }
@@ -201,9 +207,10 @@ export class SelectionOverlay {
     const lineWidth = 2.5 / viewportScale;
     const dashLen = 8 / viewportScale;
     const gapLen = 4 / viewportScale;
+    const outlineColor = this.theme === "space" ? SPACE_OUTLINE_COLOR : OUTLINE_COLOR;
 
     this.outline.clear();
-    this.outline.setStrokeStyle({ width: lineWidth, color: OUTLINE_COLOR });
+    this.outline.setStrokeStyle({ width: lineWidth, color: outlineColor });
     for (const n of nodes) {
       this.drawDashedRect(n.x, n.y, n.width, n.height, dashLen, gapLen);
     }
@@ -225,10 +232,11 @@ export class SelectionOverlay {
       "bottom-right": { x: x + width, y: y + height },
     };
 
+    const handleColor = this.theme === "space" ? SPACE_HANDLE_COLOR : HANDLE_COLOR;
     for (const [hid, handle] of this.handles) {
       const pos = rawPositions[hid];
       handle.clear();
-      handle.rect(-hs / 2, -hs / 2, hs, hs).fill(HANDLE_COLOR).stroke({ width: 1 / viewportScale, color: 0xffffff });
+      handle.rect(-hs / 2, -hs / 2, hs, hs).fill(handleColor).stroke({ width: 1 / viewportScale, color: 0xffffff });
       handle.position.set(pos.x, pos.y);
       handle.visible = true;
       // Make hit area larger for easier grabbing
@@ -321,6 +329,7 @@ export class SelectionOverlay {
         setContainerBounds(container, newBounds);
 
         // Update graphics
+        const glow = container.getChildByLabel("node-glow") as Graphics | null;
         const rect = container.getChildByLabel("node-rect") as Graphics;
         const text = container.getChildByLabel("node-label") as any;
         if (rect) {
@@ -329,14 +338,32 @@ export class SelectionOverlay {
           const strokeClr = rectMeta?.strokeColor ?? 0x333333;
           const shape = rectMeta?.nodeShape;
           const dir = rectMeta?.nodeDirection;
+          const isGroup = glow ? (glow as any).__isGroup ?? false : false;
+          const isSpace = this.theme === "space";
           rect.clear();
-          drawShape(rect, newW, newH, shape, fill, strokeClr, dir);
+          if (isGroup && isSpace) {
+            drawNebulaBg(rect, newW, newH, fill);
+          } else {
+            drawShape(rect, newW, newH, shape, fill, strokeClr, dir, this.theme);
+          }
+          // Rebuild glow layer to match new size (space only)
+          if (glow && isSpace && (isGroup || shape !== "text")) {
+            glow.clear();
+            drawGlowLayer(glow, newW, newH, fill);
+          } else if (glow && !isSpace) {
+            glow.clear();
+          }
         }
         if (text) {
-          text.style.wordWrapWidth = newW;
-          const textH = text.height;
+          text.style.wordWrapWidth = this.theme === "space" ? newW * 1.5 : newW;
           text.x = newW / 2;
-          text.y = Math.max(0, (newH - textH) / 2);
+          const isGroup = glow ? (glow as any).__isGroup ?? false : false;
+          if (this.theme === "space") {
+            const gr = glyphRadius(newW, newH);
+            text.y = isGroup ? 4 : newH / 2 + gr + 4;
+          } else {
+            text.y = isGroup ? 4 : Math.max(0, (newH - text.height) / 2);
+          }
         }
 
         if (commit) {
@@ -363,6 +390,7 @@ export class SelectionOverlay {
         if (container) {
           setContainerBounds(container, newBounds);
 
+          const glow = container.getChildByLabel("node-glow") as Graphics | null;
           const rect = container.getChildByLabel("node-rect") as Graphics;
           const text = container.getChildByLabel("node-label") as any;
           if (rect) {
@@ -371,14 +399,31 @@ export class SelectionOverlay {
             const strokeClr = rectMeta?.strokeColor ?? 0x333333;
             const shape = rectMeta?.nodeShape;
             const dir = rectMeta?.nodeDirection;
+            const isGroup = glow ? (glow as any).__isGroup ?? false : false;
+            const isSpace = this.theme === "space";
             rect.clear();
-            drawShape(rect, newBounds.width, newBounds.height, shape, fill, strokeClr, dir);
+            if (isGroup && isSpace) {
+              drawNebulaBg(rect, newBounds.width, newBounds.height, fill);
+            } else {
+              drawShape(rect, newBounds.width, newBounds.height, shape, fill, strokeClr, dir, this.theme);
+            }
+            if (glow && isSpace && (isGroup || shape !== "text")) {
+              glow.clear();
+              drawGlowLayer(glow, newBounds.width, newBounds.height, fill);
+            } else if (glow && !isSpace) {
+              glow.clear();
+            }
           }
           if (text) {
-            text.style.wordWrapWidth = newBounds.width;
-            const textH = text.height;
+            text.style.wordWrapWidth = this.theme === "space" ? newBounds.width * 1.5 : newBounds.width;
             text.x = newBounds.width / 2;
-            text.y = Math.max(0, (newBounds.height - textH) / 2);
+            const isGroup = glow ? (glow as any).__isGroup ?? false : false;
+            if (this.theme === "space") {
+              const gr = glyphRadius(newBounds.width, newBounds.height);
+              text.y = isGroup ? 4 : newBounds.height / 2 + gr + 4;
+            } else {
+              text.y = isGroup ? 4 : Math.max(0, (newBounds.height - text.height) / 2);
+            }
           }
         }
 
