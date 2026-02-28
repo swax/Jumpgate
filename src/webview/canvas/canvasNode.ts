@@ -1,4 +1,4 @@
-import { Container, Graphics, Text as PixiText, TextStyle, FederatedPointerEvent } from "pixi.js";
+import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds, Node } from "../../schema";
 import type { NodeChanges } from "../shared";
 import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
@@ -6,9 +6,8 @@ import { startLabelEdit, type LabelEditContext } from "../interactions/labelEdit
 import { showGroupDragMessage, hideGroupDragMessage } from "../interactions/groupStatus";
 import { getState, getDescendantIds, getChildNodeIds, getNodeById } from "../state";
 import { snap } from "../controls/gridSnap";
-import { drawShape, drawGlowLayer, drawNebulaBg, glyphRadius } from "./shapeDrawing";
+import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapeDrawing";
 import { findNodeAtPoint } from "./edgeUtils";
-import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
 import { getNodeMeta, setNodeMeta, setNodeRectMeta } from "./metadata";
 
 const DEFAULT_NODE_COLOR = 0x888888;
@@ -107,34 +106,8 @@ export function createCanvasNode(
   }
   rect.eventMode = "passive";
 
-  const textFill = node.labelColor ?? labelColor;
-  const text = new PixiText({
-    text: node.label || "",
-    resolution: MIN_TEXT_RESOLUTION,
-    style: new TextStyle({
-      fontSize: BASE_FONT_SIZE,
-      fontFamily: isSpace ? "Consolas, 'Courier New', monospace" : "sans-serif",
-      fill: textFill,
-      align: "center",
-      wordWrap: true,
-      wordWrapWidth: isSpace ? node.bounds.width * 1.5 : node.bounds.width,
-    }),
-    textureStyle: { scaleMode: "linear" },
-  });
-  text.label = "node-label";
-  text.anchor.set(0.5, 0);
-  text.x = node.bounds.width / 2;
-  if (isSpace) {
-    const gr = glyphRadius(node.bounds.width, node.bounds.height);
-    text.y = hasChildren ? 4 : node.bounds.height / 2 + gr + 4;
-  } else {
-    text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
-  }
-  text.eventMode = "none";
-
   group.addChild(glow);
   group.addChild(rect);
-  group.addChild(text);
 
   const meta = {
     fillColor,
@@ -438,19 +411,11 @@ export function isDraggingNode(id: string): boolean {
   return draggingIds.has(id) || groupDraggingIds.has(id);
 }
 
-export function updateNodeTextResolution(group: Container, resolution: number): void {
-  const text = group.getChildByLabel("node-label") as PixiText | null;
-  if (text && text.resolution !== resolution) {
-    text.resolution = resolution;
-  }
-}
-
 export function updateCanvasNode(group: Container, node: Node, labelColor: string, theme?: string): void {
   if (draggingIds.has(node.id) || groupDraggingIds.has(node.id)) return;
 
   const glow = group.getChildByLabel("node-glow") as Graphics | null;
   const rect = group.getChildByLabel("node-rect") as Graphics;
-  const text = group.getChildByLabel("node-label") as PixiText;
 
   setContainerBounds(group, node.bounds);
 
@@ -488,19 +453,6 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   };
   setNodeMeta(group, updatedMeta);
   setNodeRectMeta(rect, updatedMeta);
-
-  const textFill = node.labelColor ?? labelColor;
-  text.text = node.label || "";
-  text.style.fill = textFill;
-  text.style.fontFamily = isSpace ? "Consolas, 'Courier New', monospace" : "sans-serif";
-  text.style.wordWrapWidth = isSpace ? node.bounds.width * 1.5 : node.bounds.width;
-  text.x = node.bounds.width / 2;
-  if (isSpace) {
-    const gr = glyphRadius(node.bounds.width, node.bounds.height);
-    text.y = hasChildren ? 4 : node.bounds.height / 2 + gr + 4;
-  } else {
-    text.y = hasChildren ? 4 : Math.max(0, (node.bounds.height - text.height) / 2);
-  }
 
   group.cursor = updatedMeta.hasFileLink ? "pointer" : "default";
 }

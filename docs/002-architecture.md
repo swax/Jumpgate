@@ -25,12 +25,14 @@ src/
   webview/
     main.ts               Entry point — PixiJS Application, viewport container, message wiring
     state.ts              Pub/sub store (EditorState: document + selectedNodeIds[] + selectedEdgeIds[] + edgeMode + locked + snapToGrid)
-    renderer.ts           Reconciles PixiJS containers against state, manages selection + edge handle overlays
+    renderer.ts           Reconciles PixiJS containers against state, manages selection + edge handle overlays, instantiates DomLabelManager and syncs label positions each frame
     globals.d.ts          acquireVsCodeApi type declaration
     canvas/
-      canvasNode.ts       Node container factory (shape Graphics + Text label) + drag/click/dblclick handlers
+      canvasNode.ts       Node container factory (shape Graphics) + drag/click/dblclick handlers
       shapeDrawing.ts     Centralized drawShape() + directionToDeg() — 13 shape types, direction-based orientation within bounding box
-      canvasEdge.ts       Edge container factory (Graphics "edge-line" + Text "edge-label") + polyline rendering (waypoints) + arrowhead rendering + endpoint resolution + double-click label editing; exports buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance
+      canvasEdge.ts       Edge container factory (Graphics "edge-line") + polyline rendering (waypoints) + arrowhead rendering + endpoint resolution + double-click label editing; exports buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance
+      domLabels.ts        DomLabelManager — renders node/edge labels as native DOM divs over the canvas for crisp text at any zoom; syncs world→screen positions each frame via CSS transform
+      textDefaults.ts     Constants: BASE_FONT_SIZE, DEFAULT_FONT_FAMILY
       edgeUtils.ts        Shared edge utilities: findNodeAtPoint (with optional excludeIds), computeAnchor, buildEndpoint, dot constants
       selectionOverlay.ts Dashed bounding box + 8 resize handles for selected nodes
       edgeHandleOverlay.ts Draggable endpoint handles on selected edges — drag to reposition from/to; also manages waypoint handles (pooled Graphics) with drag-to-move and Ctrl+double-click to remove
@@ -43,7 +45,7 @@ src/
       keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state — copy/paste includes descendants
       edgeMode.ts         Edge creation mode — toolbar toggle, two-click workflow, preview line + cursor dot
       groupStatus.ts      Group status bar — shows parent info on selection, drag-to-group messages, remove-from-group link
-      labelEditor.ts      DOM textarea overlay for inline label editing on double-click (nodes and edges); Enter commits, Shift+Enter for newline, Escape cancels
+      labelEditor.ts      DOM textarea overlay for inline label editing on double-click (nodes and edges); hides/shows DOM labels via DomLabelManager; Enter commits, Shift+Enter for newline, Escape cancels
       selectionBox.ts     Shift+drag rubber-band selection box + click-off deselect
       cursorManager.ts    Centralized cursor priority manager (pan/select)
 ```
@@ -54,17 +56,22 @@ src/
 app.stage                         (background click-to-deselect)
   └─ viewport                     (sortableChildren — pan/zoom transform)
       ├─ edge containers          (zIndex derived from connected nodes — see below)
-      │   ├─ Graphics "edge-line" (line/arrows, eventMode: "static", owns hitArea)
-      │   └─ Text "edge-label"   (centered at edge midpoint, stays horizontal)
+      │   └─ Graphics "edge-line" (line/arrows, eventMode: "static", owns hitArea)
       ├─ node containers          (zIndex depth-based, eventMode: "static")
-      │   ├─ Graphics "node-rect" (shape graphic, optionally rotated via pivot)
-      │   └─ Text "node-label"    (centered, word-wrapped, stays horizontal)
+      │   ├─ Graphics "node-glow" (space theme glow layer, eventMode: "none")
+      │   └─ Graphics "node-rect" (shape graphic, optionally rotated via pivot)
       ├─ SelectionOverlay         (zIndex 9000, eventMode: "passive")
       │   ├─ Graphics             (dashed outline)
       │   └─ Graphics × 8         (resize handles)
       └─ EdgeHandleOverlay        (zIndex 9001, eventMode: "passive")
           ├─ Graphics × 2         (from/to endpoint handles)
           └─ Graphics × N         (waypoint handles, pooled — shown when edge selected)
+
+canvas container (HTML)
+  ├─ <canvas>                     (PixiJS WebGL canvas)
+  └─ DOM label overlay <div>      (pointer-events: none, positioned over canvas)
+      ├─ node label <div> × N     (flexbox centered, CSS transform for world→screen)
+      └─ edge label <div> × M     (centered at polyline midpoint via translate(-50%,-50%))
 ```
 
 Z-index layers (bottom to top): depth-0 nodes (1000+i), depth-0 text nodes (1500+i), depth-1 nodes (2000+i), depth-1 text nodes (2500+i), etc. Edges sit just below the higher of their two connected nodes (max node zIndex − 0.5). Dragged nodes temporarily boost to 8900+. Overlays at 9000+. Depth is determined by `parentId` ancestry chain — children render above parents.
@@ -77,7 +84,8 @@ Two esbuild bundles (`npm run build`):
 
 ## Key Patterns
 
-- **Reconciliation** (`renderer.ts`): Diffs state against existing PixiJS containers by node ID — creates, updates, or destroys as needed. Skips nodes mid-drag to avoid fighting user input.
+- **Reconciliation** (`renderer.ts`): Diffs state against existing PixiJS containers by node ID — creates, updates, or destroys as needed. Skips nodes mid-drag to avoid fighting user input. Upserts DOM labels for nodes and edges on each render; removes DOM labels when nodes/edges are deleted.
+- **DOM labels** (`domLabels.ts`): Replaces PixiJS `Text` objects with native browser `<div>` elements for crisp text at any zoom level. PixiJS `Text` pre-rasterizes to a canvas texture, and no amount of resolution/mipmap tuning could prevent blurry text when the GPU downscaled at zoom levels below 1x. Native DOM text sidesteps this entirely — the browser renders at the actual CSS font-size with full hinting and subpixel AA. An overlay div sits over the canvas; each label is positioned via `transform: translate(screenX, screenY)` (GPU-composited, no layout reflow). The ticker calls `syncPositions()` every frame to convert world coordinates to screen coordinates. Font size scales linearly with zoom (`BASE_FONT_SIZE * zoom`). Zoom-dependent styles (fontSize, width, height, padding) are only updated when zoom changes; transform updates every frame.
 - **Selection overlay** (`selectionOverlay.ts`): Draws a dashed bounding box around selected nodes with 8 resize handles. Single-node selection shows resize handles for direct move/resize; multi-node selection shows individual dashed outlines per node but no resize handles. Handles and stroke scale inversely with viewport zoom to maintain consistent visual size. Fires `onDragUpdate` during resize so edges follow live.
 - **Edge handle overlay** (`edgeHandleOverlay.ts`): When exactly one edge is selected (not locked, not in edge mode), shows draggable dot handles at from/to endpoints and at each waypoint. Red = node-anchored, blue = free-point/waypoint. During drag, exposes `getEndpointOverride()` and `getWaypointOverrides()` so `renderEdges` draws the edge at the in-flight position. Waypoint handles use a pooled array (`ensureWaypointHandles`) that grows as needed. Ctrl+double-click timing is stored on the handle object (`_lastCtrlClickTime`) to survive listener re-setup across renders. Dragging a waypoint onto a from/to endpoint removes it (merge). `insertWaypoint(edgeId, segmentIndex, point)` is called from the renderer on Ctrl+double-click-on-segment.
 - **Edge utilities** (`edgeUtils.ts`): Shared helpers extracted from `edgeMode.ts` — `findNodeAtPoint`, `computeAnchor`, `buildEndpoint`. Snap-before-hit-test: coordinates are grid-snapped before node hit-testing so the visual dot color always matches the snapped position.
@@ -92,10 +100,10 @@ Two esbuild bundles (`npm run build`):
 - **Delete** (`keyboard.ts`): Delete/Backspace removes selected nodes.
 - **Snap to grid** (`gridSnap.ts`): Optional grid snapping (20px) applied during drag and resize. Toggled via toolbar button.
 - **Lock mode** (`lockToggle.ts`): Toggles all interactions off — deselects nodes, hides sidebar, disables dragging and transforms. Linked nodes remain clickable to follow file links.
-- **Label editing** (`labelEditor.ts`): Overlays an HTML `<textarea>` at the element's screen position on double-click, scaled with viewport zoom. Works for both nodes (`startLabelEdit`) and edges (`startEdgeLabelEdit`). Enter commits, Shift+Enter inserts a newline, Escape cancels, blur commits.
+- **Label editing** (`labelEditor.ts`): Overlays an HTML `<textarea>` at the element's screen position on double-click, scaled with viewport zoom. Hides the DOM label during editing and restores it on commit/cancel. Works for both nodes (`startLabelEdit`) and edges (`startEdgeLabelEdit`). Enter commits, Shift+Enter inserts a newline, Escape cancels, blur commits.
 - **Edge creation** (`edgeMode.ts`): Toggle via toolbar button. Two-click workflow: first click sets source endpoint, second click creates the edge. Preview line + cursor dot follow the mouse. ESC exits edge mode.
 - **Edge waypoints** (`canvasEdge.ts`, `edgeHandleOverlay.ts`, `renderer.ts`): Edges support optional `waypoints` — an array of `{x, y}` coordinates that create polyline paths routing through intermediate points. Rendering builds a point array `[from, ...waypoints, to]` via `buildPolylinePoints`. Solid lines draw a single polyline; dashed/dotted styles iterate per segment. Arrowheads use the first/last segment direction. Labels sit at the arc-length midpoint via `computePolylineMidpoint`. Hit-testing uses `PolylineHitArea` which checks point-to-segment distance across all segments. Ctrl+double-click on an edge segment inserts a waypoint; Ctrl+double-click on a waypoint handle removes it; dragging a waypoint onto a from/to endpoint also removes it.
-- **Edge labels** (`canvasEdge.ts`, `labelEditor.ts`): Edges support optional labels rendered as `PixiText` at the polyline midpoint. Double-click an edge to edit its label. Selected edges show a blue dashed overlay rather than changing the edge color.
+- **Edge labels** (`canvasEdge.ts`, `domLabels.ts`, `labelEditor.ts`): Edges support optional labels rendered as DOM divs at the polyline midpoint. Double-click an edge to edit its label. Selected edges show a blue dashed overlay rather than changing the edge color.
 - **Edge endpoints** (`canvasEdge.ts`): An endpoint is either node-anchored (`nodeId` + proportional `anchor`) or a free-point (`x`, `y`). `resolveEndpoint` converts both forms to world coordinates using a `nodeMap`.
 - **Live edge following** (`renderer.ts`): `buildNodeMap` always reads live container positions/sizes, so edges follow during both node drag (`onDragUpdate` from `canvasNode`) and node resize (`onDragUpdate` from `selectionOverlay`). During edge handle drags, `renderEdges` applies the overlay's endpoint override and waypoint override to draw the edge at the in-flight position.
 - **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`, `canvasEdge.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick that lists both nodes and edges. Edges without a label display as "from label → to label". Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Ctrl+Click)". Ctrl+Click opens the file and jumps to the matched text. In locked mode, a plain click follows the link. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.

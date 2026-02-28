@@ -3,7 +3,7 @@ import type { Bounds } from "../../schema";
 import type { NodeChanges } from "../shared";
 import { snap, GRID_SIZE } from "../controls/gridSnap";
 import { setContainerBounds } from "./canvasNode";
-import { drawShape, drawGlowLayer, drawNebulaBg, glyphRadius } from "./shapeDrawing";
+import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapeDrawing";
 
 import { getNodeRectMeta } from "./metadata";
 
@@ -331,7 +331,6 @@ export class SelectionOverlay {
         // Update graphics
         const glow = container.getChildByLabel("node-glow") as Graphics | null;
         const rect = container.getChildByLabel("node-rect") as Graphics;
-        const text = container.getChildByLabel("node-label") as any;
         if (rect) {
           const rectMeta = getNodeRectMeta(rect);
           const fill = rectMeta?.fillColor ?? 0x888888;
@@ -352,17 +351,6 @@ export class SelectionOverlay {
             drawGlowLayer(glow, newW, newH, fill);
           } else if (glow && !isSpace) {
             glow.clear();
-          }
-        }
-        if (text) {
-          text.style.wordWrapWidth = this.theme === "space" ? newW * 1.5 : newW;
-          text.x = newW / 2;
-          const isGroup = glow ? (glow as any).__isGroup ?? false : false;
-          if (this.theme === "space") {
-            const gr = glyphRadius(newW, newH);
-            text.y = isGroup ? 4 : newH / 2 + gr + 4;
-          } else {
-            text.y = isGroup ? 4 : Math.max(0, (newH - text.height) / 2);
           }
         }
 
@@ -392,7 +380,6 @@ export class SelectionOverlay {
 
           const glow = container.getChildByLabel("node-glow") as Graphics | null;
           const rect = container.getChildByLabel("node-rect") as Graphics;
-          const text = container.getChildByLabel("node-label") as any;
           if (rect) {
             const rectMeta = getNodeRectMeta(rect);
             const fill = rectMeta?.fillColor ?? 0x888888;
@@ -412,17 +399,6 @@ export class SelectionOverlay {
               drawGlowLayer(glow, newBounds.width, newBounds.height, fill);
             } else if (glow && !isSpace) {
               glow.clear();
-            }
-          }
-          if (text) {
-            text.style.wordWrapWidth = this.theme === "space" ? newBounds.width * 1.5 : newBounds.width;
-            text.x = newBounds.width / 2;
-            const isGroup = glow ? (glow as any).__isGroup ?? false : false;
-            if (this.theme === "space") {
-              const gr = glyphRadius(newBounds.width, newBounds.height);
-              text.y = isGroup ? 4 : newBounds.height / 2 + gr + 4;
-            } else {
-              text.y = isGroup ? 4 : Math.max(0, (newBounds.height - text.height) / 2);
             }
           }
         }

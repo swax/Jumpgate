@@ -1,8 +1,7 @@
-import { Container, Graphics, Polygon, Text as PixiText, TextStyle } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 import { colorToHex, DOUBLE_CLICK_MS } from "../shared";
 import type { LabelEditContext } from "../interactions/labelEditor";
-import { MIN_TEXT_RESOLUTION, BASE_FONT_SIZE } from "./textDefaults";
 import { getEdgeGroupMeta, setEdgeGroupMeta } from "./metadata";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
@@ -131,24 +130,7 @@ export function createCanvasEdge(
   gfx.eventMode = "static";
   gfx.cursor = edge.fileLink ? "pointer" : "default";
 
-  const text = new PixiText({
-    text: edge.label || "",
-    resolution: MIN_TEXT_RESOLUTION,
-    style: new TextStyle({
-      fontSize: BASE_FONT_SIZE,
-      fontFamily: theme === "space" ? "Consolas, 'Courier New', monospace" : "sans-serif",
-      fill: labelColor,
-      align: "center",
-    }),
-    textureStyle: { scaleMode: "linear" },
-  });
-  text.label = "edge-label";
-  text.anchor.set(0.5, 0.5);
-  text.eventMode = "none";
-  if (!edge.label) text.visible = false;
-
   group.addChild(gfx);
-  group.addChild(text);
 
   setEdgeGroupMeta(group, {
     hasFileLink: !!edge.fileLink,
@@ -232,7 +214,6 @@ export function updateCanvasEdge(
   theme?: string
 ): void {
   const gfx = group.getChildByLabel("edge-line") as Graphics;
-  const text = group.getChildByLabel("edge-label") as PixiText;
 
   gfx.clear();
   gfx.cursor = edge.fileLink ? "pointer" : "default";
@@ -295,25 +276,6 @@ export function updateCanvasEdge(
   const tolerance = HIT_TOLERANCE / viewportScale;
   gfx.hitArea = new PolylineHitArea(points, Math.max(tolerance, HIT_TOLERANCE));
 
-  // Update label — position at polyline midpoint
-  const mid = computePolylineMidpoint(points);
-  text.position.set(mid.x, mid.y);
-  const labelText = edge.label || "";
-  if (labelText) {
-    text.text = labelText;
-    text.style.fill = edge.labelColor ?? labelColor;
-    text.style.fontFamily = isSpace ? "Consolas, 'Courier New', monospace" : "sans-serif";
-    text.visible = true;
-  } else {
-    text.visible = false;
-  }
-}
-
-export function updateEdgeTextResolution(group: Container, resolution: number): void {
-  const text = group.getChildByLabel("edge-label") as PixiText | null;
-  if (text && text.resolution !== resolution) {
-    text.resolution = resolution;
-  }
 }
 
 function drawDashedLine(

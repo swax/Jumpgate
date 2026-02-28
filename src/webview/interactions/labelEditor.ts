@@ -1,16 +1,20 @@
-import { Application, Container, Text as PixiText } from "pixi.js";
+import { Application, Container } from "pixi.js";
 import { getContainerBounds } from "../canvas/canvasNode";
+import type { DomLabelManager } from "../canvas/domLabels";
 
 export interface LabelEditContext {
   app: Application;
   viewport: Container;
   labelColor: string;
+  domLabels: DomLabelManager;
   onLabelChanged: (nodeId: string, label: string) => void;
   onEdgeLabelChanged: (edgeId: string, label: string) => void;
 }
 
 interface TextareaOpts {
-  textNode: PixiText;
+  entityId: string;
+  domLabels: DomLabelManager;
+  initialText: string;
   globalPos: { x: number; y: number };
   width: number;
   height: number;
@@ -26,15 +30,15 @@ interface TextareaOpts {
 
 function openTextarea(opts: TextareaOpts): void {
   const {
-    textNode, globalPos, width, height, scale, container,
+    entityId, domLabels, initialText, globalPos, width, height, scale, container,
     labelColor, background, border, onCommit,
     visibleWhenEmpty = true,
   } = opts;
 
-  textNode.visible = false;
+  domLabels.hideLabel(entityId);
 
   const textarea = document.createElement("textarea");
-  textarea.value = textNode.text;
+  textarea.value = initialText;
 
   Object.assign(textarea.style, {
     position: "absolute",
@@ -79,8 +83,9 @@ function openTextarea(opts: TextareaOpts): void {
     done = true;
     const newLabel = textarea.value;
     textarea.remove();
-    textNode.text = newLabel;
-    textNode.visible = visibleWhenEmpty || !!newLabel;
+    if (visibleWhenEmpty || !!newLabel) {
+      domLabels.showLabel(entityId);
+    }
     onCommit(newLabel);
   };
 
@@ -88,7 +93,9 @@ function openTextarea(opts: TextareaOpts): void {
     if (done) return;
     done = true;
     textarea.remove();
-    textNode.visible = visibleWhenEmpty || !!textNode.text;
+    if (visibleWhenEmpty || !!initialText) {
+      domLabels.showLabel(entityId);
+    }
   };
 
   textarea.addEventListener("keydown", (e) => {
@@ -109,14 +116,16 @@ export function startLabelEdit(
   group: Container,
   nodeId: string
 ): void {
-  const textNode = group.getChildByLabel("node-label") as PixiText;
   const { width, height } = getContainerBounds(group);
+  const initialText = ctx.domLabels.getLabelText(nodeId);
 
   const globalPos = group.toGlobal({ x: 0, y: 0 });
   const scale = ctx.viewport.scale.x;
 
   openTextarea({
-    textNode,
+    entityId: nodeId,
+    domLabels: ctx.domLabels,
+    initialText,
     globalPos,
     width: width * scale,
     height: height * scale,
@@ -132,16 +141,31 @@ export function startEdgeLabelEdit(
   group: Container,
   edgeId: string
 ): void {
-  const textNode = group.getChildByLabel("edge-label") as PixiText;
+  const initialText = ctx.domLabels.getLabelText(edgeId);
 
-  const globalPos = textNode.toGlobal({ x: 0, y: 0 });
+  // Get position from DOM element if available, else fall back to group global pos
+  const el = ctx.domLabels.getElement(edgeId);
+  let globalPos: { x: number; y: number };
+  if (el) {
+    const rect = el.getBoundingClientRect();
+    const containerRect = ctx.app.canvas.parentElement!.getBoundingClientRect();
+    globalPos = {
+      x: rect.left + rect.width / 2 - containerRect.left,
+      y: rect.top + rect.height / 2 - containerRect.top,
+    };
+  } else {
+    const gp = group.toGlobal({ x: 0, y: 0 });
+    globalPos = { x: gp.x, y: gp.y };
+  }
+
   const scale = ctx.viewport.scale.x;
-
   const boxWidth = 150 * scale;
   const boxHeight = 40 * scale;
 
   openTextarea({
-    textNode,
+    entityId: edgeId,
+    domLabels: ctx.domLabels,
+    initialText,
     globalPos: { x: globalPos.x - boxWidth / 2, y: globalPos.y - boxHeight / 2 },
     width: boxWidth,
     height: boxHeight,

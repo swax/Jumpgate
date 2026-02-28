@@ -1,14 +1,15 @@
-import { Application, Container, Graphics } from "pixi.js";
+import { Application, Container } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
 import type { NodeChanges } from "./shared";
-import { createCanvasNode, updateCanvasNode, updateNodeTextResolution, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
-import { createCanvasEdge, updateCanvasEdge, updateEdgeTextResolution, resolveEndpoint, buildPolylinePoints, pointToSegmentDistance } from "./canvas/canvasEdge";
+import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
+import { createCanvasEdge, updateCanvasEdge, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance } from "./canvas/canvasEdge";
 import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
-import { getNodeDepth, getNodeById, getEdgeById, type EditorState } from "./state";
+import { getNodeDepth, getNodeById, getChildNodeIds, getEdgeById, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
 import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
-import { MIN_TEXT_RESOLUTION } from "./canvas/textDefaults";
+import { DomLabelManager } from "./canvas/domLabels";
+import { DEFAULT_FONT_FAMILY } from "./canvas/textDefaults";
 
 export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
@@ -38,10 +39,13 @@ export function createRenderer(
       .getPropertyValue("--vscode-editor-foreground")
       .trim() || "#cccccc";
 
+  const domLabels = new DomLabelManager(app.canvas.parentElement!);
+
   const labelEditCtx: LabelEditContext = {
     app,
     viewport,
     labelColor,
+    domLabels,
     onLabelChanged: (nodeId, label) => callbacks.onNodeChanged(nodeId, { label }),
     onEdgeLabelChanged: (edgeId, label) => callbacks.onEdgeChanged(edgeId, { label }),
   };
@@ -90,6 +94,11 @@ export function createRenderer(
           })
           .filter((n): n is NonNullable<typeof n> => n !== null);
         selectionOverlay.update(nodeInfos, viewport.scale.x, lastState?.document.theme);
+
+        // Update DOM label world positions from live container bounds
+        for (const info of nodeInfos) {
+          domLabels.updateWorldPosition(info.id, info.x, info.y, info.width, info.height);
+        }
       }
       // Re-render edges during drag so they follow nodes
       renderEdges(lastState);
@@ -112,25 +121,13 @@ export function createRenderer(
 
   let lastState: EditorState | null = null;
 
-  // Keep text crisp during zoom by updating resolution when viewport scale changes
-  let lastTextRes = MIN_TEXT_RESOLUTION;
+  // Sync DOM label positions every frame for smooth pan/zoom tracking
   app.ticker.add(() => {
     if (!lastState) return;
-
-    // --- Text resolution update (only when zoom changes) ---
-    const textRes = Math.max(MIN_TEXT_RESOLUTION, Math.ceil(viewport.scale.x * window.devicePixelRatio));
-    if (textRes !== lastTextRes) {
-      lastTextRes = textRes;
-      for (const node of lastState.document.nodes) {
-        const group = viewport.getChildByLabel(node.id) as Container | null;
-        if (group) updateNodeTextResolution(group, textRes);
-      }
-      for (const edge of lastState.document.edges) {
-        const group = viewport.getChildByLabel(edge.id) as Container | null;
-        if (group) updateEdgeTextResolution(group, textRes);
-      }
-    }
-
+    const zoom = viewport.scale.x;
+    const vpX = viewport.position.x;
+    const vpY = viewport.position.y;
+    domLabels.syncPositions(zoom, vpX, vpY);
   });
 
   /** Build a nodeMap using live container positions/sizes (covers both drag and resize previews). */
@@ -158,6 +155,7 @@ export function createRenderer(
           viewport.removeChild(gfx);
           gfx.destroy();
         }
+        domLabels.removeLabel(id);
       }
     }
 
@@ -240,6 +238,14 @@ export function createRenderer(
       }
 
       updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor, doc.theme);
+
+      // Upsert DOM label for this edge
+      const points = buildPolylinePoints(from, to, renderEdge.waypoints);
+      const mid = computePolylineMidpoint(points);
+      const isSpace = doc.theme === "space";
+      const edgeFontFamily = isSpace ? "Consolas, 'Courier New', monospace" : DEFAULT_FONT_FAMILY;
+      const edgeLabelColor = edge.labelColor ?? labelColor;
+      domLabels.upsertEdgeLabel(edge.id, edge.label || "", edgeLabelColor, edgeFontFamily, mid.x, mid.y, isSpace);
     }
 
     prevEdgeIds = currentEdgeIds;
@@ -271,6 +277,7 @@ export function createRenderer(
           viewport.removeChild(node);
           node.destroy();
         }
+        domLabels.removeLabel(id);
       }
     }
 
@@ -297,17 +304,24 @@ export function createRenderer(
       if (!isDraggingNode(node.id)) {
         updateCanvasNode(group, node, labelColor, doc.theme);
       }
-    }
 
-    // Update text resolution and scale for crisp rendering at current zoom
-    const textRes = Math.max(MIN_TEXT_RESOLUTION, Math.ceil(viewport.scale.x * window.devicePixelRatio));
-    for (const node of doc.nodes) {
-      const group = viewport.getChildByLabel(node.id) as Container | null;
-      if (group) updateNodeTextResolution(group, textRes);
-    }
-    for (const edge of doc.edges) {
-      const group = viewport.getChildByLabel(edge.id) as Container | null;
-      if (group) updateEdgeTextResolution(group, textRes);
+      // Upsert DOM label for this node
+      const isSpace = doc.theme === "space";
+      const hasChildren = getChildNodeIds(node.id).length > 0;
+      const textFill = node.labelColor ?? labelColor;
+      const fontFamily = isSpace ? "Consolas, 'Courier New', monospace" : DEFAULT_FONT_FAMILY;
+      domLabels.upsertNodeLabel(
+        node.id,
+        node.label || "",
+        textFill,
+        fontFamily,
+        node.bounds.x,
+        node.bounds.y,
+        node.bounds.width,
+        node.bounds.height,
+        hasChildren,
+        isSpace
+      );
     }
 
     // Update selection overlay
