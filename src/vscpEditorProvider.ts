@@ -223,6 +223,57 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     .color-field::-moz-color-swatch {
       border: none;
     }
+    .color-wrapper {
+      position: relative;
+      overflow: visible;
+    }
+    .color-clear {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #aa3333;
+      color: white;
+      font-size: 10px;
+      line-height: 14px;
+      text-align: center;
+      cursor: pointer;
+      z-index: 2;
+      border: none;
+      padding: 0;
+    }
+    .color-clear:hover {
+      background: #cc4444;
+    }
+    .color-wrapper.is-none .color-clear {
+      display: none;
+    }
+    .no-color-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 3px;
+    }
+    .no-color-overlay::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        135deg,
+        transparent,
+        transparent 3px,
+        rgba(255, 80, 80, 0.45) 3px,
+        rgba(255, 80, 80, 0.45) 4px
+      );
+      border-radius: 3px;
+    }
+    .color-wrapper.is-none .no-color-overlay {
+      display: block;
+    }
     #text-color-wrapper {
       position: relative;
       width: 32px;
@@ -249,6 +300,35 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
       font-weight: bold;
       font-size: 16px;
       pointer-events: none;
+    }
+    #border-color-wrapper {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #333333;
+      border-radius: 4px;
+      cursor: pointer;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    #border-color-wrapper #border-color {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    #border-color-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      pointer-events: none;
+      color: var(--vscode-dropdown-foreground, #cccccc);
     }
     #shape-select {
       width: 32px;
@@ -341,10 +421,20 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   <div id="edge-mode-status"></div>
   <div id="group-status"></div>
   <div id="sidebar">
-    <input type="color" id="fill-color" class="color-field" title="Node color">
+    <div id="fill-color-wrapper" class="color-wrapper" title="Node color">
+      <input type="color" id="fill-color" class="color-field">
+      <span class="no-color-overlay"></span>
+      <span class="color-clear">×</span>
+    </div>
     <div id="text-color-wrapper" title="Label color">
       <span id="text-color-label">T</span>
       <input type="color" id="text-color" class="color-field">
+    </div>
+    <div id="border-color-wrapper" class="color-wrapper" title="Border color">
+      <span id="border-color-label">▢</span>
+      <input type="color" id="border-color" class="color-field">
+      <span class="no-color-overlay"></span>
+      <span class="color-clear">×</span>
     </div>
     <select id="shape-select" title="Shape">
       <option value="">▭</option>

@@ -10,7 +10,7 @@
     {
       "id": "grp-extension",
       "bounds": { "x": 20, "y": 20, "width": 760, "height": 280 },
-      "nodeColor": "#263238",
+      "nodeColor": "#263238", "borderColor": "#546E7A",
       "label": "VS Code Extension Host"
     },
     {
@@ -91,7 +91,7 @@
     {
       "id": "grp-webview-entry",
       "bounds": { "x": 20, "y": 360, "width": 760, "height": 200 },
-      "nodeColor": "#1A237E",
+      "nodeColor": "#1A237E", "borderColor": "#3949AB",
       "label": "Webview Entry & Wiring"
     },
     {
@@ -135,7 +135,7 @@
     {
       "id": "grp-state",
       "bounds": { "x": 820, "y": 360, "width": 500, "height": 440 },
-      "nodeColor": "#E65100",
+      "nodeColor": "#E65100", "borderColor": "#FF9100",
       "label": "State Management"
     },
     {
@@ -268,7 +268,7 @@
     {
       "id": "grp-renderer",
       "bounds": { "x": 20, "y": 620, "width": 760, "height": 280 },
-      "nodeColor": "#BF360C",
+      "nodeColor": "#BF360C", "borderColor": "#FF6E40",
       "label": "Renderer (reconciliation)"
     },
     {
@@ -338,7 +338,7 @@
     {
       "id": "grp-canvas-node",
       "bounds": { "x": 20, "y": 960, "width": 500, "height": 300 },
-      "nodeColor": "#880E4F",
+      "nodeColor": "#880E4F", "borderColor": "#EC407A",
       "label": "Canvas Node (canvasNode.ts)"
     },
     {
@@ -407,7 +407,7 @@
     {
       "id": "grp-canvas-edge",
       "bounds": { "x": 560, "y": 960, "width": 500, "height": 320 },
-      "nodeColor": "#880E4F",
+      "nodeColor": "#880E4F", "borderColor": "#EC407A",
       "label": "Canvas Edge (canvasEdge.ts)"
     },
     {
@@ -485,7 +485,7 @@
     {
       "id": "grp-shapes",
       "bounds": { "x": 20, "y": 1320, "width": 500, "height": 200 },
-      "nodeColor": "#4A148C",
+      "nodeColor": "#4A148C", "borderColor": "#AB47BC",
       "label": "Shape Drawing (shapeDrawing.ts)"
     },
     {
@@ -518,7 +518,7 @@
     {
       "id": "grp-edge-utils",
       "bounds": { "x": 560, "y": 1320, "width": 500, "height": 200 },
-      "nodeColor": "#4A148C",
+      "nodeColor": "#4A148C", "borderColor": "#AB47BC",
       "label": "Edge Utilities (edgeUtils.ts)"
     },
     {
@@ -561,7 +561,7 @@
     {
       "id": "grp-selection-overlay",
       "bounds": { "x": 1100, "y": 860, "width": 440, "height": 260 },
-      "nodeColor": "#880E4F",
+      "nodeColor": "#880E4F", "borderColor": "#EC407A",
       "label": "Selection Overlay"
     },
     {
@@ -610,7 +610,7 @@
     {
       "id": "grp-edge-handle",
       "bounds": { "x": 1100, "y": 1160, "width": 440, "height": 260 },
-      "nodeColor": "#880E4F",
+      "nodeColor": "#880E4F", "borderColor": "#EC407A",
       "label": "Edge Handle Overlay"
     },
     {
@@ -661,7 +661,7 @@
     {
       "id": "grp-interactions",
       "bounds": { "x": 20, "y": 1580, "width": 760, "height": 460 },
-      "nodeColor": "#311B92",
+      "nodeColor": "#311B92", "borderColor": "#7C4DFF",
       "label": "Interactions"
     },
     {
@@ -773,7 +773,7 @@
     {
       "id": "grp-controls",
       "bounds": { "x": 820, "y": 1580, "width": 500, "height": 260 },
-      "nodeColor": "#004D40",
+      "nodeColor": "#004D40", "borderColor": "#26A69A",
       "label": "Controls"
     },
     {

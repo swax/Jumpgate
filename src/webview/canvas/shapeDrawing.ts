@@ -41,6 +41,11 @@ const STROKE_WIDTH = 2;
 const ELLIPSE_SEGMENTS = 48;
 const CORNER_SEGMENTS = 8;
 
+function applyStyle(gfx: Graphics, fillColor: number | null, strokeColor: number | null): void {
+  if (fillColor !== null) gfx.fill(fillColor);
+  if (strokeColor !== null) gfx.stroke({ width: STROKE_WIDTH, color: strokeColor });
+}
+
 function transformVertices(
   flatPts: number[],
   width: number,
@@ -181,11 +186,10 @@ function drawShapeStandard(
   width: number,
   height: number,
   shape: NodeShape | undefined,
-  fillColor: number,
-  strokeColor: number,
+  fillColor: number | null,
+  strokeColor: number | null,
   direction?: NodeDirection
 ): void {
-  const sw = STROKE_WIDTH;
   const deg = directionToDeg(direction);
 
   gfx.pivot.set(0, 0);
@@ -193,7 +197,7 @@ function drawShapeStandard(
   gfx.rotation = 0;
   gfx.scale.set(1, 1);
 
-  if (shape === "text") {
+  if (shape === "text" || (fillColor === null && strokeColor === null)) {
     setBoxHitArea(gfx, width, height);
     return;
   }
@@ -202,7 +206,7 @@ function drawShapeStandard(
     const verts = getShapeVertices(width, height, shape);
     if (verts) {
       const transformed = transformVertices(verts, width, height, deg);
-      gfx.poly(transformed).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly(transformed); applyStyle(gfx, fillColor, strokeColor);
       setBoxHitArea(gfx, width, height);
       return;
     }
@@ -210,35 +214,35 @@ function drawShapeStandard(
 
   switch (shape) {
     case "rounded-rectangle":
-      gfx.roundRect(0, 0, width, height, 10).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.roundRect(0, 0, width, height, 10); applyStyle(gfx, fillColor, strokeColor);
       break;
 
     case "ellipse":
-      gfx.ellipse(width / 2, height / 2, width / 2, height / 2).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.ellipse(width / 2, height / 2, width / 2, height / 2); applyStyle(gfx, fillColor, strokeColor);
       break;
 
     case "diamond": {
       const cx = width / 2;
       const cy = height / 2;
-      gfx.poly([cx, 0, width, cy, cx, height, 0, cy]).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly([cx, 0, width, cy, cx, height, 0, cy]); applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
     case "parallelogram": {
       const offset = width * 0.2;
-      gfx.poly([offset, 0, width, 0, width - offset, height, 0, height]).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly([offset, 0, width, 0, width - offset, height, 0, height]); applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
     case "trapezoid": {
       const offset = width * 0.15;
-      gfx.poly([offset, 0, width - offset, 0, width, height, 0, height]).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly([offset, 0, width - offset, 0, width, height, 0, height]); applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
     case "triangle": {
       const cx = width / 2;
-      gfx.poly([cx, 0, width, height, 0, height]).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly([cx, 0, width, height, 0, height]); applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
@@ -246,7 +250,7 @@ function drawShapeStandard(
       const swap = deg === 90 || deg === 270;
       const dw = swap ? height : width;
       const dh = swap ? width : height;
-      gfx.roundRect(0, 0, dw, dh, Math.min(dw, dh) / 2).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.roundRect(0, 0, dw, dh, Math.min(dw, dh) / 2); applyStyle(gfx, fillColor, strokeColor);
       if (deg !== 0) {
         const rad = (deg * Math.PI) / 180;
         gfx.pivot.set(dw / 2, dh / 2);
@@ -265,7 +269,7 @@ function drawShapeStandard(
       }
       pts.push(width, height);
       pts.push(0, height);
-      gfx.poly(pts).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly(pts); applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
@@ -283,7 +287,7 @@ function drawShapeStandard(
       }
       pts.push(dw - r, dh);
       pts.push(0, dh);
-      gfx.poly(pts).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly(pts); applyStyle(gfx, fillColor, strokeColor);
       if (deg !== 0) {
         const rad = (deg * Math.PI) / 180;
         gfx.pivot.set(dw / 2, dh / 2);
@@ -307,7 +311,7 @@ function drawShapeStandard(
         pts.push(x, y);
       }
       pts.push(0, 0);
-      gfx.poly(pts).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.poly(pts); applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
@@ -316,11 +320,13 @@ function drawShapeStandard(
       const dw = swap ? height : width;
       const dh = swap ? width : height;
       const ry = Math.min(dh * 0.15, 20);
-      gfx.ellipse(dw / 2, dh - ry, dw / 2, ry).fill(fillColor).stroke({ width: sw, color: strokeColor });
-      gfx.rect(0, ry, dw, dh - 2 * ry).fill(fillColor);
-      gfx.moveTo(0, ry).lineTo(0, dh - ry).stroke({ width: sw, color: strokeColor });
-      gfx.moveTo(dw, ry).lineTo(dw, dh - ry).stroke({ width: sw, color: strokeColor });
-      gfx.ellipse(dw / 2, ry, dw / 2, ry).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.ellipse(dw / 2, dh - ry, dw / 2, ry); applyStyle(gfx, fillColor, strokeColor);
+      if (fillColor !== null) gfx.rect(0, ry, dw, dh - 2 * ry).fill(fillColor);
+      if (strokeColor !== null) {
+        gfx.moveTo(0, ry).lineTo(0, dh - ry).stroke({ width: STROKE_WIDTH, color: strokeColor });
+        gfx.moveTo(dw, ry).lineTo(dw, dh - ry).stroke({ width: STROKE_WIDTH, color: strokeColor });
+      }
+      gfx.ellipse(dw / 2, ry, dw / 2, ry); applyStyle(gfx, fillColor, strokeColor);
       if (deg !== 0) {
         const rad = (deg * Math.PI) / 180;
         gfx.pivot.set(dw / 2, dh / 2);
@@ -332,7 +338,7 @@ function drawShapeStandard(
 
     case "rectangle":
     default:
-      gfx.rect(0, 0, width, height).fill(fillColor).stroke({ width: sw, color: strokeColor });
+      gfx.rect(0, 0, width, height); applyStyle(gfx, fillColor, strokeColor);
       break;
   }
 
@@ -348,8 +354,8 @@ export function drawShape(
   width: number,
   height: number,
   shape: NodeShape | undefined,
-  fillColor: number,
-  strokeColor: number,
+  fillColor: number | null,
+  strokeColor: number | null,
   direction?: NodeDirection,
   theme?: string
 ): void {

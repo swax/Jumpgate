@@ -10,16 +10,6 @@ import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapeDrawing";
 import { findNodeAtPoint } from "./edgeUtils";
 import { getNodeMeta, setNodeMeta, setNodeRectMeta } from "./metadata";
 
-const DEFAULT_NODE_COLOR = 0x888888;
-const STROKE_COLOR = 0x333333;
-const SPACE_NODE_COLOR = 0x44BBDD;
-const SPACE_STROKE_COLOR = 0x88CCFF;
-
-function getNodeColors(theme?: string) {
-  return theme === "space"
-    ? { defaultColor: SPACE_NODE_COLOR, strokeColor: SPACE_STROKE_COLOR }
-    : { defaultColor: DEFAULT_NODE_COLOR, strokeColor: STROKE_COLOR };
-}
 
 export function getContainerBounds(container: Container): Bounds {
   const meta = getNodeMeta(container);
@@ -39,8 +29,8 @@ export function setContainerBounds(container: Container, bounds: Bounds): void {
     meta.nodeHeight = bounds.height;
   } else {
     setNodeMeta(container, {
-      fillColor: DEFAULT_NODE_COLOR,
-      strokeColor: STROKE_COLOR,
+      fillColor: null,
+      strokeColor: null,
       nodeWidth: bounds.width,
       nodeHeight: bounds.height,
       hasFileLink: false,
@@ -81,8 +71,8 @@ export function createCanvasNode(
   group.eventMode = "static";
   group.cursor = node.fileLink ? "pointer" : "default";
 
-  const { defaultColor, strokeColor: themeStroke } = getNodeColors(theme);
-  const fillColor = colorToHex(node.nodeColor, defaultColor);
+  const fillColor = node.nodeColor ? colorToHex(node.nodeColor, 0) : null;
+  const strokeColor = node.borderColor ? colorToHex(node.borderColor, 0) : null;
   const hasChildren = getChildNodeIds(node.id).length > 0;
   const isSpace = theme === "space";
 
@@ -90,7 +80,7 @@ export function createCanvasNode(
   const glow = new Graphics();
   glow.label = "node-glow";
   (glow as any).__isGroup = hasChildren;
-  if (isSpace) {
+  if (isSpace && fillColor !== null) {
     if (hasChildren || node.shape !== "text") {
       drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
     }
@@ -99,10 +89,10 @@ export function createCanvasNode(
 
   const rect = new Graphics();
   rect.label = "node-rect";
-  if (hasChildren && isSpace) {
+  if (hasChildren && isSpace && fillColor !== null) {
     drawNebulaBg(rect, node.bounds.width, node.bounds.height, fillColor);
   } else {
-    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, themeStroke, node.direction, theme);
+    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, strokeColor, node.direction, theme);
   }
   rect.eventMode = "passive";
 
@@ -111,7 +101,7 @@ export function createCanvasNode(
 
   const meta = {
     fillColor,
-    strokeColor: themeStroke,
+    strokeColor,
     nodeShape: node.shape,
     nodeDirection: node.direction,
     nodeWidth: node.bounds.width,
@@ -427,8 +417,8 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
 
   setContainerBounds(group, node.bounds);
 
-  const { defaultColor, strokeColor: themeStroke } = getNodeColors(theme);
-  const fillColor = colorToHex(node.nodeColor, defaultColor);
+  const fillColor = node.nodeColor ? colorToHex(node.nodeColor, 0) : null;
+  const strokeColor = node.borderColor ? colorToHex(node.borderColor, 0) : null;
   const hasChildren = getChildNodeIds(node.id).length > 0;
   const isSpace = theme === "space";
 
@@ -436,22 +426,22 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   if (glow) {
     glow.clear();
     (glow as any).__isGroup = hasChildren;
-    if (isSpace && (hasChildren || node.shape !== "text")) {
+    if (isSpace && fillColor !== null && (hasChildren || node.shape !== "text")) {
       drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
     }
   }
 
   // Rebuild rect
   rect.clear();
-  if (hasChildren && isSpace) {
+  if (hasChildren && isSpace && fillColor !== null) {
     drawNebulaBg(rect, node.bounds.width, node.bounds.height, fillColor);
   } else {
-    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, themeStroke, node.direction, theme);
+    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, strokeColor, node.direction, theme);
   }
 
   const updatedMeta = {
     fillColor,
-    strokeColor: themeStroke,
+    strokeColor,
     nodeShape: node.shape,
     nodeDirection: node.direction,
     nodeWidth: node.bounds.width,

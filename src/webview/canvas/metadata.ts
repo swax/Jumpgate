@@ -2,8 +2,8 @@ import type { Container, Graphics } from "pixi.js";
 import type { Node } from "../../schema";
 
 export interface NodeMeta {
-  fillColor: number;
-  strokeColor: number;
+  fillColor: number | null;
+  strokeColor: number | null;
   nodeShape?: Node["shape"];
   nodeDirection?: Node["direction"];
   nodeWidth: number;

@@ -2,7 +2,6 @@ import { directionValues, type Edge, type Node } from "../../schema";
 import { getState, subscribe, getNodeById, getEdgeById } from "../state";
 
 const DEFAULT_FILL = "#888888";
-const SPACE_FILL = "#44BBDD";
 const DEFAULT_TEXT = "#cccccc";
 
 const STANDARD_SHAPE_OPTIONS: [string, string][] = [
@@ -37,7 +36,7 @@ const SPACE_SHAPE_OPTIONS: [string, string][] = [
   ["text", "T"],
 ];
 
-export interface SidebarChanges extends Partial<Pick<Node, "nodeColor" | "labelColor" | "shape" | "direction">> {
+export interface SidebarChanges extends Partial<Pick<Node, "nodeColor" | "labelColor" | "borderColor" | "shape" | "direction">> {
   bounds?: Partial<Node["bounds"]>;
 }
 
@@ -65,9 +64,14 @@ export function setupSidebar(
   callbacks: SidebarCallbacks
 ): void {
   const fillInput = container.querySelector<HTMLInputElement>("#fill-color")!;
+  const fillWrapper = container.querySelector<HTMLElement>("#fill-color-wrapper")!;
+  const fillClear = fillWrapper.querySelector<HTMLElement>(".color-clear")!;
   const textInput = container.querySelector<HTMLInputElement>("#text-color")!;
   const textWrapper = container.querySelector<HTMLElement>("#text-color-wrapper")!;
   const textLabel = container.querySelector<HTMLElement>("#text-color-label")!;
+  const borderInput = container.querySelector<HTMLInputElement>("#border-color")!;
+  const borderWrapper = container.querySelector<HTMLElement>("#border-color-wrapper")!;
+  const borderClear = borderWrapper.querySelector<HTMLElement>(".color-clear")!;
   const shapeSelect = container.querySelector<HTMLSelectElement>("#shape-select")!;
   const rotateBtn = container.querySelector<HTMLButtonElement>("#rotate-btn")!;
 
@@ -75,8 +79,9 @@ export function setupSidebar(
 
   let targetIds: string[] = [];
   let targetType: "node" | "edge" = "node";
-  let currentFill = DEFAULT_FILL;
+  let currentFill: string | null = null;
   let currentText = DEFAULT_TEXT;
+  let currentBorder: string | null = null;
   let currentShapeTheme: string | undefined;
 
   function rebuildShapeOptions(theme: string | undefined): void {
@@ -94,17 +99,23 @@ export function setupSidebar(
     shapeSelect.value = savedValue;
   }
 
-  function updateTextPreview(): void {
-    textWrapper.style.backgroundColor = currentFill;
+  function updatePreview(): void {
+    textWrapper.style.backgroundColor = currentFill ?? "transparent";
     textLabel.style.color = currentText;
+    borderWrapper.style.backgroundColor = currentFill ?? "transparent";
+    borderWrapper.style.borderColor = currentBorder ?? "transparent";
+    fillWrapper.classList.toggle("is-none", currentFill === null);
+    borderWrapper.classList.toggle("is-none", currentBorder === null);
   }
 
-  function setColors(fill: string, text: string): void {
+  function setColors(fill: string | null, text: string, border: string | null): void {
     currentFill = fill;
     currentText = text;
-    fillInput.value = fill;
+    currentBorder = border;
+    fillInput.value = fill ?? DEFAULT_FILL;
     textInput.value = text;
-    updateTextPreview();
+    borderInput.value = border ?? "#333333";
+    updatePreview();
   }
 
   function applyNodeChanges(changes: SidebarChanges): void {
@@ -136,7 +147,31 @@ export function setupSidebar(
     } else {
       applyNodeChanges({ nodeColor: currentFill });
     }
-    updateTextPreview();
+    updatePreview();
+  });
+
+  fillClear.addEventListener("click", (e) => {
+    e.stopPropagation();
+    currentFill = null;
+    if (targetType === "edge") {
+      applyEdgeChanges({ color: undefined });
+    } else {
+      applyNodeChanges({ nodeColor: undefined });
+    }
+    updatePreview();
+  });
+
+  borderInput.addEventListener("input", () => {
+    currentBorder = borderInput.value;
+    applyNodeChanges({ borderColor: currentBorder });
+    updatePreview();
+  });
+
+  borderClear.addEventListener("click", (e) => {
+    e.stopPropagation();
+    currentBorder = null;
+    applyNodeChanges({ borderColor: undefined });
+    updatePreview();
   });
 
   textInput.addEventListener("input", () => {
@@ -146,7 +181,7 @@ export function setupSidebar(
     } else {
       applyNodeChanges({ labelColor: currentText });
     }
-    updateTextPreview();
+    updatePreview();
   });
 
   shapeSelect.addEventListener("change", () => {
@@ -196,7 +231,7 @@ export function setupSidebar(
     }
   });
 
-  setColors(DEFAULT_FILL, DEFAULT_TEXT);
+  setColors(null, DEFAULT_TEXT, null);
 
   subscribe(() => {
     const { document: doc, selectedNodeIds, selectedEdgeIds, locked } = getState();
@@ -205,27 +240,27 @@ export function setupSidebar(
     if (themeBtn) themeBtn.style.display = locked ? "none" : "";
     rebuildShapeOptions(doc.theme);
 
-    const themeFill = doc.theme === "space" ? SPACE_FILL : DEFAULT_FILL;
-
     if (selectedNodeIds.length > 0) {
       const node = getNodeById(selectedNodeIds[0]);
       if (node) {
         targetIds = selectedNodeIds;
         targetType = "node";
-        setColors(node.nodeColor ?? themeFill, node.labelColor ?? DEFAULT_TEXT);
+        setColors(node.nodeColor ?? null, node.labelColor ?? DEFAULT_TEXT, node.borderColor ?? null);
         shapeSelect.value = node.shape ?? "";
         shapeSelect.disabled = false;
         rotateBtn.disabled = false;
+        borderWrapper.style.display = "";
       }
     } else if (selectedEdgeIds.length > 0) {
       const edge = getEdgeById(selectedEdgeIds[0]);
       if (edge) {
         targetIds = selectedEdgeIds;
         targetType = "edge";
-        setColors(edge.color ?? themeFill, edge.labelColor ?? DEFAULT_TEXT);
+        setColors(edge.color ?? null, edge.labelColor ?? DEFAULT_TEXT, null);
         shapeSelect.value = "";
         shapeSelect.disabled = true;
         rotateBtn.disabled = true;
+        borderWrapper.style.display = "none";
       }
     } else {
       targetIds = [];

@@ -38,6 +38,7 @@ export const nodeSchema = z.object({
   bounds: boundsSchema,
   nodeColor: z.string().optional(),
   labelColor: z.string().optional(),
+  borderColor: z.string().optional(),
   label: z.string().optional(),
   fileLink: fileLinkSchema.optional(),
   shape: z.enum(shapeValues).optional(),

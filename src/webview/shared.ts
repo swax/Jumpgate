@@ -4,6 +4,7 @@ export type NodeChanges = {
   bounds?: Partial<Node["bounds"]>;
   nodeColor?: string;
   labelColor?: string;
+  borderColor?: string;
   label?: string;
   shape?: Node["shape"];
   direction?: Node["direction"];

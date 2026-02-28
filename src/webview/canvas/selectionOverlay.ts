@@ -364,20 +364,20 @@ export class SelectionOverlay {
         const rect = container.getChildByLabel("node-rect") as Graphics;
         if (rect) {
           const rectMeta = getNodeRectMeta(rect);
-          const fill = rectMeta?.fillColor ?? 0x888888;
-          const strokeClr = rectMeta?.strokeColor ?? 0x333333;
+          const fill = rectMeta?.fillColor ?? null;
+          const strokeClr = rectMeta?.strokeColor ?? null;
           const shape = rectMeta?.nodeShape;
           const dir = rectMeta?.nodeDirection;
           const isGroup = glow ? (glow as any).__isGroup ?? false : false;
           const isSpace = this.theme === "space";
           rect.clear();
-          if (isGroup && isSpace) {
+          if (isGroup && isSpace && fill !== null) {
             drawNebulaBg(rect, newW, newH, fill);
           } else {
             drawShape(rect, newW, newH, shape, fill, strokeClr, dir, this.theme);
           }
           // Rebuild glow layer to match new size (space only)
-          if (glow && isSpace && (isGroup || shape !== "text")) {
+          if (glow && isSpace && fill !== null && (isGroup || shape !== "text")) {
             glow.clear();
             drawGlowLayer(glow, newW, newH, fill);
           } else if (glow && !isSpace) {
@@ -420,12 +420,12 @@ export class SelectionOverlay {
             const isGroup = glow ? (glow as any).__isGroup ?? false : false;
             const isSpace = this.theme === "space";
             rect.clear();
-            if (isGroup && isSpace) {
+            if (isGroup && isSpace && fill !== null) {
               drawNebulaBg(rect, newBounds.width, newBounds.height, fill);
             } else {
               drawShape(rect, newBounds.width, newBounds.height, shape, fill, strokeClr, dir, this.theme);
             }
-            if (glow && isSpace && (isGroup || shape !== "text")) {
+            if (glow && isSpace && fill !== null && (isGroup || shape !== "text")) {
               glow.clear();
               drawGlowLayer(glow, newBounds.width, newBounds.height, fill);
             } else if (glow && !isSpace) {
