@@ -1,6 +1,6 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, FederatedPointerEvent, Graphics } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
-import { colorToHex, DOUBLE_CLICK_MS } from "../shared";
+import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
 import type { LabelEditContext } from "../interactions/labelEditor";
 import { getEdgeGroupMeta, setEdgeGroupMeta } from "./metadata";
 
@@ -125,6 +125,12 @@ export function createCanvasEdge(
   group.label = edge.id;
   group.eventMode = "auto";
 
+  const edgeGlow = new Graphics();
+  edgeGlow.label = "edge-glow";
+  edgeGlow.eventMode = "none";
+  edgeGlow.visible = false;
+  group.addChild(edgeGlow);
+
   const gfx = new Graphics();
   gfx.label = "edge-line";
   gfx.eventMode = "static";
@@ -158,20 +164,29 @@ export function createCanvasEdge(
   let lastCtrlKey = false;
 
   gfx.on("pointerdown", (e) => {
-    e.stopPropagation();
-
-    // In locked mode, click on linked edges opens the file link
+    // In locked mode, don't stop propagation so drag-to-pan works through edges.
+    // Only register a click if pointer didn't move.
     if (callbacks.isLocked()) {
-      if (!getEdgeGroupMeta(group)?.hasFileLink) return;
-      const onUpLocked = () => {
+      const downPos = { x: e.global.x, y: e.global.y };
+      const onUpLocked = (ue: FederatedPointerEvent) => {
         gfx.off("pointerup", onUpLocked);
         gfx.off("pointerupoutside", onUpLocked);
-        callbacks.onOpenFileLink(edge.id);
+        const dx = ue.global.x - downPos.x;
+        const dy = ue.global.y - downPos.y;
+        if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
+          if ((ue.ctrlKey || ue.metaKey) && getEdgeGroupMeta(group)?.hasFileLink) {
+            callbacks.onOpenFileLink(edge.id);
+          } else {
+            callbacks.onSelect(edge.id);
+          }
+        }
       };
       gfx.on("pointerup", onUpLocked);
       gfx.on("pointerupoutside", onUpLocked);
       return;
     }
+
+    e.stopPropagation();
 
     // Capture world position and modifier keys for double-click
     lastPointerWorldPos = gfx.toLocal(e.global);
@@ -211,8 +226,10 @@ export function updateCanvasEdge(
   isSelected: boolean,
   viewportScale: number,
   labelColor: string,
-  theme?: string
+  theme?: string,
+  locked = false
 ): void {
+  const edgeGlow = group.getChildByLabel("edge-glow") as Graphics;
   const gfx = group.getChildByLabel("edge-line") as Graphics;
 
   gfx.clear();
@@ -234,21 +251,30 @@ export function updateCanvasEdge(
   const style = edge.style ?? "solid";
   const arrow = edge.arrow ?? "end";
 
+  // Selection glow — separate Graphics so its alpha can be pulsed independently
+  edgeGlow.clear();
+  if (isSelected && locked) {
+    const glowColor = isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR;
+    drawPolyline(edgeGlow, points);
+    edgeGlow.stroke({ width: 14, color: glowColor, alpha: 0.2 });
+    drawPolyline(edgeGlow, points);
+    edgeGlow.stroke({ width: 8, color: glowColor, alpha: 0.3 });
+    drawPolyline(edgeGlow, points);
+    edgeGlow.stroke({ width: 4, color: glowColor, alpha: 0.4 });
+    edgeGlow.visible = true;
+  } else {
+    edgeGlow.visible = false;
+  }
+
   // Glow pass — wider low-alpha stroke behind the main line (space theme only)
   if (isSpace && style === "solid") {
-    gfx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      gfx.lineTo(points[i].x, points[i].y);
-    }
+    drawPolyline(gfx, points);
     gfx.stroke({ width: 4, color, alpha: 0.12 });
   }
 
   // Draw main line through all points
   if (style === "solid") {
-    gfx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      gfx.lineTo(points[i].x, points[i].y);
-    }
+    drawPolyline(gfx, points);
     gfx.stroke({ width: lineWidth, color });
   } else {
     for (let i = 1; i < points.length; i++) {
@@ -265,8 +291,8 @@ export function updateCanvasEdge(
     drawArrowhead(gfx, points[1], points[0], color);
   }
 
-  // Draw selection overlay along all segments
-  if (isSelected) {
+  // Draw selection overlay along all segments (unlocked mode only)
+  if (isSelected && !locked) {
     for (let i = 1; i < points.length; i++) {
       drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, 3, isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR, "dashed");
     }
@@ -276,6 +302,13 @@ export function updateCanvasEdge(
   const tolerance = HIT_TOLERANCE / viewportScale;
   gfx.hitArea = new PolylineHitArea(points, Math.max(tolerance, HIT_TOLERANCE));
 
+}
+
+function drawPolyline(gfx: Graphics, points: Point[]): void {
+  gfx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    gfx.lineTo(points[i].x, points[i].y);
+  }
 }
 
 function drawDashedLine(
@@ -342,11 +375,20 @@ function drawArrowhead(
   ]).fill(color);
 }
 
-/** Custom hit area checking point-to-segment distance across all polyline segments. */
-class PolylineHitArea {
+/** Custom hit area checking point-to-segment distance across all polyline segments,
+ *  plus an optional label bounding rect. */
+export class PolylineHitArea {
+  labelRect: { x: number; y: number; width: number; height: number } | null = null;
+
   constructor(private points: Point[], private tolerance: number) {}
 
   contains(x: number, y: number): boolean {
+    if (this.labelRect) {
+      const r = this.labelRect;
+      if (x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + r.height) {
+        return true;
+      }
+    }
     for (let i = 1; i < this.points.length; i++) {
       const dist = pointToSegmentDistance(
         x, y,

@@ -58,14 +58,32 @@ export function setupSelectionBox(
   app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
     const state = getState();
     if (state.edgeMode) return;
-    if (state.locked) return;
     if (e.target !== app.stage) return;
 
     if (!e.shiftKey) {
+      if (state.locked) {
+        // In locked mode, defer deselect until pointerup without drag (so panning preserves selection)
+        const downPos = { x: e.global.x, y: e.global.y };
+        const onUpDeselect = (ue: FederatedPointerEvent) => {
+          app.stage.off("pointerup", onUpDeselect);
+          app.stage.off("pointerupoutside", onUpDeselect);
+          const dx = ue.global.x - downPos.x;
+          const dy = ue.global.y - downPos.y;
+          if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
+            setSelectedNodeIds([]);
+            setSelectedEdgeIds([]);
+          }
+        };
+        app.stage.on("pointerup", onUpDeselect);
+        app.stage.on("pointerupoutside", onUpDeselect);
+        return;
+      }
       setSelectedNodeIds([]);
       setSelectedEdgeIds([]);
       return;
     }
+
+    if (state.locked) return;
 
     const local = viewport.toLocal(e.global);
     selectionStart = { x: local.x, y: local.y };

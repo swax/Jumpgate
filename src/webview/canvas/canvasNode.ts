@@ -150,14 +150,22 @@ export function createCanvasNode(
   const cascadePositions = new Map<string, { x: number; y: number }>();
 
   group.on("pointerdown", (e: FederatedPointerEvent) => {
-    // In locked mode, click on linked nodes opens the file link
+    // In locked mode, don't stop propagation so drag-to-pan works through nodes.
+    // Only register a click if pointer didn't move (like a Windows button).
     if (callbacks.isLocked()) {
-      if (!getNodeMeta(group)?.hasFileLink) return;
-      e.stopPropagation();
-      const onUpLocked = () => {
+      const downPos = { x: e.global.x, y: e.global.y };
+      const onUpLocked = (ue: FederatedPointerEvent) => {
         group.off("pointerup", onUpLocked);
         group.off("pointerupoutside", onUpLocked);
-        callbacks.onOpenFileLink(nodeId);
+        const dx = ue.global.x - downPos.x;
+        const dy = ue.global.y - downPos.y;
+        if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
+          if ((ue.ctrlKey || ue.metaKey) && getNodeMeta(group)?.hasFileLink) {
+            callbacks.onOpenFileLink(nodeId);
+          } else {
+            callbacks.onSelect(nodeId, false);
+          }
+        }
       };
       group.on("pointerup", onUpLocked);
       group.on("pointerupoutside", onUpLocked);

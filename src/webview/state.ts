@@ -64,6 +64,30 @@ export function setSelectedNodeIds(ids: string[]): void {
   notify();
 }
 
+export function setSelection(nodeIds: string[], edgeIds: string[]): void {
+  state = { ...state, selectedNodeIds: nodeIds, selectedEdgeIds: edgeIds };
+  notify();
+}
+
+export function getConnectedEdgeIds(nodeId: string): string[] {
+  return state.document.edges
+    .filter(
+      (e) =>
+        ("nodeId" in e.from && e.from.nodeId === nodeId) ||
+        ("nodeId" in e.to && e.to.nodeId === nodeId)
+    )
+    .map((e) => e.id);
+}
+
+export function getConnectedNodeIds(edgeId: string): string[] {
+  const edge = state.document.edges.find((e) => e.id === edgeId);
+  if (!edge) return [];
+  const ids: string[] = [];
+  if ("nodeId" in edge.from) ids.push(edge.from.nodeId);
+  if ("nodeId" in edge.to) ids.push(edge.to.nodeId);
+  return ids;
+}
+
 export function setSelectedEdgeIds(ids: string[]): void {
   state = { ...state, selectedEdgeIds: ids, selectedNodeIds: [] };
   notify();

@@ -3,20 +3,36 @@ import type { CursorManager } from "./cursorManager";
 
 const SCALE_BY = 1.1;
 
+export interface PanZoomControls {
+  setSuppressGrab: (suppress: boolean) => void;
+}
+
 export function setupPanZoom(
   app: Application,
   viewport: Container,
-  cursorManager: CursorManager
-): void {
+  cursorManager: CursorManager,
+  isLocked?: () => boolean
+): PanZoomControls {
   let isPanning = false;
   let lastPointer = { x: 0, y: 0 };
   let hoverOnStage = false;
+  let suppressGrab = false;
   const cursor = cursorManager;
   const CURSOR_KEY = "pan";
 
-  // Pan: drag on empty stage background
+  function updateHoverCursor(): void {
+    if (isPanning) return;
+    if (hoverOnStage && !suppressGrab) {
+      cursor.set(CURSOR_KEY, "grab", 1);
+    } else {
+      cursor.clear(CURSOR_KEY);
+    }
+  }
+
+  // Pan: drag on stage background, or from any target in locked mode
   app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
-    if (e.target !== app.stage) return;
+    const locked = isLocked?.() ?? false;
+    if (e.target !== app.stage && !locked) return;
     if (e.shiftKey) return;
     isPanning = true;
     cursor.set(CURSOR_KEY, "grabbing", 1);
@@ -34,11 +50,7 @@ export function setupPanZoom(
 
   const stopPan = () => {
     isPanning = false;
-    if (hoverOnStage) {
-      cursor.set(CURSOR_KEY, "grab", 1);
-    } else {
-      cursor.clear(CURSOR_KEY);
-    }
+    updateHoverCursor();
   };
   app.stage.on("pointerup", stopPan);
   app.stage.on("pointerupoutside", stopPan);
@@ -50,11 +62,7 @@ export function setupPanZoom(
       cursor.clear(CURSOR_KEY);
       return;
     }
-    if (hoverOnStage) {
-      cursor.set(CURSOR_KEY, "grab", 1);
-    } else {
-      cursor.clear(CURSOR_KEY);
-    }
+    updateHoverCursor();
   });
 
   app.stage.on("pointerout", () => {
@@ -86,4 +94,11 @@ export function setupPanZoom(
       pointerY - mousePointTo.y * newScale
     );
   }, { passive: false });
+
+  return {
+    setSuppressGrab: (suppress: boolean) => {
+      suppressGrab = suppress;
+      updateHoverCursor();
+    },
+  };
 }

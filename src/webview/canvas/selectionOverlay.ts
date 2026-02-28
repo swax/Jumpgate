@@ -133,7 +133,7 @@ export class SelectionOverlay {
     }
   }
 
-  update(nodes: NodeInfo[], viewportScale: number, theme?: string): void {
+  update(nodes: NodeInfo[], viewportScale: number, theme?: string, locked = false): void {
     this.theme = theme;
     this.selectedNodes = nodes;
 
@@ -144,14 +144,24 @@ export class SelectionOverlay {
     }
 
     if (nodes.length === 1) {
-      // Single select: outline + resize handles
       const n = nodes[0];
       this.bbox = { x: n.x, y: n.y, width: n.width, height: n.height };
-      this.drawOutline(viewportScale);
-      this.drawHandles(viewportScale);
+      if (locked) {
+        // Locked mode: solid outline, no resize handles
+        this.drawSolidOutline(viewportScale);
+        for (const h of this.handles.values()) h.visible = false;
+      } else {
+        // Edit mode: dashed outline + resize handles
+        this.drawOutline(viewportScale);
+        this.drawHandles(viewportScale);
+      }
     } else {
       // Multi-select: individual outlines per node, no resize handles
-      this.drawMultiOutlines(nodes, viewportScale);
+      if (locked) {
+        this.drawSolidMultiOutlines(nodes, viewportScale);
+      } else {
+        this.drawMultiOutlines(nodes, viewportScale);
+      }
       for (const h of this.handles.values()) h.visible = false;
     }
   }
@@ -188,6 +198,27 @@ export class SelectionOverlay {
     this.drawDashedLine(x + width, y, x + width, y + height, dashLen, gapLen);
     this.drawDashedLine(x + width, y + height, x, y + height, dashLen, gapLen);
     this.drawDashedLine(x, y + height, x, y, dashLen, gapLen);
+  }
+
+  private drawSolidOutline(viewportScale: number): void {
+    const { x, y, width, height } = this.bbox;
+    const lineWidth = 2.5 / viewportScale;
+    const outlineColor = this.theme === "space" ? SPACE_OUTLINE_COLOR : OUTLINE_COLOR;
+
+    this.outline.clear();
+    this.outline.rect(x, y, width, height);
+    this.outline.stroke({ width: lineWidth, color: outlineColor });
+  }
+
+  private drawSolidMultiOutlines(nodes: NodeInfo[], viewportScale: number): void {
+    const lineWidth = 2.5 / viewportScale;
+    const outlineColor = this.theme === "space" ? SPACE_OUTLINE_COLOR : OUTLINE_COLOR;
+
+    this.outline.clear();
+    for (const n of nodes) {
+      this.outline.rect(n.x, n.y, n.width, n.height);
+    }
+    this.outline.stroke({ width: lineWidth, color: outlineColor });
   }
 
   private drawOutline(viewportScale: number): void {

@@ -10,7 +10,10 @@ import {
   setDocument,
   setSelectedNodeIds,
   setSelectedEdgeIds,
+  setSelection,
   toggleSelectedNodeId,
+  getConnectedEdgeIds,
+  getConnectedNodeIds,
   subscribe,
   updateNode,
   updateNodes,
@@ -98,7 +101,7 @@ async function main(): Promise<void> {
   const nodesChanged = (updates: { id: string; changes: NodeChanges }[]) => { updateNodes(updates); sendEditDebounced(); };
   const edgeChanged = (id: string, changes: Partial<import("../schema").Edge>) => { updateEdge(id, changes); sendEditDebounced(); };
 
-  setupPanZoom(app, viewport, cursorManager);
+  const panZoom = setupPanZoom(app, viewport, cursorManager, () => getState().locked);
   setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
   setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
   setupThemeToggle(document.getElementById("theme-btn") as HTMLButtonElement, sendEditDebounced);
@@ -115,6 +118,9 @@ async function main(): Promise<void> {
     onSelect: (id, shiftKey) => {
       if (shiftKey) {
         toggleSelectedNodeId(id);
+      } else if (getState().locked) {
+        // Locked mode: select node + highlight connected edges
+        setSelection([id], getConnectedEdgeIds(id));
       } else {
         setSelectedNodeIds([id]);
       }
@@ -128,7 +134,11 @@ async function main(): Promise<void> {
       }
     },
     onEdgeSelect: (edgeId) => {
-      setSelectedEdgeIds([edgeId]);
+      if (getState().locked) {
+        setSelection(getConnectedNodeIds(edgeId), [edgeId]);
+      } else {
+        setSelectedEdgeIds([edgeId]);
+      }
     },
     onEdgeChanged: edgeChanged,
   });
@@ -136,6 +146,19 @@ async function main(): Promise<void> {
 
   subscribe(() => {
     renderer.render(getState());
+  });
+
+  // Ctrl key suppresses the grab cursor so arrow/pointer cursors show
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Control") panZoom.setSuppressGrab(true);
+  });
+
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "Control") panZoom.setSuppressGrab(false);
+  });
+
+  window.addEventListener("blur", () => {
+    panZoom.setSuppressGrab(false);
   });
 
   // Toggle starfield visibility and background based on theme

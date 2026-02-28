@@ -1,8 +1,8 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
 import type { NodeChanges } from "./shared";
 import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
-import { createCanvasEdge, updateCanvasEdge, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance } from "./canvas/canvasEdge";
+import { createCanvasEdge, updateCanvasEdge, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance, PolylineHitArea } from "./canvas/canvasEdge";
 import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
 import { getNodeDepth, getNodeById, getChildNodeIds, getEdgeById, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
@@ -107,6 +107,87 @@ export function createRenderer(
 
   const nodeZIndexMap = new Map<string, number>();
 
+  // Selection glow containers for locked mode
+  const GLOW_COLOR = 0x4488ff;
+  const SPACE_GLOW_COLOR = 0x44ccff;
+  const SECONDARY_GLOW_COLOR = 0x9944ff;
+  const SPACE_SECONDARY_GLOW_COLOR = 0xbb66ff;
+  const selectionGlows = new Map<string, Graphics>();
+  let glowPulse = 0; // 0..1 oscillating value for pulsing glow alpha
+
+  function drawNodeGlow(glow: Graphics, x: number, y: number, width: number, height: number, color: number): void {
+    glow.clear();
+    glow.roundRect(x - 10, y - 10, width + 20, height + 20, 10)
+      .stroke({ width: 6, color, alpha: 0.15 });
+    glow.roundRect(x - 6, y - 6, width + 12, height + 12, 7)
+      .stroke({ width: 4, color, alpha: 0.3 });
+    glow.roundRect(x - 3, y - 3, width + 6, height + 6, 4)
+      .stroke({ width: 2, color, alpha: 0.5 });
+  }
+
+  function updateSelectionGlows(selectedNodeIds: string[], selectedEdgeIds: string[], locked: boolean, theme?: string): void {
+    if (!locked) {
+      for (const [, gfx] of selectionGlows) {
+        viewport.removeChild(gfx);
+        gfx.destroy();
+      }
+      selectionGlows.clear();
+      return;
+    }
+
+    const isSpace = theme === "space";
+    const primaryColor = isSpace ? SPACE_GLOW_COLOR : GLOW_COLOR;
+    const secondaryColor = isSpace ? SPACE_SECONDARY_GLOW_COLOR : SECONDARY_GLOW_COLOR;
+
+    // Compute secondary nodes: endpoints of selected edges not in primary selection
+    const primarySet = new Set(selectedNodeIds);
+    const secondaryNodeIds = new Set<string>();
+    for (const edgeId of selectedEdgeIds) {
+      const edge = getEdgeById(edgeId);
+      if (!edge) continue;
+      if ("nodeId" in edge.from && !primarySet.has(edge.from.nodeId)) {
+        secondaryNodeIds.add(edge.from.nodeId);
+      }
+      if ("nodeId" in edge.to && !primarySet.has(edge.to.nodeId)) {
+        secondaryNodeIds.add(edge.to.nodeId);
+      }
+    }
+
+    // All nodes that need a glow
+    const allGlowIds = new Set([...selectedNodeIds, ...secondaryNodeIds]);
+
+    // Remove glows for nodes no longer needing one
+    for (const [id, gfx] of selectionGlows) {
+      if (!allGlowIds.has(id)) {
+        viewport.removeChild(gfx);
+        gfx.destroy();
+        selectionGlows.delete(id);
+      }
+    }
+
+    // Add/update glows
+    for (const nodeId of allGlowIds) {
+      const node = getNodeById(nodeId);
+      if (!node) continue;
+
+      let glow = selectionGlows.get(nodeId);
+      if (!glow) {
+        glow = new Graphics();
+        glow.label = `__sel_glow_${nodeId}`;
+        glow.eventMode = "none";
+        viewport.addChild(glow);
+        selectionGlows.set(nodeId, glow);
+      }
+
+      const { x, y, width, height } = node.bounds;
+      const nodeZ = nodeZIndexMap.get(nodeId) ?? 1000;
+      glow.zIndex = nodeZ - 0.1;
+
+      const color = secondaryNodeIds.has(nodeId) ? secondaryColor : primaryColor;
+      drawNodeGlow(glow, x, y, width, height, color);
+    }
+  }
+
   function computeEdgeZIndex(edge: Edge): number {
     const fromId = "nodeId" in edge.from ? edge.from.nodeId : null;
     const toId = "nodeId" in edge.to ? edge.to.nodeId : null;
@@ -121,13 +202,37 @@ export function createRenderer(
 
   let lastState: EditorState | null = null;
 
-  // Sync DOM label positions every frame for smooth pan/zoom tracking
-  app.ticker.add(() => {
+  // Sync DOM label positions + pulse glow every frame
+  app.ticker.add((ticker) => {
     if (!lastState) return;
     const zoom = viewport.scale.x;
     const vpX = viewport.position.x;
     const vpY = viewport.position.y;
     domLabels.syncPositions(zoom, vpX, vpY);
+
+    // Pulse glow alpha for selected items in locked mode
+    if (selectionGlows.size > 0 || (lastState && lastState.selectedEdgeIds.length > 0 && isLocked)) {
+      glowPulse = (glowPulse + ticker.deltaMS * 0.001) % 1;
+      const pulse = 0.5 + 0.5 * Math.sin(glowPulse * Math.PI * 2); // 0..1
+      const alpha = 0.6 + 0.4 * pulse;
+
+      // Pulse node glows
+      for (const [, gfx] of selectionGlows) {
+        gfx.alpha = alpha;
+      }
+
+      // Pulse edge glows
+      if (lastState) {
+        for (const edgeId of lastState.selectedEdgeIds) {
+          const edgeContainer = viewport.getChildByLabel(edgeId) as Container | null;
+          if (!edgeContainer) continue;
+          const edgeGlow = edgeContainer.getChildByLabel("edge-glow") as Graphics | null;
+          if (edgeGlow?.visible) {
+            edgeGlow.alpha = alpha;
+          }
+        }
+      }
+    }
   });
 
   /** Build a nodeMap using live container positions/sizes (covers both drag and resize previews). */
@@ -230,14 +335,12 @@ export function createRenderer(
 
       edgeContainer.zIndex = (handleOverride && edge.id === handleOverride.edgeId) ? 8999 : computeEdgeZIndex(edge);
 
-      // Keep edges with file links interactive in locked mode
       const edgeGfx = edgeContainer.getChildByLabel("edge-line");
       if (edgeGfx) {
-        const hasEdgeFileLink = !!edge.fileLink;
-        edgeGfx.eventMode = (isLocked && !hasEdgeFileLink) ? "none" : "static";
+        edgeGfx.eventMode = "static";
       }
 
-      updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor, doc.theme);
+      updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor, doc.theme, isLocked);
 
       // Upsert DOM label for this edge
       const points = buildPolylinePoints(from, to, renderEdge.waypoints);
@@ -246,6 +349,22 @@ export function createRenderer(
       const edgeFontFamily = isSpace ? "Consolas, 'Courier New', monospace" : DEFAULT_FONT_FAMILY;
       const edgeLabelColor = edge.labelColor ?? labelColor;
       domLabels.upsertEdgeLabel(edge.id, edge.label || "", edgeLabelColor, edgeFontFamily, mid.x, mid.y, isSpace);
+
+      // Expand edge hit area to include the label bounding box
+      if (edge.label && edgeGfx) {
+        const labelEl = domLabels.getElement(edge.id);
+        if (labelEl && edgeGfx.hitArea instanceof PolylineHitArea) {
+          const zoom = viewport.scale.x;
+          const worldW = labelEl.offsetWidth / zoom;
+          const worldH = labelEl.offsetHeight / zoom;
+          edgeGfx.hitArea.labelRect = {
+            x: mid.x - worldW / 2,
+            y: mid.y - worldH / 2,
+            width: worldW,
+            height: worldH,
+          };
+        }
+      }
     }
 
     prevEdgeIds = currentEdgeIds;
@@ -298,8 +417,7 @@ export function createRenderer(
       }
       nodeZIndexMap.set(node.id, group.zIndex);
 
-      const hasFileLink = !!node.fileLink;
-      group.eventMode = (isLocked && !hasFileLink) ? "none" : "static";
+      group.eventMode = "static";
 
       if (!isDraggingNode(node.id)) {
         updateCanvasNode(group, node, labelColor, doc.theme);
@@ -324,18 +442,26 @@ export function createRenderer(
       );
     }
 
-    // Update selection overlay
-    if (stateSelectedNodeIds.length > 0 && !locked) {
-      const nodeInfos = stateSelectedNodeIds
-        .map((id) => {
-          const n = getNodeById(id);
-          if (!n) return null;
-          return { id: n.id, ...n.bounds };
-        })
-        .filter((n): n is NonNullable<typeof n> => n !== null);
-      selectionOverlay.update(nodeInfos, viewport.scale.x, doc.theme);
-    } else {
+    // Update selection visuals
+    if (locked) {
+      // Locked mode: glow behind selected nodes (no overlay)
       selectionOverlay.update([], viewport.scale.x, doc.theme);
+      updateSelectionGlows(stateSelectedNodeIds, state.selectedEdgeIds, true, doc.theme);
+    } else {
+      // Edit mode: dashed overlay + resize handles
+      updateSelectionGlows([], [], false);
+      if (stateSelectedNodeIds.length > 0) {
+        const nodeInfos = stateSelectedNodeIds
+          .map((id) => {
+            const n = getNodeById(id);
+            if (!n) return null;
+            return { id: n.id, ...n.bounds };
+          })
+          .filter((n): n is NonNullable<typeof n> => n !== null);
+        selectionOverlay.update(nodeInfos, viewport.scale.x, doc.theme);
+      } else {
+        selectionOverlay.update([], viewport.scale.x, doc.theme);
+      }
     }
 
     // Render edges
