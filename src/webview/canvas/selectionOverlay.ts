@@ -271,7 +271,7 @@ export class SelectionOverlay {
       handle.position.set(pos.x, pos.y);
       handle.visible = true;
       // Make hit area larger for easier grabbing
-      handle.hitArea = { x: -hs, y: -hs, width: hs * 2, height: hs * 2, contains: (px: number, py: number) => px >= -hs && px <= hs && py >= -hs && py <= hs };
+      handle.hitArea = { contains: (px: number, py: number) => px >= -hs && px <= hs && py >= -hs && py <= hs };
     }
   }
 

@@ -20,10 +20,6 @@ export function directionToDeg(d: NodeDirection | undefined): number {
 
 export function setBoxHitArea(gfx: Graphics, width: number, height: number): void {
   gfx.hitArea = {
-    x: 0,
-    y: 0,
-    width,
-    height,
     contains: (px: number, py: number) =>
       px >= 0 && px <= width && py >= 0 && py <= height,
   };

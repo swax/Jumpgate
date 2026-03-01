@@ -5,6 +5,7 @@ const SCALE_BY = 1.1;
 
 export interface PanZoomControls {
   setSuppressGrab: (suppress: boolean) => void;
+  resetView: () => void;
 }
 
 export function setupPanZoom(
@@ -99,6 +100,11 @@ export function setupPanZoom(
     setSuppressGrab: (suppress: boolean) => {
       suppressGrab = suppress;
       updateHoverCursor();
+    },
+    resetView: () => {
+      const defaultZoom = 1 / (SCALE_BY * SCALE_BY);
+      viewport.scale.set(defaultZoom);
+      viewport.position.set(0, 0);
     },
   };
 }

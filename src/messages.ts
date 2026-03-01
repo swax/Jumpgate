@@ -8,4 +8,4 @@ export type ExtensionToWebviewMessage = {
 export type WebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "edit"; document: VscpDocument }
-  | { type: "openFileLink"; path: string; match?: string };
+  | { type: "openFileLink"; path: string; match?: string; preview?: boolean };

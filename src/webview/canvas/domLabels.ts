@@ -12,6 +12,8 @@ interface LabelEntry {
   kind: "node" | "edge";
   hasChildren: boolean;
   isSpace: boolean;
+  /** True when layout-affecting properties changed since last syncPositions. */
+  dirty: boolean;
 }
 
 export class DomLabelManager {
@@ -65,7 +67,7 @@ export class DomLabelManager {
         lineHeight: "1.2",
       });
       this.overlay.appendChild(el);
-      entry = { el, worldX, worldY, width, height, kind: "node", hasChildren, isSpace };
+      entry = { el, worldX, worldY, width, height, kind: "node", hasChildren, isSpace, dirty: true };
       this.labels.set(id, entry);
       // Force zoom-dependent styles on next sync
       this.lastAppliedZoom = -1;
@@ -73,6 +75,9 @@ export class DomLabelManager {
 
     entry.worldX = worldX;
     entry.worldY = worldY;
+    if (entry.width !== width || entry.height !== height || entry.hasChildren !== hasChildren || entry.isSpace !== isSpace) {
+      entry.dirty = true;
+    }
     entry.width = width;
     entry.height = height;
     entry.hasChildren = hasChildren;
@@ -105,7 +110,7 @@ export class DomLabelManager {
         lineHeight: "1.2",
       });
       this.overlay.appendChild(el);
-      entry = { el, worldX, worldY, width: 0, height: 0, kind: "edge", hasChildren: false, isSpace };
+      entry = { el, worldX, worldY, width: 0, height: 0, kind: "edge", hasChildren: false, isSpace, dirty: false };
       this.labels.set(id, entry);
       this.lastAppliedZoom = -1;
     }
@@ -125,8 +130,8 @@ export class DomLabelManager {
     if (!entry) return;
     entry.worldX = worldX;
     entry.worldY = worldY;
-    if (width !== undefined) entry.width = width;
-    if (height !== undefined) entry.height = height;
+    if (width !== undefined && entry.width !== width) { entry.width = width; entry.dirty = true; }
+    if (height !== undefined && entry.height !== height) { entry.height = height; entry.dirty = true; }
   }
 
   removeLabel(id: string): void {
@@ -170,7 +175,8 @@ export class DomLabelManager {
 
         el.style.transform = `translate(${screenX}px, ${screenY}px)`;
 
-        if (zoomChanged) {
+        const needsUpdate = zoomChanged || entry.dirty;
+        if (needsUpdate) {
           el.style.fontSize = `${fontSize}px`;
           el.style.width = `${screenW}px`;
           el.style.height = `${screenH}px`;
@@ -186,6 +192,7 @@ export class DomLabelManager {
             el.style.alignItems = "center";
             el.style.paddingTop = "0";
           }
+          entry.dirty = false;
         }
       } else {
         // Edge label: centered at midpoint

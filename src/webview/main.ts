@@ -59,10 +59,18 @@ async function main(): Promise<void> {
   });
   container.appendChild(app.canvas);
 
+  // Prevent browser auto-scroll on middle-click (middle-click opens file links)
+  app.canvas.addEventListener("mousedown", (e) => {
+    if (e.button === 1) e.preventDefault();
+  });
+
   const cursorManager = createCursorManager(app.canvas);
 
   // Viewport container for pan/zoom
   const viewport = new Container();
+  // Default to 2 wheel notches zoomed out (SCALE_BY=1.1 per notch)
+  const defaultZoom = 1 / (1.1 * 1.1);
+  viewport.scale.set(defaultZoom);
   app.stage.addChild(viewport);
 
   // Starfield background layer — pans/zooms with content
@@ -105,6 +113,10 @@ async function main(): Promise<void> {
   setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
   setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
   setupThemeToggle(document.getElementById("theme-btn") as HTMLButtonElement, sendEditDebounced);
+
+  document.getElementById("reset-view-btn")!.addEventListener("click", () => {
+    panZoom.resetView();
+  });
   setupSidebar(document.documentElement, {
     onNodeChanged: nodeChanged,
     onNodesChanged: nodesChanged,
@@ -125,12 +137,12 @@ async function main(): Promise<void> {
         setSelectedNodeIds([id]);
       }
     },
-    onOpenFileLink: (id, kind) => {
+    onOpenFileLink: (id, kind, preview) => {
       const fileLink = kind === "edge"
         ? getEdgeById(id)?.fileLink
         : getNodeById(id)?.fileLink;
       if (fileLink) {
-        postMessage({ type: "openFileLink", path: fileLink.path, match: fileLink.match });
+        postMessage({ type: "openFileLink", path: fileLink.path, match: fileLink.match, preview });
       }
     },
     onEdgeSelect: (edgeId) => {

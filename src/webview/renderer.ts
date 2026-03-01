@@ -1,4 +1,4 @@
-import { Application, Container, Graphics } from "pixi.js";
+import { Application, BlurFilter, Container, Graphics } from "pixi.js";
 import type { Bounds, Edge, Node } from "../schema";
 import type { NodeChanges } from "./shared";
 import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
@@ -15,7 +15,7 @@ export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
   onSelect: (id: string, shiftKey: boolean) => void;
-  onOpenFileLink: (id: string, kind: "node" | "edge") => void;
+  onOpenFileLink: (id: string, kind: "node" | "edge", preview?: boolean) => void;
   onEdgeSelect: (edgeId: string) => void;
   onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to" | "label" | "waypoints">>) => void;
 }
@@ -78,7 +78,7 @@ export function createRenderer(
     onNodeChanged: callbacks.onNodeChanged,
     onNodesChanged: callbacks.onNodesChanged,
     onSelect: callbacks.onSelect,
-    onOpenFileLink: (id) => callbacks.onOpenFileLink(id, "node"),
+    onOpenFileLink: (id, preview) => callbacks.onOpenFileLink(id, "node", preview),
     getSelectedNodeIds: () => selectedNodeIds,
     isLocked: () => isLocked,
     isEdgeMode: () => isEdgeMode,
@@ -112,17 +112,20 @@ export function createRenderer(
   const SPACE_GLOW_COLOR = 0x44ccff;
   const SECONDARY_GLOW_COLOR = 0x9944ff;
   const SPACE_SECONDARY_GLOW_COLOR = 0xbb66ff;
+  const GLOW_BLUR_STRENGTH = 3;
+  const GLOW_BLUR_QUALITY = 4;
   const selectionGlows = new Map<string, Graphics>();
   let glowPulse = 0; // 0..1 oscillating value for pulsing glow alpha
 
   function drawNodeGlow(glow: Graphics, x: number, y: number, width: number, height: number, color: number): void {
     glow.clear();
-    glow.roundRect(x - 10, y - 10, width + 20, height + 20, 10)
-      .stroke({ width: 6, color, alpha: 0.15 });
-    glow.roundRect(x - 6, y - 6, width + 12, height + 12, 7)
-      .stroke({ width: 4, color, alpha: 0.3 });
-    glow.roundRect(x - 3, y - 3, width + 6, height + 6, 4)
-      .stroke({ width: 2, color, alpha: 0.5 });
+    glow.roundRect(x - 4, y - 4, width + 8, height + 8, 6)
+      .stroke({ color, width: 3, alpha: 1.0 });
+    glow.roundRect(x - 2, y - 2, width + 4, height + 4, 4)
+      .stroke({ color: 0xffffff, width: 3, alpha: 1.0 });
+    if (!glow.filters || !(glow.filters as BlurFilter[])[0]) {
+      glow.filters = [new BlurFilter({ strength: GLOW_BLUR_STRENGTH, quality: GLOW_BLUR_QUALITY })];
+    }
   }
 
   function updateSelectionGlows(selectedNodeIds: string[], selectedEdgeIds: string[], locked: boolean, theme?: string): void {
@@ -290,7 +293,7 @@ export function createRenderer(
       if (!edgeContainer) {
         edgeContainer = createCanvasEdge(edge, labelColor, {
           onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
-          onOpenFileLink: (edgeId) => callbacks.onOpenFileLink(edgeId, "edge"),
+          onOpenFileLink: (edgeId, preview) => callbacks.onOpenFileLink(edgeId, "edge", preview),
           isLocked: () => isLocked,
           onDoubleClick: (edgeId, container, worldPos, ctrlKey) => {
             if (isLocked) return;

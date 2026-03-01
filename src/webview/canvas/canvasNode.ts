@@ -1,4 +1,4 @@
-import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
+import { BlurFilter, Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds, Node } from "../../schema";
 import type { NodeChanges } from "../shared";
 import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
@@ -49,7 +49,7 @@ export interface CanvasNodeCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
   onNodesChanged: (updates: { id: string; changes: NodeChanges }[]) => void;
   onSelect: (id: string, shiftKey: boolean) => void;
-  onOpenFileLink: (id: string) => void;
+  onOpenFileLink: (id: string, preview?: boolean) => void;
   getSelectedNodeIds: () => string[];
   isLocked: () => boolean;
   isEdgeMode: () => boolean;
@@ -83,6 +83,7 @@ export function createCanvasNode(
   if (isSpace && fillColor !== null) {
     if (hasChildren || node.shape !== "text") {
       drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
+      glow.filters = [new BlurFilter({ strength: 5, quality: 3 })];
     }
   }
   glow.eventMode = "none";
@@ -140,6 +141,14 @@ export function createCanvasNode(
   const cascadePositions = new Map<string, { x: number; y: number }>();
 
   group.on("pointerdown", (e: FederatedPointerEvent) => {
+    // Middle-click on linked node — open file in new pinned tab
+    if (e.button === 1 && getNodeMeta(group)?.hasFileLink) {
+      e.preventDefault();
+      e.stopPropagation();
+      callbacks.onOpenFileLink(nodeId, false);
+      return;
+    }
+
     // In locked mode, don't stop propagation so drag-to-pan works through nodes.
     // Only register a click if pointer didn't move (like a Windows button).
     if (callbacks.isLocked()) {
@@ -428,6 +437,11 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
     (glow as any).__isGroup = hasChildren;
     if (isSpace && fillColor !== null && (hasChildren || node.shape !== "text")) {
       drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
+      if (!glow.filters || !(glow.filters as BlurFilter[])[0]) {
+        glow.filters = [new BlurFilter({ strength: 5, quality: 3 })];
+      }
+    } else {
+      glow.filters = [];
     }
   }
 

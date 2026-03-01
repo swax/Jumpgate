@@ -1,6 +1,7 @@
 import { Application, Container } from "pixi.js";
 import { getContainerBounds } from "../canvas/canvasNode";
 import type { DomLabelManager } from "../canvas/domLabels";
+import { getChildNodeIds } from "../state";
 
 export interface LabelEditContext {
   app: Application;
@@ -21,17 +22,20 @@ interface TextareaOpts {
   scale: number;
   container: HTMLElement;
   labelColor: string;
+  fontFamily: string;
   background?: string;
   border?: string;
   onCommit: (text: string) => void;
   /** Controls visibility when cancelled/committed with empty text. Default: true (always visible). */
   visibleWhenEmpty?: boolean;
+  /** If true, text is positioned at the top instead of centered. */
+  isGroupNode?: boolean;
 }
 
 function openTextarea(opts: TextareaOpts): void {
   const {
     entityId, domLabels, initialText, globalPos, width, height, scale, container,
-    labelColor, background, border, onCommit,
+    labelColor, fontFamily, background, border, onCommit,
     visibleWhenEmpty = true,
   } = opts;
 
@@ -47,7 +51,7 @@ function openTextarea(opts: TextareaOpts): void {
     width: `${width}px`,
     height: `${height}px`,
     fontSize: `${14 * scale}px`,
-    fontFamily: "sans-serif",
+    fontFamily,
     lineHeight: `${18 * scale}px`,
     textAlign: "center",
     border: border ?? "none",
@@ -63,10 +67,14 @@ function openTextarea(opts: TextareaOpts): void {
 
   const LINE_HEIGHT = 18 * scale;
   const updatePadding = () => {
-    const lines = textarea.value.split("\n").length;
-    const textHeight = lines * LINE_HEIGHT;
-    const pad = Math.max(0, (height - textHeight) / 2);
-    textarea.style.paddingTop = `${pad}px`;
+    if (opts.isGroupNode) {
+      textarea.style.paddingTop = `${4 * scale}px`;
+    } else {
+      const lines = textarea.value.split("\n").length;
+      const textHeight = lines * LINE_HEIGHT;
+      const pad = Math.max(0, (height - textHeight) / 2);
+      textarea.style.paddingTop = `${pad}px`;
+    }
   };
 
   container.style.position = "relative";
@@ -118,9 +126,14 @@ export function startLabelEdit(
 ): void {
   const { width, height } = getContainerBounds(group);
   const initialText = ctx.domLabels.getLabelText(nodeId);
+  const hasChildren = getChildNodeIds(nodeId).length > 0;
 
   const globalPos = group.toGlobal({ x: 0, y: 0 });
   const scale = ctx.viewport.scale.x;
+
+  const labelEl = ctx.domLabels.getElement(nodeId);
+  const actualColor = labelEl?.style.color || ctx.labelColor;
+  const actualFont = labelEl?.style.fontFamily || "sans-serif";
 
   openTextarea({
     entityId: nodeId,
@@ -131,7 +144,9 @@ export function startLabelEdit(
     height: height * scale,
     scale,
     container: ctx.app.canvas.parentElement!,
-    labelColor: ctx.labelColor,
+    labelColor: actualColor,
+    fontFamily: actualFont,
+    isGroupNode: hasChildren,
     onCommit: (label) => ctx.onLabelChanged(nodeId, label),
   });
 }
@@ -162,6 +177,10 @@ export function startEdgeLabelEdit(
   const boxWidth = 150 * scale;
   const boxHeight = 40 * scale;
 
+  const labelEl = ctx.domLabels.getElement(edgeId);
+  const actualColor = labelEl?.style.color || ctx.labelColor;
+  const actualFont = labelEl?.style.fontFamily || "sans-serif";
+
   openTextarea({
     entityId: edgeId,
     domLabels: ctx.domLabels,
@@ -171,7 +190,8 @@ export function startEdgeLabelEdit(
     height: boxHeight,
     scale,
     container: ctx.app.canvas.parentElement!,
-    labelColor: ctx.labelColor,
+    labelColor: actualColor,
+    fontFamily: actualFont,
     background: "rgba(0,0,0,0.6)",
     border: "1px solid rgba(255,255,255,0.3)",
     visibleWhenEmpty: false,

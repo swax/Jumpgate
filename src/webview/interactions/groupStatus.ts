@@ -22,17 +22,19 @@ function updateSelectionMessage(): void {
     if (node?.parentId) {
       const parent = getNodeById(node.parentId);
       const parentLabel = parent?.label || parent?.id || node.parentId;
-      statusEl.innerHTML = `In group: ${escapeHtml(parentLabel)} \u2014 <a id="group-remove-link">Remove</a>`;
-      statusEl.style.display = "block";
-      const removeLink = document.getElementById("group-remove-link");
-      if (removeLink) {
-        removeLink.addEventListener("click", (e) => {
-          e.preventDefault();
-          updateNode(node.id, { parentId: null });
-          onEditCallback();
-        });
+      if (!state.locked) {
+        statusEl.innerHTML = `In group: ${escapeHtml(parentLabel)} \u2014 <a id="group-remove-link">Remove</a>`;
+        statusEl.style.display = "block";
+        const removeLink = document.getElementById("group-remove-link");
+        if (removeLink) {
+          removeLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            updateNode(node.id, { parentId: null });
+            onEditCallback();
+          });
+        }
+        return;
       }
-      return;
     }
   }
   statusEl.style.display = "none";

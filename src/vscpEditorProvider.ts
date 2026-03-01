@@ -90,15 +90,19 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
                   selection = new vscode.Range(startPos, endPos);
                 }
               }
-              // If another editor group exists, open there; otherwise same group
               const panelColumn = webviewPanel.viewColumn;
-              const otherGroup = vscode.window.tabGroups.all.find(
-                (g) => g.viewColumn !== panelColumn
-              );
+              const backgroundOpen = msg.preview === false;
+              // Find another editor group, preferring the leftmost one
+              const otherGroups = vscode.window.tabGroups.all
+                .filter((g) => g.viewColumn !== panelColumn)
+                .sort((a, b) => a.viewColumn - b.viewColumn);
+              const viewColumn = otherGroups[0]?.viewColumn
+                ?? (backgroundOpen ? vscode.ViewColumn.Beside : undefined);
               await vscode.window.showTextDocument(fileDoc, {
                 selection,
-                preview: true,
-                viewColumn: otherGroup?.viewColumn,
+                preview: msg.preview ?? true,
+                preserveFocus: backgroundOpen,
+                viewColumn,
               });
             } catch {
               vscode.window.showErrorMessage(`Could not open file: ${msg.path}`);
@@ -185,14 +189,17 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     #lock-btn {
       right: 8px;
     }
-    #snap-btn {
+    #reset-view-btn {
       right: 48px;
     }
-    #edge-btn {
+    #snap-btn {
       right: 88px;
     }
-    #theme-btn {
+    #edge-btn {
       right: 128px;
+    }
+    #theme-btn {
+      right: 168px;
     }
     #sidebar {
       position: fixed;
@@ -418,6 +425,9 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
   <button id="edge-btn" class="toolbar-btn" title="Add Edge"></button>
   <button id="snap-btn" class="toolbar-btn" title="Snap to grid (on)"></button>
   <button id="lock-btn" class="toolbar-btn" title="Lock editing"></button>
+  <button id="reset-view-btn" class="toolbar-btn" title="Reset view">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h5v2H5v3H3V3zM16 3h5v5h-2V5h-3V3zM3 16v5h5v-2H5v-3H3zM19 19v-3h2v5h-5v-2h3z" fill="currentColor"/></svg>
+  </button>
   <div id="edge-mode-status"></div>
   <div id="group-status"></div>
   <div id="sidebar">

@@ -1,4 +1,4 @@
-import { Container, FederatedPointerEvent, Graphics } from "pixi.js";
+import { BlurFilter, Container, FederatedPointerEvent, Graphics } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
 import type { LabelEditContext } from "../interactions/labelEditor";
@@ -111,7 +111,7 @@ export function pointToSegmentDistance(
 export interface CanvasEdgeCallbacks {
   onSelect: (edgeId: string) => void;
   onDoubleClick: (edgeId: string, container: Container, worldPos?: Point, ctrlKey?: boolean) => void;
-  onOpenFileLink: (edgeId: string) => void;
+  onOpenFileLink: (edgeId: string, preview?: boolean) => void;
   isLocked: () => boolean;
 }
 
@@ -124,6 +124,7 @@ export function createCanvasEdge(
   const group = new Container();
   group.label = edge.id;
   group.eventMode = "auto";
+  group.cursor = edge.fileLink ? "pointer" : "default";
 
   const edgeGlow = new Graphics();
   edgeGlow.label = "edge-glow";
@@ -164,6 +165,14 @@ export function createCanvasEdge(
   let lastCtrlKey = false;
 
   gfx.on("pointerdown", (e) => {
+    // Middle-click on linked edge — open file in new pinned tab
+    if (e.button === 1 && getEdgeGroupMeta(group)?.hasFileLink) {
+      e.preventDefault();
+      e.stopPropagation();
+      callbacks.onOpenFileLink(edge.id, false);
+      return;
+    }
+
     // In locked mode, don't stop propagation so drag-to-pan works through edges.
     // Only register a click if pointer didn't move.
     if (callbacks.isLocked()) {
@@ -234,6 +243,7 @@ export function updateCanvasEdge(
 
   gfx.clear();
   gfx.cursor = edge.fileLink ? "pointer" : "default";
+  group.cursor = edge.fileLink ? "pointer" : "default";
   setEdgeGroupMeta(group, {
     hasFileLink: !!edge.fileLink,
     fileLinkPath: edge.fileLink?.path ?? null,
@@ -256,11 +266,12 @@ export function updateCanvasEdge(
   if (isSelected && locked) {
     const glowColor = isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR;
     drawPolyline(edgeGlow, points);
-    edgeGlow.stroke({ width: 14, color: glowColor, alpha: 0.2 });
+    edgeGlow.stroke({ width: 10, color: glowColor, alpha: 1.0 });
     drawPolyline(edgeGlow, points);
-    edgeGlow.stroke({ width: 8, color: glowColor, alpha: 0.3 });
-    drawPolyline(edgeGlow, points);
-    edgeGlow.stroke({ width: 4, color: glowColor, alpha: 0.4 });
+    edgeGlow.stroke({ width: 4, color: 0xffffff, alpha: 0.7 });
+    if (!edgeGlow.filters || !(edgeGlow.filters as BlurFilter[])[0]) {
+      edgeGlow.filters = [new BlurFilter({ strength: 5, quality: 4 })];
+    }
     edgeGlow.visible = true;
   } else {
     edgeGlow.visible = false;
