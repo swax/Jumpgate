@@ -1,10 +1,9 @@
 import "pixi.js/unsafe-eval";
-import { Application, Container, Graphics, TextureSource } from "pixi.js";
+import { Application, Container, TextureSource } from "pixi.js";
 
 // Enable mipmaps so text stays crisp when the viewport is zoomed out
 TextureSource.defaultOptions.autoGenerateMipmaps = true;
 import type { ExtensionToWebviewMessage } from "../messages";
-import type { WebviewToExtensionMessage } from "../messages";
 import {
   getState,
   setDocument,
@@ -15,33 +14,25 @@ import {
   getConnectedEdgeIds,
   getConnectedNodeIds,
   subscribe,
-  updateNode,
-  updateNodes,
   addEdge,
-  updateEdge,
   generateEdgeId,
   getNodeById,
   getEdgeById,
 } from "./state";
-import type { NodeChanges } from "./shared";
 import { createRenderer } from "./renderer";
 import { setupPanZoom } from "./interactions/panZoom";
 import { setupLockToggle } from "./controls/lockToggle";
 import { setupSidebar } from "./controls/sidebar";
 import { setupGridSnap } from "./controls/gridSnap";
 import { setupKeyboard } from "./interactions/keyboard";
+import { setupContextMenu } from "./interactions/contextMenu";
 import { setupEdgeMode } from "./interactions/edgeMode";
 import { setupSelectionBox } from "./interactions/selectionBox";
 import { createCursorManager } from "./interactions/cursorManager";
 import { setupGroupStatus } from "./interactions/groupStatus";
 import { setupThemeToggle } from "./controls/themeToggle";
-
-// VS Code webview API
-const vscode = acquireVsCodeApi();
-
-function postMessage(msg: WebviewToExtensionMessage): void {
-  vscode.postMessage(msg);
-}
+import { postMessage, sendEditDebounced, nodeChanged, nodesChanged, edgeChanged } from "./messaging";
+import { createStarfield, setupThemeBackground } from "./canvas/starfield";
 
 async function main(): Promise<void> {
   const container = document.getElementById("canvas-container") as HTMLDivElement;
@@ -64,6 +55,11 @@ async function main(): Promise<void> {
     if (e.button === 1) e.preventDefault();
   });
 
+  // Suppress default browser context menu (custom menu is wired up after viewport creation)
+  app.canvas.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+
   const cursorManager = createCursorManager(app.canvas);
 
   // Viewport container for pan/zoom
@@ -73,43 +69,13 @@ async function main(): Promise<void> {
   viewport.scale.set(defaultZoom);
   app.stage.addChild(viewport);
 
-  // Starfield background layer — pans/zooms with content
-  const starfield = new Graphics();
-  starfield.zIndex = -1;
-  const STAR_COUNT = 400;
-  const FIELD_SIZE = 10000;
-  for (let i = 0; i < STAR_COUNT; i++) {
-    const sx = Math.random() * FIELD_SIZE - FIELD_SIZE / 2;
-    const sy = Math.random() * FIELD_SIZE - FIELD_SIZE / 2;
-    const sr = 0.3 + Math.random() * 1.5;
-    const sa = 0.2 + Math.random() * 0.6;
-    starfield.circle(sx, sy, sr).fill({ color: 0xffffff, alpha: sa });
-  }
-  starfield.visible = false; // shown only for space theme
-  viewport.addChild(starfield);
+  const starfield = createStarfield(viewport);
+  setupThemeBackground(app, starfield, container);
   viewport.sortableChildren = true;
 
   setupSelectionBox(app, viewport, cursorManager);
 
-  // Debounced edit sender
-  let editTimeout: ReturnType<typeof setTimeout> | null = null;
-
-  function sendEditDebounced(): void {
-    if (editTimeout) {
-      clearTimeout(editTimeout);
-    }
-    editTimeout = setTimeout(() => {
-      editTimeout = null;
-      postMessage({ type: "edit", document: getState().document });
-    }, 100);
-  }
-
-  // Helper wrappers: update state + send edit in one call
-  const nodeChanged = (id: string, changes: NodeChanges) => { updateNode(id, changes); sendEditDebounced(); };
-  const nodesChanged = (updates: { id: string; changes: NodeChanges }[]) => { updateNodes(updates); sendEditDebounced(); };
-  const edgeChanged = (id: string, changes: Partial<import("../schema").Edge>) => { updateEdge(id, changes); sendEditDebounced(); };
-
-  const panZoom = setupPanZoom(app, viewport, cursorManager, () => getState().locked);
+  const panZoom = setupPanZoom(app, viewport, cursorManager, () => getState().locked, () => getState().edgeMode);
   setupLockToggle(document.getElementById("lock-btn") as HTMLButtonElement);
   setupGridSnap(document.getElementById("snap-btn") as HTMLButtonElement);
   setupThemeToggle(document.getElementById("theme-btn") as HTMLButtonElement, sendEditDebounced);
@@ -155,43 +121,13 @@ async function main(): Promise<void> {
     onEdgeChanged: edgeChanged,
   });
 
-
   subscribe(() => {
     renderer.render(getState());
   });
 
-  // Ctrl key suppresses the grab cursor so arrow/pointer cursors show
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Control") panZoom.setSuppressGrab(true);
-  });
-
-  window.addEventListener("keyup", (e) => {
-    if (e.key === "Control") panZoom.setSuppressGrab(false);
-  });
-
-  window.addEventListener("blur", () => {
-    panZoom.setSuppressGrab(false);
-  });
-
-  // Toggle starfield visibility and background based on theme
-  const canvasContainer = document.getElementById("canvas-container") as HTMLDivElement;
-  subscribe(() => {
-    const theme = getState().document.theme;
-    if (theme === "space") {
-      starfield.visible = true;
-      app.renderer.background.color = 0x020408;
-      canvasContainer.style.background = "radial-gradient(ellipse at center, #0a0e1a 0%, #020408 100%)";
-    } else {
-      starfield.visible = false;
-      const bgColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--vscode-editor-background")
-        .trim() || "#1e1e1e";
-      app.renderer.background.color = bgColor;
-      canvasContainer.style.background = bgColor;
-    }
-  });
-
   setupKeyboard(sendEditDebounced);
+  setupContextMenu(app, viewport);
+
   setupGroupStatus(sendEditDebounced);
   setupEdgeMode(
     document.getElementById("edge-btn") as HTMLButtonElement,

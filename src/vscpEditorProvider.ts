@@ -375,6 +375,34 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
     #rotate-btn:hover {
       background: var(--vscode-button-secondaryHoverBackground, #45494e);
     }
+    #context-menu {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      min-width: 160px;
+      background: var(--vscode-menu-background, var(--vscode-dropdown-background, #252526));
+      color: var(--vscode-menu-foreground, var(--vscode-dropdown-foreground, #cccccc));
+      border: 1px solid var(--vscode-menu-border, var(--vscode-editorWidget-border, #454545));
+      border-radius: 4px;
+      padding: 4px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      font-family: var(--vscode-font-family, sans-serif);
+      font-size: 12px;
+    }
+    .context-menu-item {
+      padding: 6px 20px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .context-menu-item:hover {
+      background: var(--vscode-menu-selectionBackground, var(--vscode-list-hoverBackground, #094771));
+      color: var(--vscode-menu-selectionForeground, var(--vscode-list-hoverForeground, #ffffff));
+    }
+    .context-menu-separator {
+      height: 1px;
+      margin: 4px 8px;
+      background: var(--vscode-menu-separatorBackground, var(--vscode-editorWidget-border, #454545));
+    }
     #edge-mode-status {
       display: none;
       position: fixed;

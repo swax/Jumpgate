@@ -23,7 +23,8 @@ src/
   messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink
   vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler
   webview/
-    main.ts               Entry point — PixiJS Application, viewport container, message wiring, Ctrl-key grab suppression
+    main.ts               Entry point — PixiJS Application, viewport container, wires up all modules; delegates messaging, starfield, context menu, and Ctrl-key suppression to dedicated modules
+    messaging.ts          VS Code postMessage wrapper, debounced edit sender, nodeChanged/nodesChanged/edgeChanged helpers
     state.ts              Pub/sub store (EditorState: document + selectedNodeIds[] + selectedEdgeIds[] + edgeMode + locked + snapToGrid); helpers: setSelection(), getConnectedEdgeIds(), getConnectedNodeIds()
     renderer.ts           Reconciles PixiJS containers against state, manages selection + edge handle overlays, instantiates DomLabelManager and syncs label positions each frame
     globals.d.ts          acquireVsCodeApi type declaration
@@ -36,12 +37,14 @@ src/
       edgeUtils.ts        Shared edge utilities: findNodeAtPoint (with optional excludeIds), computeAnchor, buildEndpoint, dot constants
       selectionOverlay.ts Dashed bounding box + 8 resize handles for selected nodes (edit mode); solid outline without handles (locked mode — though glow is used instead, see below)
       edgeHandleOverlay.ts Draggable endpoint handles on selected edges — drag to reposition from/to; also manages waypoint handles (pooled Graphics) with drag-to-move and Ctrl+double-click to remove
+      starfield.ts        Creates randomized star Graphics layer + subscribes to state for theme-based background/starfield toggling
     controls/
       lockToggle.ts       Lock button UI — toggles editing, hides sidebar, disables interactions
       gridSnap.ts         Snap-to-grid toggle button and snap() utility (GRID_SIZE = 20)
       sidebar.ts          Sidebar controls for fill color, label color, border color, shape dropdown, and direction rotate button — works for both nodes (nodeColor/labelColor/borderColor) and edges (color/labelColor); shape, rotate, and border color disabled for edges
     interactions/
-      panZoom.ts          Viewport panning and mouse-wheel zoom-to-cursor; returns PanZoomControls with setSuppressGrab(); in locked mode pans from any target (not just stage)
+      panZoom.ts          Viewport panning and mouse-wheel zoom-to-cursor; Ctrl-key grab suppression is internal; returns PanZoomControls with setSuppressGrab() for compatibility
+      contextMenu.ts      DOM context menu (show/hide) + setupContextMenu() — right-click hit-testing (screen→world, node/edge), context menu wiring (locked vs edit mode, file link, cut/copy/paste/delete)
       keyboard.ts         Keyboard shortcuts (Delete, Ctrl+C/V) and clipboard state — copy/paste includes descendants
       edgeMode.ts         Edge creation mode — toolbar toggle, two-click workflow, preview line + cursor dot
       groupStatus.ts      Group status bar — shows parent info on selection, drag-to-group messages, remove-from-group link
@@ -90,7 +93,7 @@ Two esbuild bundles (`npm run build`):
 - **Pub/sub store** (`state.ts`): Simple reactive state — `EditorState` holds document, `selectedNodeIds[]`, `selectedEdgeIds[]`, edgeMode, locked, and snapToGrid flags. Subscribers (renderer) are notified on any change. `updateNodes()` batches multiple node changes into a single notify.
 - **Reconciliation** (`renderer.ts`): Diffs state against existing PixiJS containers by node ID — creates, updates, or destroys as needed. Skips nodes mid-drag to avoid fighting user input. Upserts DOM labels for nodes and edges on each render; removes DOM labels when nodes/edges are deleted.
 - **Echo guard** (`vscpEditorProvider.ts`): `isApplyingEdit` flag prevents `onDidChangeTextDocument` from echoing back edits the webview just made.
-- **Debounced edits** (`main.ts`): Canvas changes are batched (100ms) before posting to the extension to avoid spamming WorkspaceEdits.
+- **Debounced edits** (`messaging.ts`): Canvas changes are batched (100ms) before posting to the extension to avoid spamming WorkspaceEdits.
 
 ### Rendering
 
@@ -123,5 +126,5 @@ Two esbuild bundles (`npm run build`):
 
 ### Navigation
 
-- **Lock mode** (`lockToggle.ts`, `canvasNode.ts`, `canvasEdge.ts`, `renderer.ts`, `panZoom.ts`): Toggles editing off — hides sidebar, disables dragging/resize/delete. All nodes and edges remain clickable for selection. Click (no drag) selects a node and highlights its connected edges, or selects an edge and highlights its connected nodes. Selection is shown as a glow effect (concentric semi-transparent rounded rects behind nodes; layered semi-transparent strokes behind edges) rather than dashed outlines. Click+drag pans the canvas even when starting on a node (panZoom accepts any target in locked mode); the click only registers if the pointer doesn’t move (Windows-button pattern). Holding Ctrl suppresses the grab cursor (`panZoom.setSuppressGrab`) so arrow/pointer cursors show; Ctrl+Click on a linked node/edge opens its file link.
-- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`, `canvasEdge.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick that lists both nodes and edges. Edges without a label display as "from label → to label". Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Ctrl+Click)". Ctrl+Click opens the file and jumps to the matched text. In locked mode, Ctrl must be held for interaction — Ctrl+Click on a linked item opens the file; a plain click selects and highlights connections. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.
+- **Lock mode** (`lockToggle.ts`, `canvasNode.ts`, `canvasEdge.ts`, `renderer.ts`, `panZoom.ts`): Toggles editing off — hides sidebar, disables dragging/resize/delete. All nodes and edges remain clickable for selection. Click (no drag) selects a node and highlights its connected edges, or selects an edge and highlights its connected nodes. Selection is shown as a glow effect (concentric semi-transparent rounded rects behind nodes; layered semi-transparent strokes behind edges) rather than dashed outlines. Click+drag pans the canvas even when starting on a node (panZoom accepts any target in locked mode); the click only registers if the pointer doesn’t move (Windows-button pattern). Double-click on a linked node/edge opens its file link.
+- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`, `canvasEdge.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick that lists both nodes and edges. Edges without a label display as "from label → to label". Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Double-click)". In edit mode, Ctrl+Click opens the file and jumps to the matched text. In locked mode, double-click on a linked item opens the file; a plain click selects and highlights connections. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document.

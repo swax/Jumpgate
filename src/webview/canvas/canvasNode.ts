@@ -118,7 +118,7 @@ export function createCanvasNode(
     const m = getNodeMeta(group);
     if (m?.fileLinkPath) {
       const canvas = document.querySelector("canvas");
-      if (canvas) canvas.title = `${m.fileLinkPath} (Ctrl+Click)`;
+      if (canvas) canvas.title = `${m.fileLinkPath} (Double-click)`;
     }
   });
   group.on("pointerout", () => {
@@ -159,9 +159,12 @@ export function createCanvasNode(
         const dx = ue.global.x - downPos.x;
         const dy = ue.global.y - downPos.y;
         if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
-          if ((ue.ctrlKey || ue.metaKey) && getNodeMeta(group)?.hasFileLink) {
+          const now = Date.now();
+          if (now - lastClickTime < DOUBLE_CLICK_MS && getNodeMeta(group)?.hasFileLink) {
+            lastClickTime = 0;
             callbacks.onOpenFileLink(nodeId);
           } else {
+            lastClickTime = now;
             callbacks.onSelect(nodeId, false);
           }
         }
@@ -172,6 +175,38 @@ export function createCanvasNode(
     }
 
     if (callbacks.isEdgeMode()) return; // Let event propagate to viewport for edge creation
+
+    // Unselected node in edit mode: don't stop propagation (allows pan on drag).
+    // Only register a click/double-click if pointer didn't move.
+    if (!callbacks.getSelectedNodeIds().includes(nodeId)) {
+      const downPos = { x: e.global.x, y: e.global.y };
+      const onUpUnselected = (ue: FederatedPointerEvent) => {
+        group.off("pointerup", onUpUnselected);
+        group.off("pointerupoutside", onUpUnselected);
+        const dx = ue.global.x - downPos.x;
+        const dy = ue.global.y - downPos.y;
+        if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
+          if ((ue.ctrlKey || ue.metaKey) && getNodeMeta(group)?.hasFileLink) {
+            callbacks.onSelect(nodeId, false);
+            callbacks.onOpenFileLink(nodeId);
+          } else {
+            const now = Date.now();
+            if (now - lastClickTime < DOUBLE_CLICK_MS) {
+              lastClickTime = 0;
+              callbacks.onSelect(nodeId, false);
+              startLabelEdit(labelEditCtx, group, nodeId);
+            } else {
+              lastClickTime = now;
+              callbacks.onSelect(nodeId, ue.shiftKey);
+            }
+          }
+        }
+      };
+      group.on("pointerup", onUpUnselected);
+      group.on("pointerupoutside", onUpUnselected);
+      return;
+    }
+
     e.stopPropagation();
 
     const viewport = callbacks.getViewport();

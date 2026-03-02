@@ -12,7 +12,8 @@ export function setupPanZoom(
   app: Application,
   viewport: Container,
   cursorManager: CursorManager,
-  isLocked?: () => boolean
+  isLocked?: () => boolean,
+  isEdgeMode?: () => boolean
 ): PanZoomControls {
   let isPanning = false;
   let lastPointer = { x: 0, y: 0 };
@@ -30,11 +31,11 @@ export function setupPanZoom(
     }
   }
 
-  // Pan: drag on stage background, or from any target in locked mode
+  // Pan: drag on stage background, or from any target when locked/unselected
+  // Selected nodes/edges call stopPropagation so their events never reach here.
   app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
-    const locked = isLocked?.() ?? false;
-    if (e.target !== app.stage && !locked) return;
     if (e.shiftKey) return;
+    if (isEdgeMode?.()) return;
     isPanning = true;
     cursor.set(CURSOR_KEY, "grabbing", 1);
     lastPointer = { x: e.global.x, y: e.global.y };
@@ -96,11 +97,26 @@ export function setupPanZoom(
     );
   }, { passive: false });
 
+  // Ctrl key suppresses the grab cursor so arrow/pointer cursors show
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Control") setSuppressGrab(true);
+  });
+
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "Control") setSuppressGrab(false);
+  });
+
+  window.addEventListener("blur", () => {
+    setSuppressGrab(false);
+  });
+
+  function setSuppressGrab(suppress: boolean): void {
+    suppressGrab = suppress;
+    updateHoverCursor();
+  }
+
   return {
-    setSuppressGrab: (suppress: boolean) => {
-      suppressGrab = suppress;
-      updateHoverCursor();
-    },
+    setSuppressGrab,
     resetView: () => {
       const defaultZoom = 1 / (SCALE_BY * SCALE_BY);
       viewport.scale.set(defaultZoom);

@@ -113,6 +113,8 @@ export interface CanvasEdgeCallbacks {
   onDoubleClick: (edgeId: string, container: Container, worldPos?: Point, ctrlKey?: boolean) => void;
   onOpenFileLink: (edgeId: string, preview?: boolean) => void;
   isLocked: () => boolean;
+  isEdgeMode: () => boolean;
+  getSelectedEdgeIds: () => string[];
 }
 
 export function createCanvasEdge(
@@ -149,7 +151,7 @@ export function createCanvasEdge(
     const m = getEdgeGroupMeta(group);
     if (m?.fileLinkPath) {
       const canvas = document.querySelector("canvas");
-      if (canvas) canvas.title = `${m.fileLinkPath} (Ctrl+Click)`;
+      if (canvas) canvas.title = `${m.fileLinkPath} (Double-click)`;
     }
   });
   gfx.on("pointerout", () => {
@@ -183,15 +185,51 @@ export function createCanvasEdge(
         const dx = ue.global.x - downPos.x;
         const dy = ue.global.y - downPos.y;
         if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
-          if ((ue.ctrlKey || ue.metaKey) && getEdgeGroupMeta(group)?.hasFileLink) {
+          const now = Date.now();
+          if (now - lastClickTime < DOUBLE_CLICK_MS && getEdgeGroupMeta(group)?.hasFileLink) {
+            lastClickTime = 0;
             callbacks.onOpenFileLink(edge.id);
           } else {
+            lastClickTime = now;
             callbacks.onSelect(edge.id);
           }
         }
       };
       gfx.on("pointerup", onUpLocked);
       gfx.on("pointerupoutside", onUpLocked);
+      return;
+    }
+
+    if (callbacks.isEdgeMode()) return; // Let event propagate for edge creation
+
+    // Unselected edge: don't stop propagation (allows pan on drag).
+    // Only register click/double-click if pointer didn't move.
+    if (!callbacks.getSelectedEdgeIds().includes(edge.id)) {
+      const downPos = { x: e.global.x, y: e.global.y };
+      const onUpUnselected = (ue: FederatedPointerEvent) => {
+        gfx.off("pointerup", onUpUnselected);
+        gfx.off("pointerupoutside", onUpUnselected);
+        const dx = ue.global.x - downPos.x;
+        const dy = ue.global.y - downPos.y;
+        if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
+          lastPointerWorldPos = gfx.toLocal(ue.global);
+          lastCtrlKey = ue.ctrlKey || ue.metaKey;
+          const now = Date.now();
+          if (now - lastClickTime < DOUBLE_CLICK_MS) {
+            lastClickTime = 0;
+            callbacks.onDoubleClick(edge.id, group, lastPointerWorldPos, lastCtrlKey);
+          } else {
+            lastClickTime = now;
+            if (lastCtrlKey && getEdgeGroupMeta(group)?.hasFileLink) {
+              callbacks.onOpenFileLink(edge.id);
+            } else {
+              callbacks.onSelect(edge.id);
+            }
+          }
+        }
+      };
+      gfx.on("pointerup", onUpUnselected);
+      gfx.on("pointerupoutside", onUpUnselected);
       return;
     }
 

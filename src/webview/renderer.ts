@@ -51,6 +51,7 @@ export function createRenderer(
   };
 
   let selectedNodeIds: string[] = [];
+  let selectedEdgeIds: string[] = [];
 
   const selectionOverlay = new SelectionOverlay(
     () => viewport,
@@ -295,6 +296,8 @@ export function createRenderer(
           onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
           onOpenFileLink: (edgeId, preview) => callbacks.onOpenFileLink(edgeId, "edge", preview),
           isLocked: () => isLocked,
+          isEdgeMode: () => isEdgeMode,
+          getSelectedEdgeIds: () => selectedEdgeIds,
           onDoubleClick: (edgeId, container, worldPos, ctrlKey) => {
             if (isLocked) return;
 
@@ -386,6 +389,7 @@ export function createRenderer(
     lastState = state;
     const { document: doc, selectedNodeIds: stateSelectedNodeIds, locked, snapToGrid, edgeMode } = state;
     selectedNodeIds = stateSelectedNodeIds;
+    selectedEdgeIds = state.selectedEdgeIds;
     isLocked = locked;
     snapEnabled = snapToGrid;
     isEdgeMode = edgeMode;
