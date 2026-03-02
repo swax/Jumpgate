@@ -1,8 +1,8 @@
-import { Application, BlurFilter, Container, Graphics } from "pixi.js";
-import type { Bounds, Edge, Node } from "../schema";
+import { Application, Container } from "pixi.js";
+import type { Edge } from "../schema";
 import type { NodeChanges } from "./shared";
 import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
-import { createCanvasEdge, updateCanvasEdge, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance, PolylineHitArea } from "./canvas/canvasEdge";
+import { resolveEndpoint, buildPolylinePoints, pointToSegmentDistance, type CanvasEdgeCallbacks } from "./canvas/canvasEdge";
 import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
 import { getNodeDepth, getNodeById, getChildNodeIds, getEdgeById, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
@@ -10,6 +10,8 @@ import { SelectionOverlay } from "./canvas/selectionOverlay";
 import { EdgeHandleOverlay } from "./canvas/edgeHandleOverlay";
 import { DomLabelManager } from "./canvas/domLabels";
 import { DEFAULT_FONT_FAMILY } from "./canvas/textDefaults";
+import { SelectionGlowManager } from "./canvas/selectionGlow";
+import { reconcileEdges, buildNodeMap } from "./canvas/edgeReconciler";
 
 export interface RendererCallbacks {
   onNodeChanged: (id: string, changes: NodeChanges) => void;
@@ -106,103 +108,58 @@ export function createRenderer(
     },
   };
 
+  const edgeCallbacks: CanvasEdgeCallbacks = {
+    onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
+    onOpenFileLink: (edgeId, preview) => callbacks.onOpenFileLink(edgeId, "edge", preview),
+    isLocked: () => isLocked,
+    isEdgeMode: () => isEdgeMode,
+    getSelectedEdgeIds: () => selectedEdgeIds,
+    onDragUpdate: () => renderEdges(lastState),
+    onEdgeChanged: callbacks.onEdgeChanged,
+    getViewport: () => viewport,
+    onDoubleClick: (edgeId, container, worldPos, ctrlKey) => {
+      if (isLocked) return;
+
+      // Ctrl+double-click: insert a waypoint at the clicked segment
+      if (ctrlKey && worldPos) {
+        const currentEdge = getEdgeById(edgeId);
+        if (!currentEdge) return;
+
+        const nodeMap = buildNodeMap(lastState!, viewport);
+        const from = resolveEndpoint(currentEdge.from, nodeMap);
+        const to = resolveEndpoint(currentEdge.to, nodeMap);
+        if (from && to) {
+          const pts = buildPolylinePoints(from, to, currentEdge.waypoints);
+          let bestDist = Infinity;
+          let bestIdx = 0;
+          for (let s = 1; s < pts.length; s++) {
+            const d = pointToSegmentDistance(
+              worldPos.x, worldPos.y,
+              pts[s - 1].x, pts[s - 1].y,
+              pts[s].x, pts[s].y
+            );
+            if (d < bestDist) {
+              bestDist = d;
+              bestIdx = s - 1;
+            }
+          }
+
+          const sx = snapEnabled ? snap(worldPos.x) : worldPos.x;
+          const sy = snapEnabled ? snap(worldPos.y) : worldPos.y;
+
+          edgeHandleOverlay.insertWaypoint(edgeId, bestIdx, { x: sx, y: sy });
+          return;
+        }
+      }
+
+      // Plain double-click: edit label
+      startEdgeLabelEdit(labelEditCtx, container, edgeId);
+    },
+  };
+
   const nodeZIndexMap = new Map<string, number>();
 
-  // Selection glow containers for locked mode
-  const GLOW_COLOR = 0x4488ff;
-  const SPACE_GLOW_COLOR = 0x44ccff;
-  const SECONDARY_GLOW_COLOR = 0x9944ff;
-  const SPACE_SECONDARY_GLOW_COLOR = 0xbb66ff;
-  const GLOW_BLUR_STRENGTH = 3;
-  const GLOW_BLUR_QUALITY = 4;
-  const selectionGlows = new Map<string, Graphics>();
-  let glowPulse = 0; // 0..1 oscillating value for pulsing glow alpha
-
-  function drawNodeGlow(glow: Graphics, x: number, y: number, width: number, height: number, color: number): void {
-    glow.clear();
-    glow.roundRect(x - 4, y - 4, width + 8, height + 8, 6)
-      .stroke({ color, width: 3, alpha: 1.0 });
-    glow.roundRect(x - 2, y - 2, width + 4, height + 4, 4)
-      .stroke({ color: 0xffffff, width: 3, alpha: 1.0 });
-    if (!glow.filters || !(glow.filters as BlurFilter[])[0]) {
-      glow.filters = [new BlurFilter({ strength: GLOW_BLUR_STRENGTH, quality: GLOW_BLUR_QUALITY })];
-    }
-  }
-
-  function updateSelectionGlows(selectedNodeIds: string[], selectedEdgeIds: string[], locked: boolean, theme?: string): void {
-    if (!locked) {
-      for (const [, gfx] of selectionGlows) {
-        viewport.removeChild(gfx);
-        gfx.destroy();
-      }
-      selectionGlows.clear();
-      return;
-    }
-
-    const isSpace = theme === "space";
-    const primaryColor = isSpace ? SPACE_GLOW_COLOR : GLOW_COLOR;
-    const secondaryColor = isSpace ? SPACE_SECONDARY_GLOW_COLOR : SECONDARY_GLOW_COLOR;
-
-    // Compute secondary nodes: endpoints of selected edges not in primary selection
-    const primarySet = new Set(selectedNodeIds);
-    const secondaryNodeIds = new Set<string>();
-    for (const edgeId of selectedEdgeIds) {
-      const edge = getEdgeById(edgeId);
-      if (!edge) continue;
-      if ("nodeId" in edge.from && !primarySet.has(edge.from.nodeId)) {
-        secondaryNodeIds.add(edge.from.nodeId);
-      }
-      if ("nodeId" in edge.to && !primarySet.has(edge.to.nodeId)) {
-        secondaryNodeIds.add(edge.to.nodeId);
-      }
-    }
-
-    // All nodes that need a glow
-    const allGlowIds = new Set([...selectedNodeIds, ...secondaryNodeIds]);
-
-    // Remove glows for nodes no longer needing one
-    for (const [id, gfx] of selectionGlows) {
-      if (!allGlowIds.has(id)) {
-        viewport.removeChild(gfx);
-        gfx.destroy();
-        selectionGlows.delete(id);
-      }
-    }
-
-    // Add/update glows
-    for (const nodeId of allGlowIds) {
-      const node = getNodeById(nodeId);
-      if (!node) continue;
-
-      let glow = selectionGlows.get(nodeId);
-      if (!glow) {
-        glow = new Graphics();
-        glow.label = `__sel_glow_${nodeId}`;
-        glow.eventMode = "none";
-        viewport.addChild(glow);
-        selectionGlows.set(nodeId, glow);
-      }
-
-      const { x, y, width, height } = node.bounds;
-      const nodeZ = nodeZIndexMap.get(nodeId) ?? 1000;
-      glow.zIndex = nodeZ - 0.1;
-
-      const color = secondaryNodeIds.has(nodeId) ? secondaryColor : primaryColor;
-      drawNodeGlow(glow, x, y, width, height, color);
-    }
-  }
-
-  function computeEdgeZIndex(edge: Edge): number {
-    const fromId = "nodeId" in edge.from ? edge.from.nodeId : null;
-    const toId = "nodeId" in edge.to ? edge.to.nodeId : null;
-    const fromZ = fromId ? nodeZIndexMap.get(fromId) : undefined;
-    const toZ = toId ? nodeZIndexMap.get(toId) : undefined;
-
-    if (fromZ !== undefined && toZ !== undefined) return Math.max(fromZ, toZ) - 0.5;
-    if (fromZ !== undefined) return fromZ - 0.5;
-    if (toZ !== undefined) return toZ - 0.5;
-    return 8999; // free-floating: above all nodes, below overlays
-  }
+  const glowManager = new SelectionGlowManager(viewport);
 
   let lastState: EditorState | null = null;
 
@@ -215,174 +172,25 @@ export function createRenderer(
     domLabels.syncPositions(zoom, vpX, vpY);
 
     // Pulse glow alpha for selected items in locked mode
-    if (selectionGlows.size > 0 || (lastState && lastState.selectedEdgeIds.length > 0 && isLocked)) {
-      glowPulse = (glowPulse + ticker.deltaMS * 0.001) % 1;
-      const pulse = 0.5 + 0.5 * Math.sin(glowPulse * Math.PI * 2); // 0..1
-      const alpha = 0.6 + 0.4 * pulse;
-
-      // Pulse node glows
-      for (const [, gfx] of selectionGlows) {
-        gfx.alpha = alpha;
-      }
-
-      // Pulse edge glows
-      if (lastState) {
-        for (const edgeId of lastState.selectedEdgeIds) {
-          const edgeContainer = viewport.getChildByLabel(edgeId) as Container | null;
-          if (!edgeContainer) continue;
-          const edgeGlow = edgeContainer.getChildByLabel("edge-glow") as Graphics | null;
-          if (edgeGlow?.visible) {
-            edgeGlow.alpha = alpha;
-          }
-        }
-      }
+    if (isLocked) {
+      glowManager.pulse(ticker.deltaMS, lastState.selectedEdgeIds, viewport);
     }
   });
 
-  /** Build a nodeMap using live container positions/sizes (covers both drag and resize previews). */
-  function buildNodeMap(state: EditorState): Map<string, Bounds> {
-    const map = new Map<string, Bounds>();
-    for (const n of state.document.nodes) {
-      const container = viewport.getChildByLabel(n.id) as Container | null;
-      map.set(n.id, container ? getContainerBounds(container) : n.bounds);
-    }
-    return map;
-  }
-
   function renderEdges(state: EditorState | null): void {
     if (!state) return;
-    const { document: doc, selectedEdgeIds } = state;
-    const selectedEdgeSet = new Set(selectedEdgeIds);
-    const currentEdgeIds = new Set(doc.edges.map((e) => e.id));
-    const nodeMap = buildNodeMap(state);
-
-    // Remove edges for deleted items
-    for (const id of prevEdgeIds) {
-      if (!currentEdgeIds.has(id)) {
-        const gfx = viewport.getChildByLabel(id);
-        if (gfx) {
-          viewport.removeChild(gfx);
-          gfx.destroy();
-        }
-        domLabels.removeLabel(id);
-      }
-    }
-
-    // Check for in-flight edge handle drag overrides
-    const handleOverride = edgeHandleOverlay.getEndpointOverride();
-    const wpOverride = edgeHandleOverlay.getWaypointOverrides();
-
-    // Create or update edges
-    for (let i = 0; i < doc.edges.length; i++) {
-      const edge = doc.edges[i];
-      // Apply endpoint override during handle drag
-      let renderEdge = (handleOverride && edge.id === handleOverride.edgeId)
-        ? { ...edge, [handleOverride.which]: handleOverride.endpoint }
-        : edge;
-
-      // Apply waypoint override during waypoint drag
-      if (wpOverride && edge.id === wpOverride.edgeId) {
-        renderEdge = { ...renderEdge, waypoints: wpOverride.waypoints };
-      }
-
-      // Skip edges with missing node references
-      const from = resolveEndpoint(renderEdge.from, nodeMap);
-      const to = resolveEndpoint(renderEdge.to, nodeMap);
-      if (!from || !to) continue;
-
-      let edgeContainer = viewport.getChildByLabel(edge.id) as Container | null;
-      if (!edgeContainer) {
-        edgeContainer = createCanvasEdge(edge, labelColor, {
-          onSelect: (edgeId) => callbacks.onEdgeSelect(edgeId),
-          onOpenFileLink: (edgeId, preview) => callbacks.onOpenFileLink(edgeId, "edge", preview),
-          isLocked: () => isLocked,
-          isEdgeMode: () => isEdgeMode,
-          getSelectedEdgeIds: () => selectedEdgeIds,
-          onDoubleClick: (edgeId, container, worldPos, ctrlKey) => {
-            if (isLocked) return;
-
-            // Ctrl+double-click: insert a waypoint at the clicked segment
-            if (ctrlKey && worldPos) {
-              const currentEdge = getEdgeById(edgeId);
-              if (!currentEdge) return;
-
-              const from = resolveEndpoint(currentEdge.from, buildNodeMap(lastState!));
-              const to = resolveEndpoint(currentEdge.to, buildNodeMap(lastState!));
-              if (from && to) {
-                const pts = buildPolylinePoints(from, to, currentEdge.waypoints);
-                let bestDist = Infinity;
-                let bestIdx = 0;
-                for (let s = 1; s < pts.length; s++) {
-                  const d = pointToSegmentDistance(
-                    worldPos.x, worldPos.y,
-                    pts[s - 1].x, pts[s - 1].y,
-                    pts[s].x, pts[s].y
-                  );
-                  if (d < bestDist) {
-                    bestDist = d;
-                    bestIdx = s - 1;
-                  }
-                }
-
-                const sx = snapEnabled ? snap(worldPos.x) : worldPos.x;
-                const sy = snapEnabled ? snap(worldPos.y) : worldPos.y;
-
-                edgeHandleOverlay.insertWaypoint(edgeId, bestIdx, { x: sx, y: sy });
-                return;
-              }
-            }
-
-            // Plain double-click: edit label
-            startEdgeLabelEdit(labelEditCtx, container, edgeId);
-          },
-        }, doc.theme);
-        viewport.addChild(edgeContainer);
-      }
-
-      edgeContainer.zIndex = (handleOverride && edge.id === handleOverride.edgeId) ? 8999 : computeEdgeZIndex(edge);
-
-      const edgeGfx = edgeContainer.getChildByLabel("edge-line");
-      if (edgeGfx) {
-        edgeGfx.eventMode = "static";
-      }
-
-      updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor, doc.theme, isLocked);
-
-      // Upsert DOM label for this edge
-      const points = buildPolylinePoints(from, to, renderEdge.waypoints);
-      const mid = computePolylineMidpoint(points);
-      const isSpace = doc.theme === "space";
-      const edgeFontFamily = isSpace ? "Consolas, 'Courier New', monospace" : DEFAULT_FONT_FAMILY;
-      const edgeLabelColor = edge.labelColor ?? labelColor;
-      domLabels.upsertEdgeLabel(edge.id, edge.label || "", edgeLabelColor, edgeFontFamily, mid.x, mid.y, isSpace);
-
-      // Expand edge hit area to include the label bounding box
-      if (edge.label && edgeGfx) {
-        const labelEl = domLabels.getElement(edge.id);
-        if (labelEl && edgeGfx.hitArea instanceof PolylineHitArea) {
-          const zoom = viewport.scale.x;
-          const worldW = labelEl.offsetWidth / zoom;
-          const worldH = labelEl.offsetHeight / zoom;
-          edgeGfx.hitArea.labelRect = {
-            x: mid.x - worldW / 2,
-            y: mid.y - worldH / 2,
-            width: worldW,
-            height: worldH,
-          };
-        }
-      }
-    }
-
-    prevEdgeIds = currentEdgeIds;
-
-    edgeHandleOverlay.update(
-      doc.edges,
-      state.selectedEdgeIds,
-      nodeMap,
-      viewport.scale.x,
+    prevEdgeIds = reconcileEdges({
+      viewport,
+      edgeCallbacks,
+      edgeHandleOverlay,
+      domLabels,
+      nodeZIndexMap,
+      labelColor,
       isLocked,
-      isEdgeMode
-    );
+      isEdgeMode,
+      snapEnabled,
+      prevEdgeIds,
+    }, state);
   }
 
   function render(state: EditorState): void {
@@ -453,10 +261,10 @@ export function createRenderer(
     if (locked) {
       // Locked mode: glow behind selected nodes (no overlay)
       selectionOverlay.update([], viewport.scale.x, doc.theme);
-      updateSelectionGlows(stateSelectedNodeIds, state.selectedEdgeIds, true, doc.theme);
+      glowManager.update(stateSelectedNodeIds, state.selectedEdgeIds, true, nodeZIndexMap, doc.theme);
     } else {
       // Edit mode: dashed overlay + resize handles
-      updateSelectionGlows([], [], false);
+      glowManager.update([], [], false, nodeZIndexMap);
       if (stateSelectedNodeIds.length > 0) {
         const nodeInfos = stateSelectedNodeIds
           .map((id) => {

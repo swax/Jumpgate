@@ -125,7 +125,7 @@ async function main(): Promise<void> {
     renderer.render(getState());
   });
 
-  setupKeyboard(sendEditDebounced);
+  setupKeyboard(sendEditDebounced, app, viewport);
   setupContextMenu(app, viewport);
 
   setupGroupStatus(sendEditDebounced);
@@ -149,6 +149,14 @@ async function main(): Promise<void> {
       case "update":
         setDocument(msg.document);
         break;
+      case "fileLinkResult": {
+        if (msg.targetKind === "node") {
+          nodeChanged(msg.targetId, { fileLink: msg.fileLink });
+        } else {
+          edgeChanged(msg.targetId, { fileLink: msg.fileLink });
+        }
+        break;
+      }
     }
   });
 

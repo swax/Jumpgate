@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { documentSchema } from "./schema";
+import type { FileLink } from "./schema";
 import type {
   ExtensionToWebviewMessage,
   WebviewToExtensionMessage,
@@ -74,7 +75,15 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
             isApplyingEdit = false;
             break;
           }
+          case "viewSource": {
+            await vscode.commands.executeCommand("vscode.openWith", document.uri, "default");
+            break;
+          }
           case "openFileLink": {
+            if (/^https?:\/\//.test(msg.path)) {
+              vscode.env.openExternal(vscode.Uri.parse(msg.path));
+              break;
+            }
             const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
             if (!workspaceFolder) break;
             const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, msg.path);
@@ -107,6 +116,76 @@ export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
             } catch {
               vscode.window.showErrorMessage(`Could not open file: ${msg.path}`);
             }
+            break;
+          }
+          case "editFileLink": {
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            if (!workspaceFolder) break;
+
+            const files = await vscode.workspace.findFiles("**/*", "**/node_modules/**");
+            const relativePaths = files
+              .map((f) => vscode.workspace.asRelativePath(f, false))
+              .sort((a, b) => a.localeCompare(b));
+
+            interface FileLinkItem extends vscode.QuickPickItem {
+              action?: "remove" | "url";
+              filePath?: string;
+            }
+
+            const items: FileLinkItem[] = [];
+
+            if (msg.currentPath) {
+              items.push({ label: "$(trash) Remove File Link", action: "remove" });
+            }
+            items.push({ label: "$(link) Enter URL...", action: "url" });
+            items.push({ label: "", kind: vscode.QuickPickItemKind.Separator });
+
+            for (const p of relativePaths) {
+              items.push({ label: p, filePath: p });
+            }
+
+            const picked = await vscode.window.showQuickPick(items, {
+              placeHolder: "Select a file or enter a URL",
+              matchOnDescription: true,
+            });
+
+            if (!picked) break; // user cancelled
+
+            let fileLink: FileLink | undefined;
+
+            if (picked.action === "remove") {
+              // Send result with no fileLink to remove it
+              fileLink = undefined;
+            } else if (picked.action === "url") {
+              const url = await vscode.window.showInputBox({
+                prompt: "Enter URL",
+                placeHolder: "https://...",
+                value: msg.currentPath && /^https?:\/\//.test(msg.currentPath) ? msg.currentPath : undefined,
+              });
+              if (url === undefined) break; // user cancelled
+              if (url) {
+                fileLink = { path: url };
+              } else {
+                break; // empty input
+              }
+            } else if (picked.filePath) {
+              const prefill = (msg.currentPath === picked.filePath && msg.currentMatch) ? msg.currentMatch : undefined;
+              const match = await vscode.window.showInputBox({
+                prompt: "Optional: enter text to match in the file (leave empty to open file at top)",
+                placeHolder: "match text",
+                value: prefill,
+              });
+              if (match === undefined) break; // user cancelled
+              fileLink = match ? { path: picked.filePath, match } : { path: picked.filePath };
+            }
+
+            const result: ExtensionToWebviewMessage = {
+              type: "fileLinkResult",
+              targetId: msg.targetId,
+              targetKind: msg.targetKind,
+              fileLink,
+            };
+            webview.postMessage(result);
             break;
           }
         }

@@ -1,4 +1,4 @@
-import type { Node } from "../schema";
+import type { FileLink, Node } from "../schema";
 
 export type NodeChanges = {
   bounds?: Partial<Node["bounds"]>;
@@ -9,6 +9,7 @@ export type NodeChanges = {
   shape?: Node["shape"];
   direction?: Node["direction"];
   parentId?: string | null;
+  fileLink?: FileLink;
 };
 
 export function colorToHex(color: string | undefined, fallback: number): number {

@@ -20,14 +20,14 @@
     "commands": [
       {
         "command": "perspective.linkToNode",
-        "title": "Link to Perspective Node"
+        "title": "Jumpgate: Link to Node/Edge"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "command": "perspective.linkToNode",
-          "group": "navigation"
+          "group": "z_perspective"
         }
       ]
     },

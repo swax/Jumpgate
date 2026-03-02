@@ -33,7 +33,8 @@ export function setupEdgeMode(
     const { edgeMode, locked } = getState();
     btn.innerHTML = EDGE_BTN_SVG;
     btn.style.display = locked ? "none" : "";
-    btn.style.opacity = edgeMode ? "1" : "0.4";
+    btn.style.color = edgeMode ? "#4488ff" : "";
+    btn.style.border = edgeMode ? "1px solid #4488ff" : "";
     btn.title = edgeMode ? "Add Edge (active)" : "Add Edge";
 
     if (edgeMode && !locked) {

@@ -149,6 +149,10 @@ export function createCanvasNode(
       return;
     }
 
+    // Right-click is handled by the context menu; ignore here so it doesn't
+    // feed into the double-click timer.
+    if (e.button === 2) return;
+
     // In locked mode, don't stop propagation so drag-to-pan works through nodes.
     // Only register a click if pointer didn't move (like a Windows button).
     if (callbacks.isLocked()) {

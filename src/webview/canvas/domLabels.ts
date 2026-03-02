@@ -61,7 +61,7 @@ export class DomLabelManager {
         textAlign: "center",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word",
-        overflow: "hidden",
+        overflow: "visible",
         pointerEvents: "none",
         willChange: "transform",
         lineHeight: "1.2",

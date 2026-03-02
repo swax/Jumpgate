@@ -7,20 +7,25 @@ import {
   setSelectedEdgeIds,
 } from "../state";
 import { resolveEndpoint, buildPolylinePoints, pointToSegmentDistance } from "../canvas/canvasEdge";
-import { copySelectedNodes, pasteNodes, cutSelectedNodes, deleteSelected, hasClipboard } from "./keyboard";
+import { copySelectedNodes, pasteNodes, cutSelectedNodes, deleteSelected, hasClipboard, setLastMouseWorldPos } from "./keyboard";
 import { postMessage, sendEditDebounced } from "../messaging";
 
 export interface ContextMenuOptions {
   showOpenFile: boolean;
+  showEditFileLink: boolean;
+  editFileLinkLabel?: string;
   showCut: boolean;
   showCopy: boolean;
   showPaste: boolean;
   showDelete: boolean;
+  showViewSource: boolean;
   onOpenFile?: () => void;
+  onEditFileLink?: () => void;
   onCut?: () => void;
   onCopy?: () => void;
   onPaste?: () => void;
   onDelete?: () => void;
+  onViewSource?: () => void;
 }
 
 let menuEl: HTMLDivElement | null = null;
@@ -70,17 +75,6 @@ export function showContextMenu(x: number, y: number, options: ContextMenuOption
 
   let itemCount = 0;
 
-  if (options.showOpenFile && options.onOpenFile) {
-    menu.appendChild(createMenuItem("Go to File Link", options.onOpenFile));
-    itemCount++;
-  }
-
-  // Add separator between Open File and edit actions
-  const hasEditActions = options.showCut || options.showCopy || options.showPaste || options.showDelete;
-  if (itemCount > 0 && hasEditActions) {
-    menu.appendChild(createSeparator());
-  }
-
   if (options.showCut && options.onCut) {
     menu.appendChild(createMenuItem("Cut", options.onCut));
     itemCount++;
@@ -95,6 +89,26 @@ export function showContextMenu(x: number, y: number, options: ContextMenuOption
   }
   if (options.showDelete && options.onDelete) {
     menu.appendChild(createMenuItem("Delete", options.onDelete));
+    itemCount++;
+  }
+
+  const hasFileLinkActions = (options.showOpenFile && options.onOpenFile) || (options.showEditFileLink && options.onEditFileLink);
+  if (itemCount > 0 && hasFileLinkActions) {
+    menu.appendChild(createSeparator());
+  }
+
+  if (options.showEditFileLink && options.onEditFileLink) {
+    menu.appendChild(createMenuItem(options.editFileLinkLabel ?? "Set File Link", options.onEditFileLink));
+    itemCount++;
+  }
+  if (options.showOpenFile && options.onOpenFile) {
+    menu.appendChild(createMenuItem("Go to File Link", options.onOpenFile));
+    itemCount++;
+  }
+
+  if (options.showViewSource && options.onViewSource) {
+    if (itemCount > 0) menu.appendChild(createSeparator());
+    menu.appendChild(createMenuItem("View Page Source", options.onViewSource));
     itemCount++;
   }
 
@@ -133,6 +147,9 @@ export function setupContextMenu(app: Application, viewport: Container): void {
     const canvasY = e.clientY - canvasRect.top;
     const worldX = (canvasX - viewport.position.x) / viewport.scale.x;
     const worldY = (canvasY - viewport.position.y) / viewport.scale.y;
+
+    // Set paste position so context menu paste lands at the right-click location
+    setLastMouseWorldPos(worldX, worldY);
 
     const state = getState();
     const { nodes, edges } = state.document;
@@ -183,18 +200,19 @@ export function setupContextMenu(app: Application, viewport: Container): void {
       const hasFileLink = !!fileLink;
 
       if (state.locked) {
-        if (hasFileLink) {
-          showContextMenu(e.clientX, e.clientY, {
-            showOpenFile: true,
-            showCut: false,
-            showCopy: false,
-            showPaste: false,
-            showDelete: false,
-            onOpenFile: () => {
-              postMessage({ type: "openFileLink", path: fileLink!.path, match: fileLink!.match });
-            },
-          });
-        }
+        showContextMenu(e.clientX, e.clientY, {
+          showOpenFile: hasFileLink,
+          showEditFileLink: false,
+          showCut: false,
+          showCopy: false,
+          showPaste: false,
+          showDelete: false,
+          showViewSource: true,
+          onOpenFile: hasFileLink ? () => {
+            postMessage({ type: "openFileLink", path: fileLink!.path, match: fileLink!.match });
+          } : undefined,
+          onViewSource: () => postMessage({ type: "viewSource" }),
+        });
       } else {
         // Edit mode: select the item if not already selected
         if (targetKind === "node") {
@@ -209,28 +227,38 @@ export function setupContextMenu(app: Application, viewport: Container): void {
 
         showContextMenu(e.clientX, e.clientY, {
           showOpenFile: hasFileLink,
+          showEditFileLink: true,
+          editFileLinkLabel: hasFileLink ? "Edit File Link" : "Set File Link",
           showCut: true,
           showCopy: true,
           showPaste: hasClipboard(),
           showDelete: true,
+          showViewSource: true,
           onOpenFile: hasFileLink ? () => {
             postMessage({ type: "openFileLink", path: fileLink!.path, match: fileLink!.match });
           } : undefined,
+          onEditFileLink: () => {
+            postMessage({ type: "editFileLink", targetId: targetId!, targetKind: targetKind!, currentPath: fileLink?.path, currentMatch: fileLink?.match });
+          },
           onCut: () => cutSelectedNodes(sendEditDebounced),
           onCopy: () => copySelectedNodes(),
           onPaste: () => pasteNodes(sendEditDebounced),
           onDelete: () => deleteSelected(sendEditDebounced),
+          onViewSource: () => postMessage({ type: "viewSource" }),
         });
       }
-    } else if (!state.locked) {
-      // Right-clicked on empty space in edit mode — show paste if clipboard has content
+    } else {
+      // Right-clicked on empty space
       showContextMenu(e.clientX, e.clientY, {
         showOpenFile: false,
+        showEditFileLink: false,
         showCut: false,
         showCopy: false,
-        showPaste: hasClipboard(),
+        showPaste: !state.locked && hasClipboard(),
         showDelete: false,
+        showViewSource: true,
         onPaste: () => pasteNodes(sendEditDebounced),
+        onViewSource: () => postMessage({ type: "viewSource" }),
       });
     }
   });

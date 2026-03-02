@@ -262,8 +262,6 @@ export function setupSidebar(
         rotateBtn.disabled = true;
         borderWrapper.style.display = "none";
       }
-    } else {
-      targetIds = [];
     }
   });
 }

@@ -1,7 +1,7 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 import { DOUBLE_CLICK_MS } from "../shared";
-import { resolveEndpoint } from "./canvasEdge";
+import { resolveEndpoint, isEdgeDragging } from "./canvasEdge";
 import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "./edgeUtils";
 import { resolveAnchor } from "./canvasEdge";
 import { getState, getEdgeById } from "../state";
@@ -323,7 +323,8 @@ export class EdgeHandleOverlay {
       selectedEdgeIds.length !== 1 ||
       locked ||
       edgeMode ||
-      this.isDragging
+      this.isDragging ||
+      isEdgeDragging()
     ) {
       if (!this.isDragging && !this.isDraggingWaypoint) {
         this.fromHandle.visible = false;
