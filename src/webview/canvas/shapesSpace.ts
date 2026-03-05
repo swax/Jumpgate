@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 import type { NodeDirection, NodeShape } from "../../schema";
-import { directionToDeg, setBoxHitArea, glyphRadius } from "./shapeDrawing";
+import { directionToDeg, setBoxHitArea, glyphRadius } from "./shapes";
 
 // ── Glow & nebula layers (space-only) ───────────────────────────
 

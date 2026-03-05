@@ -7,7 +7,7 @@ import {
   setSelectedEdgeIds,
 } from "../state";
 import { resolveEndpoint, buildPolylinePoints, pointToSegmentDistance } from "../canvas/canvasEdge";
-import { copySelectedNodes, pasteNodes, cutSelectedNodes, deleteSelected, hasClipboard, setLastMouseWorldPos } from "./keyboard";
+import { copySelectedNodes, pasteNodes, cutSelectedNodes, deleteSelected, hasClipboard, setLastMouseWorldPos } from "./clipboard";
 import { postMessage, sendEditDebounced } from "../messaging";
 
 export interface ContextMenuOptions {

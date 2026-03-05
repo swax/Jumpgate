@@ -1,9 +1,10 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../../schema";
 import { DOUBLE_CLICK_MS } from "../shared";
-import { resolveEndpoint, isEdgeDragging } from "./canvasEdge";
-import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "./edgeUtils";
-import { resolveAnchor } from "./canvasEdge";
+import { resolveEndpoint, resolveAnchor } from "./edgeGeometry";
+import { isEdgeDragging } from "./canvasEdge";
+import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, computeAnchor, buildEndpoint } from "./edgeUtils";
+import { findNodeAtPoint } from "./hitTest";
 import { getState, getEdgeById } from "../state";
 import { snap } from "../controls/gridSnap";
 import { getEdgeHandleMeta, setEdgeHandleMeta, getWaypointMeta, setWaypointMeta } from "./metadata";
@@ -99,7 +100,7 @@ export class EdgeHandleOverlay {
 
     const onMove = (me: FederatedPointerEvent) => {
       const worldPos = viewport.toLocal(me.global);
-      const { endpoint } = buildEndpoint(worldPos.x, worldPos.y, viewport);
+      const { endpoint } = buildEndpoint(worldPos.x, worldPos.y, viewport, getState().snapToGrid);
       this.dragEndpoint = endpoint;
 
       const sx = getState().snapToGrid ? snap(worldPos.x) : worldPos.x;
@@ -111,7 +112,7 @@ export class EdgeHandleOverlay {
       let color: number;
 
       if (hitNode) {
-        const anchor = computeAnchor(sx, sy, hitNode);
+        const anchor = computeAnchor(sx, sy, hitNode, getState().snapToGrid);
         const resolved = resolveAnchor(hitNode, anchor);
         posX = resolved.x;
         posY = resolved.y;
@@ -140,7 +141,7 @@ export class EdgeHandleOverlay {
       handle.off("pointerupoutside", onUp);
 
       const worldPos = viewport.toLocal(ue.global);
-      const { endpoint } = buildEndpoint(worldPos.x, worldPos.y, viewport);
+      const { endpoint } = buildEndpoint(worldPos.x, worldPos.y, viewport, getState().snapToGrid);
 
       this.dragEndpoint = null;
       this.dragEdgeId = null;

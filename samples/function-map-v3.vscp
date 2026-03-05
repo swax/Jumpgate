@@ -2,1213 +2,3127 @@
   "nodes": [
     {
       "id": "title",
-      "bounds": { "x": 400, "y": -80, "width": 500, "height": 50 },
+      "bounds": {
+        "x": 400,
+        "y": -80,
+        "width": 500,
+        "height": 50
+      },
       "label": "Perspective — Detailed Function Map",
       "shape": "text"
     },
-
     {
       "id": "grp-extension",
-      "bounds": { "x": 20, "y": 20, "width": 760, "height": 280 },
-      "nodeColor": "#263238", "borderColor": "#546E7A",
+      "bounds": {
+        "x": 20,
+        "y": 20,
+        "width": 760,
+        "height": 280
+      },
+      "nodeColor": "#263238",
+      "borderColor": "#546E7A",
       "label": "VS Code Extension Host"
     },
     {
       "id": "ext-activate",
-      "bounds": { "x": 40, "y": 60, "width": 200, "height": 50 },
-      "nodeColor": "#43A047", "labelColor": "white",
-      "label": "activate()\nextension.ts",
+      "bounds": {
+        "x": 40,
+        "y": 60,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#43A047",
+      "labelColor": "white",
+      "label": "activatexxx()\nextension.ts",
+      "fileLink": {
+        "path": "https://www.google.com"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/extension.ts", "match": "function activate" }
+      "parentId": "grp-extension"
     },
     {
       "id": "ext-deactivate",
-      "bounds": { "x": 40, "y": 130, "width": 200, "height": 40 },
-      "nodeColor": "#66BB6A", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 130,
+        "width": 200,
+        "height": 40
+      },
+      "nodeColor": "#66BB6A",
+      "labelColor": "white",
       "label": "deactivate()",
+      "fileLink": {
+        "path": "src/extension.ts",
+        "match": "function deactivate"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/extension.ts", "match": "function deactivate" }
+      "parentId": "grp-extension"
     },
     {
       "id": "ext-linkToNode",
-      "bounds": { "x": 40, "y": 190, "width": 200, "height": 50 },
-      "nodeColor": "#66BB6A", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 220,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#66BB6A",
+      "labelColor": "white",
       "label": "linkToNodeCommand()\nQuickPick flow",
+      "fileLink": {
+        "path": "src/extension.ts",
+        "match": "linkToNodeCommand"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/extension.ts", "match": "linkToNodeCommand" }
+      "parentId": "grp-extension"
     },
-
     {
       "id": "provider-class",
-      "bounds": { "x": 280, "y": 60, "width": 240, "height": 50 },
-      "nodeColor": "#2E7D32", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 60,
+        "width": 240,
+        "height": 50
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "white",
       "label": "VscpEditorProvider\nCustomTextEditorProvider",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "class VscpEditorProvider"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "class VscpEditorProvider" }
+      "parentId": "grp-extension"
     },
     {
       "id": "provider-resolve",
-      "bounds": { "x": 280, "y": 130, "width": 240, "height": 50 },
-      "nodeColor": "#43A047", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 130,
+        "width": 240,
+        "height": 50
+      },
+      "nodeColor": "#43A047",
+      "labelColor": "white",
       "label": "resolveCustomTextEditor()\nwebview + messaging",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "resolveCustomTextEditor"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "resolveCustomTextEditor" }
+      "parentId": "grp-extension"
     },
     {
       "id": "provider-html",
-      "bounds": { "x": 280, "y": 200, "width": 240, "height": 40 },
-      "nodeColor": "#66BB6A", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 200,
+        "width": 240,
+        "height": 40
+      },
+      "nodeColor": "#66BB6A",
+      "labelColor": "white",
       "label": "getHtmlForWebview()\nCSP + nonce",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "getHtmlForWebview"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "getHtmlForWebview" }
+      "parentId": "grp-extension"
     },
-
     {
       "id": "schema-box",
-      "bounds": { "x": 560, "y": 60, "width": 200, "height": 100 },
-      "nodeColor": "#5C6BC0", "labelColor": "white",
+      "bounds": {
+        "x": 560,
+        "y": 60,
+        "width": 200,
+        "height": 100
+      },
+      "nodeColor": "#5C6BC0",
+      "labelColor": "white",
       "label": "schema.ts\nnodeSchema\nedgeSchema\ndocumentSchema",
+      "fileLink": {
+        "path": "src/schema.ts"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/schema.ts" }
+      "parentId": "grp-extension"
     },
     {
       "id": "messages-box",
-      "bounds": { "x": 560, "y": 180, "width": 200, "height": 60 },
-      "nodeColor": "#5C6BC0", "labelColor": "white",
+      "bounds": {
+        "x": 560,
+        "y": 180,
+        "width": 200,
+        "height": 60
+      },
+      "nodeColor": "#5C6BC0",
+      "labelColor": "white",
       "label": "messages.ts\nExtension ↔ Webview",
+      "fileLink": {
+        "path": "src/messages.ts"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-extension",
-      "fileLink": { "path": "src/messages.ts" }
+      "parentId": "grp-extension"
     },
-
     {
       "id": "grp-webview-entry",
-      "bounds": { "x": 20, "y": 360, "width": 760, "height": 200 },
-      "nodeColor": "#1A237E", "borderColor": "#3949AB",
+      "bounds": {
+        "x": 20,
+        "y": 360,
+        "width": 760,
+        "height": 200
+      },
+      "nodeColor": "#1A237E",
+      "borderColor": "#3949AB",
       "label": "Webview Entry & Wiring"
     },
     {
       "id": "main-fn",
-      "bounds": { "x": 40, "y": 400, "width": 220, "height": 50 },
-      "nodeColor": "#1E88E5", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 400,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#1E88E5",
+      "labelColor": "white",
       "label": "main()\nPixiJS init + wiring",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "async function main"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-webview-entry",
-      "fileLink": { "path": "src/webview/main.ts", "match": "async function main" }
+      "parentId": "grp-webview-entry"
     },
     {
       "id": "main-postmsg",
-      "bounds": { "x": 280, "y": 400, "width": 220, "height": 50 },
-      "nodeColor": "#42A5F5", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 400,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#42A5F5",
+      "labelColor": "white",
       "label": "postMessage()\nTyped IPC to extension",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "function postMessage"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-webview-entry",
-      "fileLink": { "path": "src/webview/main.ts", "match": "function postMessage" }
+      "parentId": "grp-webview-entry"
     },
     {
       "id": "main-debounce",
-      "bounds": { "x": 520, "y": 400, "width": 240, "height": 50 },
-      "nodeColor": "#42A5F5", "labelColor": "white",
+      "bounds": {
+        "x": 520,
+        "y": 400,
+        "width": 240,
+        "height": 50
+      },
+      "nodeColor": "#42A5F5",
+      "labelColor": "white",
       "label": "sendEditDebounced()\n100ms batch → extension",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "sendEditDebounced"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-webview-entry",
-      "fileLink": { "path": "src/webview/main.ts", "match": "sendEditDebounced" }
+      "parentId": "grp-webview-entry"
     },
-
     {
       "id": "main-msglistener",
-      "bounds": { "x": 40, "y": 480, "width": 220, "height": 50 },
-      "nodeColor": "#42A5F5", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 480,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#42A5F5",
+      "labelColor": "white",
       "label": "message listener\nupdate → setDocument",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "addEventListener"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-webview-entry",
-      "fileLink": { "path": "src/webview/main.ts", "match": "addEventListener" }
+      "parentId": "grp-webview-entry"
     },
-
     {
       "id": "grp-state",
-      "bounds": { "x": 820, "y": 360, "width": 500, "height": 440 },
-      "nodeColor": "#E65100", "borderColor": "#FF9100",
+      "bounds": {
+        "x": 820,
+        "y": 360,
+        "width": 500,
+        "height": 440
+      },
+      "nodeColor": "#E65100",
+      "borderColor": "#FF9100",
       "label": "State Management"
     },
     {
       "id": "state-getState",
-      "bounds": { "x": 840, "y": 400, "width": 220, "height": 40 },
-      "nodeColor": "#F9A825", "labelColor": "black",
+      "bounds": {
+        "x": 840,
+        "y": 400,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#F9A825",
+      "labelColor": "black",
       "label": "getState() → EditorState",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function getState"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function getState" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-setDoc",
-      "bounds": { "x": 1080, "y": 400, "width": 220, "height": 40 },
-      "nodeColor": "#F9A825", "labelColor": "black",
+      "bounds": {
+        "x": 1080,
+        "y": 400,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#F9A825",
+      "labelColor": "black",
       "label": "setDocument(doc)",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function setDocument"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function setDocument" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-selectNodes",
-      "bounds": { "x": 840, "y": 460, "width": 220, "height": 40 },
-      "nodeColor": "#FFB300", "labelColor": "black",
+      "bounds": {
+        "x": 840,
+        "y": 460,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#FFB300",
+      "labelColor": "black",
       "label": "setSelectedNodeIds(ids)",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function setSelectedNodeIds"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function setSelectedNodeIds" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-selectEdges",
-      "bounds": { "x": 1080, "y": 460, "width": 220, "height": 40 },
-      "nodeColor": "#FFB300", "labelColor": "black",
+      "bounds": {
+        "x": 1080,
+        "y": 460,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#FFB300",
+      "labelColor": "black",
       "label": "setSelectedEdgeIds(ids)",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function setSelectedEdgeIds"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function setSelectedEdgeIds" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-toggleNode",
-      "bounds": { "x": 840, "y": 520, "width": 220, "height": 40 },
-      "nodeColor": "#FFB300", "labelColor": "black",
+      "bounds": {
+        "x": 840,
+        "y": 520,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#FFB300",
+      "labelColor": "black",
       "label": "toggleSelectedNodeId(id)",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function toggleSelectedNodeId"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function toggleSelectedNodeId" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-updateNode",
-      "bounds": { "x": 840, "y": 580, "width": 220, "height": 40 },
-      "nodeColor": "#FFA000", "labelColor": "black",
+      "bounds": {
+        "x": 840,
+        "y": 580,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#FFA000",
+      "labelColor": "black",
       "label": "updateNode(id, changes)",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function updateNode"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function updateNode" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-updateNodes",
-      "bounds": { "x": 1080, "y": 580, "width": 220, "height": 40 },
-      "nodeColor": "#FFA000", "labelColor": "black",
+      "bounds": {
+        "x": 1080,
+        "y": 580,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#FFA000",
+      "labelColor": "black",
       "label": "updateNodes(batch)",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function updateNodes"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function updateNodes" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-addNodes",
-      "bounds": { "x": 840, "y": 640, "width": 140, "height": 40 },
-      "nodeColor": "#FF8F00", "labelColor": "white",
+      "bounds": {
+        "x": 840,
+        "y": 640,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#FF8F00",
+      "labelColor": "white",
       "label": "addNodes()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function addNodes"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function addNodes" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-deleteNodes",
-      "bounds": { "x": 1000, "y": 640, "width": 140, "height": 40 },
-      "nodeColor": "#FF8F00", "labelColor": "white",
+      "bounds": {
+        "x": 1000,
+        "y": 640,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#FF8F00",
+      "labelColor": "white",
       "label": "deleteNodes()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function deleteNodes"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function deleteNodes" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-addEdge",
-      "bounds": { "x": 1160, "y": 640, "width": 140, "height": 40 },
-      "nodeColor": "#FF8F00", "labelColor": "white",
+      "bounds": {
+        "x": 1160,
+        "y": 640,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#FF8F00",
+      "labelColor": "white",
       "label": "addEdge()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function addEdge"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function addEdge" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-deleteEdges",
-      "bounds": { "x": 840, "y": 700, "width": 140, "height": 40 },
-      "nodeColor": "#FF8F00", "labelColor": "white",
+      "bounds": {
+        "x": 840,
+        "y": 700,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#FF8F00",
+      "labelColor": "white",
       "label": "deleteEdges()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function deleteEdges"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function deleteEdges" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-updateEdge",
-      "bounds": { "x": 1000, "y": 700, "width": 140, "height": 40 },
-      "nodeColor": "#FF8F00", "labelColor": "white",
+      "bounds": {
+        "x": 1000,
+        "y": 700,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#FF8F00",
+      "labelColor": "white",
       "label": "updateEdge()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function updateEdge"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function updateEdge" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-subscribe",
-      "bounds": { "x": 1160, "y": 700, "width": 140, "height": 40 },
-      "nodeColor": "#E65100", "labelColor": "white",
+      "bounds": {
+        "x": 1160,
+        "y": 700,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#E65100",
+      "labelColor": "white",
       "label": "subscribe()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function subscribe"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function subscribe" }
+      "parentId": "grp-state"
     },
     {
       "id": "state-hierarchy",
-      "bounds": { "x": 1080, "y": 520, "width": 220, "height": 40 },
-      "nodeColor": "#FFA000", "labelColor": "black",
+      "bounds": {
+        "x": 1080,
+        "y": 520,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#FFA000",
+      "labelColor": "black",
       "label": "getDescendantIds()\ngetChildNodeIds() · getNodeDepth()",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function getDescendantIds"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-state",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function getDescendantIds" }
+      "parentId": "grp-state"
     },
-
     {
       "id": "grp-renderer",
-      "bounds": { "x": 20, "y": 620, "width": 760, "height": 280 },
-      "nodeColor": "#BF360C", "borderColor": "#FF6E40",
+      "bounds": {
+        "x": 20,
+        "y": 620,
+        "width": 760,
+        "height": 280
+      },
+      "nodeColor": "#BF360C",
+      "borderColor": "#FF6E40",
       "label": "Renderer (reconciliation)"
     },
     {
       "id": "renderer-create",
-      "bounds": { "x": 40, "y": 660, "width": 240, "height": 50 },
-      "nodeColor": "#FB8C00", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 660,
+        "width": 240,
+        "height": 50
+      },
+      "nodeColor": "#FB8C00",
+      "labelColor": "white",
       "label": "createRenderer()\nfactory → { render }",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "function createRenderer"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "function createRenderer" }
+      "parentId": "grp-renderer"
     },
     {
       "id": "renderer-render",
-      "bounds": { "x": 300, "y": 660, "width": 220, "height": 50 },
-      "nodeColor": "#FB8C00", "labelColor": "white",
+      "bounds": {
+        "x": 300,
+        "y": 660,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#FB8C00",
+      "labelColor": "white",
       "label": "render(state)\nfull reconcile pass",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "function render"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "function render" }
+      "parentId": "grp-renderer"
     },
     {
       "id": "renderer-renderEdges",
-      "bounds": { "x": 540, "y": 660, "width": 220, "height": 50 },
-      "nodeColor": "#EF6C00", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 660,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#EF6C00",
+      "labelColor": "white",
       "label": "renderEdges(state)\ncreate/update/remove",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "renderEdges"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "renderEdges" }
+      "parentId": "grp-renderer"
     },
     {
       "id": "renderer-buildNodeMap",
-      "bounds": { "x": 40, "y": 740, "width": 240, "height": 50 },
-      "nodeColor": "#EF6C00", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 740,
+        "width": 240,
+        "height": 50
+      },
+      "nodeColor": "#EF6C00",
+      "labelColor": "white",
       "label": "buildNodeMap(state)\nlive bounds for edges",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "buildNodeMap"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "buildNodeMap" }
+      "parentId": "grp-renderer"
     },
     {
       "id": "renderer-edgeZIndex",
-      "bounds": { "x": 300, "y": 740, "width": 220, "height": 50 },
-      "nodeColor": "#EF6C00", "labelColor": "white",
+      "bounds": {
+        "x": 300,
+        "y": 740,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#EF6C00",
+      "labelColor": "white",
       "label": "computeEdgeZIndex()\nmax(from,to) − 0.5",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "computeEdgeZIndex"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "computeEdgeZIndex" }
+      "parentId": "grp-renderer"
     },
     {
       "id": "renderer-selOverlay",
-      "bounds": { "x": 540, "y": 740, "width": 220, "height": 50 },
-      "nodeColor": "#E65100", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 740,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#E65100",
+      "labelColor": "white",
       "label": "SelectionOverlay\nupdate()",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "class SelectionOverlay"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
+      "parentId": "grp-renderer"
     },
     {
       "id": "renderer-edgeHdlOverlay",
-      "bounds": { "x": 540, "y": 810, "width": 220, "height": 50 },
-      "nodeColor": "#E65100", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 810,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#E65100",
+      "labelColor": "white",
       "label": "EdgeHandleOverlay\nupdate()",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "class EdgeHandleOverlay"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-renderer",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "class EdgeHandleOverlay" }
+      "parentId": "grp-renderer"
     },
-
     {
       "id": "grp-canvas-node",
-      "bounds": { "x": 20, "y": 960, "width": 500, "height": 300 },
-      "nodeColor": "#880E4F", "borderColor": "#EC407A",
+      "bounds": {
+        "x": 20,
+        "y": 960,
+        "width": 500,
+        "height": 300
+      },
+      "nodeColor": "#880E4F",
+      "borderColor": "#EC407A",
       "label": "Canvas Node (canvasNode.ts)"
     },
     {
       "id": "cn-create",
-      "bounds": { "x": 40, "y": 1000, "width": 220, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1000,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "createCanvasNode()\nGraphics + Text + events",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function createCanvasNode"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-node",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function createCanvasNode" }
+      "parentId": "grp-canvas-node"
     },
     {
       "id": "cn-update",
-      "bounds": { "x": 280, "y": 1000, "width": 220, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1000,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "updateCanvasNode()\nsync data → container",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function updateCanvasNode"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-node",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function updateCanvasNode" }
+      "parentId": "grp-canvas-node"
     },
     {
       "id": "cn-getBounds",
-      "bounds": { "x": 40, "y": 1070, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1070,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "getContainerBounds()",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function getContainerBounds"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-node",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function getContainerBounds" }
+      "parentId": "grp-canvas-node"
     },
     {
       "id": "cn-setBounds",
-      "bounds": { "x": 280, "y": 1070, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1070,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "setContainerBounds()",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function setContainerBounds"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-node",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function setContainerBounds" }
+      "parentId": "grp-canvas-node"
     },
     {
       "id": "cn-isDragging",
-      "bounds": { "x": 40, "y": 1130, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1130,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "isDraggingNode(id)",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function isDraggingNode"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-node",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function isDraggingNode" }
+      "parentId": "grp-canvas-node"
     },
     {
       "id": "cn-textRes",
-      "bounds": { "x": 280, "y": 1130, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1130,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "updateNodeTextResolution()",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function updateNodeTextResolution"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-node",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function updateNodeTextResolution" }
+      "parentId": "grp-canvas-node"
     },
     {
       "id": "cn-dragState",
-      "bounds": { "x": 40, "y": 1190, "width": 460, "height": 40 },
-      "nodeColor": "#C2185B", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1190,
+        "width": 460,
+        "height": 40
+      },
+      "nodeColor": "#C2185B",
+      "labelColor": "white",
       "label": "groupDraggingIds + draggingIds — multi-drag & group cascade",
       "shape": "rounded-rectangle",
       "parentId": "grp-canvas-node"
     },
-
     {
       "id": "grp-canvas-edge",
-      "bounds": { "x": 560, "y": 960, "width": 500, "height": 320 },
-      "nodeColor": "#880E4F", "borderColor": "#EC407A",
+      "bounds": {
+        "x": 560,
+        "y": 960,
+        "width": 500,
+        "height": 320
+      },
+      "nodeColor": "#880E4F",
+      "borderColor": "#EC407A",
       "label": "Canvas Edge (canvasEdge.ts)"
     },
     {
       "id": "ce-create",
-      "bounds": { "x": 580, "y": 1000, "width": 220, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 1000,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "createCanvasEdge()\nGraphics + label + events",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function createCanvasEdge"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function createCanvasEdge" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-update",
-      "bounds": { "x": 820, "y": 1000, "width": 220, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 820,
+        "y": 1000,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "updateCanvasEdge()\nredraw lines/arrows",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function updateCanvasEdge"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function updateCanvasEdge" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-resolve",
-      "bounds": { "x": 580, "y": 1070, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 1070,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "resolveEndpoint()\nworld coordinates",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function resolveEndpoint"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function resolveEndpoint" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-anchor",
-      "bounds": { "x": 820, "y": 1070, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 820,
+        "y": 1070,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "resolveAnchor()\nproportional → world",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function resolveAnchor"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function resolveAnchor" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-polyline",
-      "bounds": { "x": 580, "y": 1130, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 1130,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "buildPolylinePoints()\nfrom + waypoints + to",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function buildPolylinePoints"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function buildPolylinePoints" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-midpoint",
-      "bounds": { "x": 820, "y": 1130, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 820,
+        "y": 1130,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "computePolylineMidpoint()\nlabel placement",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function computePolylineMidpoint"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function computePolylineMidpoint" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-hitDist",
-      "bounds": { "x": 580, "y": 1190, "width": 220, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 1190,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "pointToSegmentDistance()\nhit-testing",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function pointToSegmentDistance"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-canvas-edge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function pointToSegmentDistance" }
+      "parentId": "grp-canvas-edge"
     },
     {
       "id": "ce-privates",
-      "bounds": { "x": 820, "y": 1190, "width": 220, "height": 40 },
-      "nodeColor": "#C2185B", "labelColor": "white",
+      "bounds": {
+        "x": 820,
+        "y": 1190,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#C2185B",
+      "labelColor": "white",
       "label": "drawDashedLine()\ndrawArrowhead()",
       "shape": "rounded-rectangle",
       "parentId": "grp-canvas-edge"
     },
-
     {
       "id": "grp-shapes",
-      "bounds": { "x": 20, "y": 1320, "width": 500, "height": 200 },
-      "nodeColor": "#4A148C", "borderColor": "#AB47BC",
+      "bounds": {
+        "x": 20,
+        "y": 1320,
+        "width": 500,
+        "height": 200
+      },
+      "nodeColor": "#4A148C",
+      "borderColor": "#AB47BC",
       "label": "Shape Drawing (shapeDrawing.ts)"
     },
     {
       "id": "sd-drawShape",
-      "bounds": { "x": 40, "y": 1360, "width": 220, "height": 50 },
-      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1360,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#7B1FA2",
+      "labelColor": "white",
       "label": "drawShape()\n13 shape types",
+      "fileLink": {
+        "path": "src/webview/canvas/shapeDrawing.ts",
+        "match": "function drawShape"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-shapes",
-      "fileLink": { "path": "src/webview/canvas/shapeDrawing.ts", "match": "function drawShape" }
+      "parentId": "grp-shapes"
     },
     {
       "id": "sd-dirToDeg",
-      "bounds": { "x": 280, "y": 1360, "width": 220, "height": 50 },
-      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1360,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#7B1FA2",
+      "labelColor": "white",
       "label": "directionToDeg()\nup=0 right=90 ...",
+      "fileLink": {
+        "path": "src/webview/canvas/shapeDrawing.ts",
+        "match": "function directionToDeg"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-shapes",
-      "fileLink": { "path": "src/webview/canvas/shapeDrawing.ts", "match": "function directionToDeg" }
+      "parentId": "grp-shapes"
     },
     {
       "id": "sd-privates",
-      "bounds": { "x": 40, "y": 1430, "width": 460, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1430,
+        "width": 460,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
       "label": "transformVertices() · ellipseVertices() · roundRectVertices() · getShapeVertices()",
       "shape": "rounded-rectangle",
       "parentId": "grp-shapes"
     },
-
     {
       "id": "grp-edge-utils",
-      "bounds": { "x": 560, "y": 1320, "width": 500, "height": 200 },
-      "nodeColor": "#4A148C", "borderColor": "#AB47BC",
+      "bounds": {
+        "x": 560,
+        "y": 1320,
+        "width": 500,
+        "height": 200
+      },
+      "nodeColor": "#4A148C",
+      "borderColor": "#AB47BC",
       "label": "Edge Utilities (edgeUtils.ts)"
     },
     {
       "id": "eu-findNode",
-      "bounds": { "x": 580, "y": 1360, "width": 220, "height": 50 },
-      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 1360,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#7B1FA2",
+      "labelColor": "white",
       "label": "findNodeAtPoint()\nhit-test topmost node",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeUtils.ts",
+        "match": "function findNodeAtPoint"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-utils",
-      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function findNodeAtPoint" }
+      "parentId": "grp-edge-utils"
     },
     {
       "id": "eu-computeAnchor",
-      "bounds": { "x": 820, "y": 1360, "width": 220, "height": 50 },
-      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "bounds": {
+        "x": 820,
+        "y": 1360,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#7B1FA2",
+      "labelColor": "white",
       "label": "computeAnchor()\nclick → [0..1, 0..1]",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeUtils.ts",
+        "match": "function computeAnchor"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-utils",
-      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function computeAnchor" }
+      "parentId": "grp-edge-utils"
     },
     {
       "id": "eu-buildEndpoint",
-      "bounds": { "x": 580, "y": 1430, "width": 220, "height": 50 },
-      "nodeColor": "#7B1FA2", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 1430,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#7B1FA2",
+      "labelColor": "white",
       "label": "buildEndpoint()\nsnap → hit → endpoint",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeUtils.ts",
+        "match": "function buildEndpoint"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-utils",
-      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function buildEndpoint" }
+      "parentId": "grp-edge-utils"
     },
     {
       "id": "eu-constants",
-      "bounds": { "x": 820, "y": 1430, "width": 220, "height": 50 },
-      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "bounds": {
+        "x": 820,
+        "y": 1430,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "white",
       "label": "DOT_RADIUS · DOT_COLOR_EMPTY\nDOT_COLOR_NODE",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeUtils.ts",
+        "match": "DOT_RADIUS"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-utils",
-      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "DOT_RADIUS" }
+      "parentId": "grp-edge-utils"
     },
-
     {
       "id": "grp-selection-overlay",
-      "bounds": { "x": 1100, "y": 860, "width": 440, "height": 260 },
-      "nodeColor": "#880E4F", "borderColor": "#EC407A",
+      "bounds": {
+        "x": 1100,
+        "y": 860,
+        "width": 440,
+        "height": 260
+      },
+      "nodeColor": "#880E4F",
+      "borderColor": "#EC407A",
       "label": "Selection Overlay"
     },
     {
       "id": "so-class",
-      "bounds": { "x": 1120, "y": 900, "width": 200, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 1120,
+        "y": 900,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "SelectionOverlay\nclass",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "class SelectionOverlay"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-selection-overlay",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
+      "parentId": "grp-selection-overlay"
     },
     {
       "id": "so-update",
-      "bounds": { "x": 1340, "y": 900, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 1340,
+        "y": 900,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "update()\noutline + handles",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "update("
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-selection-overlay",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "update(" }
+      "parentId": "grp-selection-overlay"
     },
     {
       "id": "so-resize",
-      "bounds": { "x": 1120, "y": 970, "width": 200, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 1120,
+        "y": 970,
+        "width": 200,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "onHandleMove()\nlive resize drag",
       "shape": "rounded-rectangle",
       "parentId": "grp-selection-overlay"
     },
     {
       "id": "so-apply",
-      "bounds": { "x": 1340, "y": 970, "width": 180, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 1340,
+        "y": 970,
+        "width": 180,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "applyToNodes()\nproportional scale",
       "shape": "rounded-rectangle",
       "parentId": "grp-selection-overlay"
     },
     {
       "id": "so-outlines",
-      "bounds": { "x": 1120, "y": 1030, "width": 400, "height": 40 },
-      "nodeColor": "#C2185B", "labelColor": "white",
+      "bounds": {
+        "x": 1120,
+        "y": 1030,
+        "width": 400,
+        "height": 40
+      },
+      "nodeColor": "#C2185B",
+      "labelColor": "white",
       "label": "drawOutline() · drawMultiOutlines() · drawHandles() · commitResize()",
       "shape": "rounded-rectangle",
       "parentId": "grp-selection-overlay"
     },
-
     {
       "id": "grp-edge-handle",
-      "bounds": { "x": 1100, "y": 1160, "width": 440, "height": 260 },
-      "nodeColor": "#880E4F", "borderColor": "#EC407A",
+      "bounds": {
+        "x": 1100,
+        "y": 1160,
+        "width": 440,
+        "height": 260
+      },
+      "nodeColor": "#880E4F",
+      "borderColor": "#EC407A",
       "label": "Edge Handle Overlay"
     },
     {
       "id": "eh-class",
-      "bounds": { "x": 1120, "y": 1200, "width": 200, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 1120,
+        "y": 1200,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "EdgeHandleOverlay\nclass",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "class EdgeHandleOverlay"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-handle",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "class EdgeHandleOverlay" }
+      "parentId": "grp-edge-handle"
     },
     {
       "id": "eh-getOverride",
-      "bounds": { "x": 1340, "y": 1200, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 1340,
+        "y": 1200,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "getEndpointOverride()\nlive preview",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "getEndpointOverride"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-handle",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "getEndpointOverride" }
+      "parentId": "grp-edge-handle"
     },
     {
       "id": "eh-wpOverride",
-      "bounds": { "x": 1120, "y": 1270, "width": 200, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 1120,
+        "y": 1270,
+        "width": 200,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "getWaypointOverrides()",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "getWaypointOverrides"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-handle",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "getWaypointOverrides" }
+      "parentId": "grp-edge-handle"
     },
     {
       "id": "eh-insertWp",
-      "bounds": { "x": 1340, "y": 1270, "width": 180, "height": 40 },
-      "nodeColor": "#AD1457", "labelColor": "white",
+      "bounds": {
+        "x": 1340,
+        "y": 1270,
+        "width": 180,
+        "height": 40
+      },
+      "nodeColor": "#AD1457",
+      "labelColor": "white",
       "label": "insertWaypoint()",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "insertWaypoint"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-edge-handle",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "insertWaypoint" }
+      "parentId": "grp-edge-handle"
     },
     {
       "id": "eh-privates",
-      "bounds": { "x": 1120, "y": 1330, "width": 400, "height": 40 },
-      "nodeColor": "#C2185B", "labelColor": "white",
+      "bounds": {
+        "x": 1120,
+        "y": 1330,
+        "width": 400,
+        "height": 40
+      },
+      "nodeColor": "#C2185B",
+      "labelColor": "white",
       "label": "startDrag() · startWaypointDrag() · removeWaypoint() · drawHandle()",
       "shape": "rounded-rectangle",
       "parentId": "grp-edge-handle"
     },
-
     {
       "id": "grp-interactions",
-      "bounds": { "x": 20, "y": 1580, "width": 760, "height": 460 },
-      "nodeColor": "#311B92", "borderColor": "#7C4DFF",
+      "bounds": {
+        "x": 20,
+        "y": 1580,
+        "width": 760,
+        "height": 460
+      },
+      "nodeColor": "#311B92",
+      "borderColor": "#7C4DFF",
       "label": "Interactions"
     },
     {
       "id": "int-panZoom",
-      "bounds": { "x": 40, "y": 1620, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1620,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "setupPanZoom()\ndrag pan + wheel zoom",
+      "fileLink": {
+        "path": "src/webview/interactions/panZoom.ts",
+        "match": "function setupPanZoom"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "function setupPanZoom" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-selBox",
-      "bounds": { "x": 280, "y": 1620, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1620,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "setupSelectionBox()\nshift+drag rubber-band",
+      "fileLink": {
+        "path": "src/webview/interactions/selectionBox.ts",
+        "match": "function setupSelectionBox"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/selectionBox.ts", "match": "function setupSelectionBox" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-keyboard",
-      "bounds": { "x": 540, "y": 1620, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 1620,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "setupKeyboard()\nDel + Ctrl+C/V",
+      "fileLink": {
+        "path": "src/webview/interactions/keyboard.ts",
+        "match": "function setupKeyboard"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "function setupKeyboard" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-edgeMode",
-      "bounds": { "x": 40, "y": 1700, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1700,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "setupEdgeMode()\ntwo-click workflow",
+      "fileLink": {
+        "path": "src/webview/interactions/edgeMode.ts",
+        "match": "function setupEdgeMode"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "function setupEdgeMode" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-edgeMode-visual",
-      "bounds": { "x": 40, "y": 1770, "width": 220, "height": 40 },
-      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1770,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "white",
       "label": "updateVisual()\nensureCursorDot()",
       "shape": "rounded-rectangle",
       "parentId": "grp-interactions"
     },
     {
       "id": "int-groupStatus",
-      "bounds": { "x": 280, "y": 1700, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1700,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "setupGroupStatus()\n\"In group: X — Remove\"",
+      "fileLink": {
+        "path": "src/webview/interactions/groupStatus.ts",
+        "match": "function setupGroupStatus"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/groupStatus.ts", "match": "function setupGroupStatus" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-groupDragMsg",
-      "bounds": { "x": 280, "y": 1770, "width": 220, "height": 40 },
-      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1770,
+        "width": 220,
+        "height": 40
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "white",
       "label": "showGroupDragMessage()\nhideGroupDragMessage()",
+      "fileLink": {
+        "path": "src/webview/interactions/groupStatus.ts",
+        "match": "function showGroupDragMessage"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/groupStatus.ts", "match": "function showGroupDragMessage" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-labelEditor",
-      "bounds": { "x": 540, "y": 1700, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 1700,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "startLabelEdit()\nDOM textarea overlay",
+      "fileLink": {
+        "path": "src/webview/interactions/labelEditor.ts",
+        "match": "function startLabelEdit"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startLabelEdit" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-edgeLabelEdit",
-      "bounds": { "x": 540, "y": 1770, "width": 220, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 1770,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "startEdgeLabelEdit()\nfixed-size at midpoint",
+      "fileLink": {
+        "path": "src/webview/interactions/labelEditor.ts",
+        "match": "function startEdgeLabelEdit"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startEdgeLabelEdit" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-cursorMgr",
-      "bounds": { "x": 40, "y": 1850, "width": 220, "height": 50 },
-      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 1850,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "white",
       "label": "createCursorManager()\npriority: set() · clear()",
+      "fileLink": {
+        "path": "src/webview/interactions/cursorManager.ts",
+        "match": "function createCursorManager"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions",
-      "fileLink": { "path": "src/webview/interactions/cursorManager.ts", "match": "function createCursorManager" }
+      "parentId": "grp-interactions"
     },
     {
       "id": "int-selBox-helpers",
-      "bounds": { "x": 280, "y": 1850, "width": 220, "height": 50 },
-      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "bounds": {
+        "x": 280,
+        "y": 1850,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "white",
       "label": "drawSelectionRect()\nclearSelectionRect()",
       "shape": "rounded-rectangle",
       "parentId": "grp-interactions"
     },
     {
       "id": "int-keyboard-copy",
-      "bounds": { "x": 540, "y": 1850, "width": 220, "height": 70 },
-      "nodeColor": "#6A1B9A", "labelColor": "white",
+      "bounds": {
+        "x": 540,
+        "y": 1850,
+        "width": 220,
+        "height": 70
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "white",
       "label": "clipboard state\ncopy: nodes + descendants\npaste: remap IDs +20,+20",
       "shape": "rounded-rectangle",
       "parentId": "grp-interactions"
     },
-
     {
       "id": "grp-controls",
-      "bounds": { "x": 820, "y": 1580, "width": 500, "height": 260 },
-      "nodeColor": "#004D40", "borderColor": "#26A69A",
+      "bounds": {
+        "x": 820,
+        "y": 1580,
+        "width": 500,
+        "height": 260
+      },
+      "nodeColor": "#004D40",
+      "borderColor": "#26A69A",
       "label": "Controls"
     },
     {
       "id": "ctrl-sidebar",
-      "bounds": { "x": 840, "y": 1620, "width": 220, "height": 50 },
-      "nodeColor": "#00897B", "labelColor": "white",
+      "bounds": {
+        "x": 840,
+        "y": 1620,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#00897B",
+      "labelColor": "white",
       "label": "setupSidebar()\nfill/text color · shape · dir",
+      "fileLink": {
+        "path": "src/webview/controls/sidebar.ts",
+        "match": "function setupSidebar"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-controls",
-      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "function setupSidebar" }
+      "parentId": "grp-controls"
     },
     {
       "id": "ctrl-sidebar-helpers",
-      "bounds": { "x": 840, "y": 1690, "width": 220, "height": 50 },
-      "nodeColor": "#00695C", "labelColor": "white",
+      "bounds": {
+        "x": 840,
+        "y": 1690,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#00695C",
+      "labelColor": "white",
       "label": "applyNodeChanges()\napplyEdgeChanges()\nupdateTextPreview()",
       "shape": "rounded-rectangle",
       "parentId": "grp-controls"
     },
     {
       "id": "ctrl-lock",
-      "bounds": { "x": 1080, "y": 1620, "width": 220, "height": 50 },
-      "nodeColor": "#00897B", "labelColor": "white",
+      "bounds": {
+        "x": 1080,
+        "y": 1620,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#00897B",
+      "labelColor": "white",
       "label": "setupLockToggle()\npencil ↔ padlock SVG",
+      "fileLink": {
+        "path": "src/webview/controls/lockToggle.ts",
+        "match": "function setupLockToggle"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-controls",
-      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "function setupLockToggle" }
+      "parentId": "grp-controls"
     },
     {
       "id": "ctrl-gridSnap",
-      "bounds": { "x": 1080, "y": 1690, "width": 220, "height": 50 },
-      "nodeColor": "#00897B", "labelColor": "white",
+      "bounds": {
+        "x": 1080,
+        "y": 1690,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#00897B",
+      "labelColor": "white",
       "label": "setupGridSnap()\nsnap() · GRID_SIZE=20",
+      "fileLink": {
+        "path": "src/webview/controls/gridSnap.ts",
+        "match": "function setupGridSnap"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-controls",
-      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function setupGridSnap" }
+      "parentId": "grp-controls"
     },
     {
       "id": "ctrl-snap-fn",
-      "bounds": { "x": 840, "y": 1760, "width": 460, "height": 40 },
-      "nodeColor": "#00695C", "labelColor": "white",
+      "bounds": {
+        "x": 840,
+        "y": 1760,
+        "width": 460,
+        "height": 40
+      },
+      "nodeColor": "#00695C",
+      "labelColor": "white",
       "label": "snap(value) → nearest GRID_SIZE multiple — used by canvasNode, edgeUtils, edgeHandleOverlay, selectionOverlay",
+      "fileLink": {
+        "path": "src/webview/controls/gridSnap.ts",
+        "match": "function snap"
+      },
       "shape": "rounded-rectangle",
-      "parentId": "grp-controls",
-      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function snap" }
+      "parentId": "grp-controls"
     }
   ],
   "edges": [
     {
       "id": "e-activate-provider",
-      "from": { "nodeId": "ext-activate", "anchor": [1, 0.5] },
-      "to": { "nodeId": "provider-class", "anchor": [0, 0.5] },
-      "arrow": "end", "label": "registers",
-      "fileLink": { "path": "src/extension.ts", "match": "VscpEditorProvider.register" }
+      "from": {
+        "nodeId": "ext-activate",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "provider-class",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "label": "registers",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/extension.ts",
+        "match": "VscpEditorProvider.register"
+      }
     },
     {
       "id": "e-activate-linkCmd",
-      "from": { "nodeId": "ext-activate", "anchor": [0.5, 1] },
-      "to": { "nodeId": "ext-linkToNode", "anchor": [0.5, 0] },
-      "arrow": "end", "label": "registers cmd",
-      "fileLink": { "path": "src/extension.ts", "match": "perspective.linkToNode" }
+      "from": {
+        "nodeId": "ext-activate",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ext-linkToNode",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "label": "registers cmd",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/extension.ts",
+        "match": "perspective.linkToNode"
+      }
     },
     {
       "id": "e-provider-resolve",
-      "from": { "nodeId": "provider-class", "anchor": [0.5, 1] },
-      "to": { "nodeId": "provider-resolve", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "provider-class",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "provider-resolve",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "resolveCustomTextEditor" }
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "resolveCustomTextEditor"
+      }
     },
     {
       "id": "e-resolve-html",
-      "from": { "nodeId": "provider-resolve", "anchor": [0.5, 1] },
-      "to": { "nodeId": "provider-html", "anchor": [0.5, 0] },
-      "arrow": "end", "label": "calls",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "getHtmlForWebview" }
+      "from": {
+        "nodeId": "provider-resolve",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "provider-html",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "label": "calls",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "getHtmlForWebview"
+      }
     },
     {
       "id": "e-provider-schema",
-      "from": { "nodeId": "provider-resolve", "anchor": [1, 0.5] },
-      "to": { "nodeId": "schema-box", "anchor": [0, 0.5] },
-      "style": "dashed", "arrow": "end", "label": "validates",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "documentSchema.parse" }
+      "from": {
+        "nodeId": "provider-resolve",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "schema-box",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "label": "validates",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "documentSchema.parse"
+      }
     },
     {
       "id": "e-provider-messages",
-      "from": { "nodeId": "provider-resolve", "anchor": [1, 0.8] },
-      "to": { "nodeId": "messages-box", "anchor": [0, 0.5] },
-      "style": "dashed", "arrow": "end", "label": "IPC types",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "ExtensionToWebviewMessage" }
+      "from": {
+        "nodeId": "provider-resolve",
+        "anchor": [
+          1,
+          0.8
+        ]
+      },
+      "to": {
+        "nodeId": "messages-box",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "label": "IPC types",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "ExtensionToWebviewMessage"
+      }
     },
-
     {
       "id": "e-provider-main",
-      "from": { "nodeId": "provider-resolve", "anchor": [0.5, 1] },
-      "to": { "nodeId": "main-fn", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 400, "y": 330 }, { "x": 150, "y": 330 }],
-      "style": "dashed", "arrow": "both", "label": "postMessage",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "postMessage" }
+      "from": {
+        "x": 860,
+        "y": 120
+      },
+      "to": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1000,
+          "y": 300
+        },
+        {
+          "x": 320,
+          "y": 320
+        }
+      ],
+      "label": "postMessage",
+      "style": "dashed",
+      "arrow": "both",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "postMessage"
+      }
     },
-
     {
       "id": "e-main-postmsg",
-      "from": { "nodeId": "main-fn", "anchor": [1, 0.5] },
-      "to": { "nodeId": "main-postmsg", "anchor": [0, 0.5] },
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "main-postmsg",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "function postMessage" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "function postMessage"
+      }
     },
     {
       "id": "e-postmsg-debounce",
-      "from": { "nodeId": "main-postmsg", "anchor": [1, 0.5] },
-      "to": { "nodeId": "main-debounce", "anchor": [0, 0.5] },
-      "arrow": "start", "label": "wraps",
-      "fileLink": { "path": "src/webview/main.ts", "match": "sendEditDebounced" }
+      "from": {
+        "nodeId": "main-postmsg",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "main-debounce",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "label": "wraps",
+      "arrow": "start",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "sendEditDebounced"
+      }
     },
     {
       "id": "e-main-listener",
-      "from": { "nodeId": "main-fn", "anchor": [0.5, 1] },
-      "to": { "nodeId": "main-msglistener", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "main-msglistener",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "addEventListener" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "addEventListener"
+      }
     },
-
     {
       "id": "e-main-state",
-      "from": { "nodeId": "main-fn", "anchor": [1, 0.3] },
-      "to": { "nodeId": "state-setDoc", "anchor": [0, 0.5] },
-      "waypoints": [{ "x": 800, "y": 415 }],
-      "arrow": "end", "label": "initializes",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setDocument" }
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          1,
+          0.3
+        ]
+      },
+      "to": {
+        "nodeId": "state-setDoc",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 800,
+          "y": 415
+        }
+      ],
+      "label": "initializes",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setDocument"
+      }
     },
-
     {
       "id": "e-main-renderer",
-      "from": { "nodeId": "main-fn", "anchor": [0.3, 1] },
-      "to": { "nodeId": "renderer-create", "anchor": [0.3, 0] },
-      "waypoints": [{ "x": 110, "y": 580 }, { "x": 110, "y": 580 }],
-      "arrow": "end", "label": "creates",
-      "fileLink": { "path": "src/webview/main.ts", "match": "createRenderer" }
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.3,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-create",
+        "anchor": [
+          0.3,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 110,
+          "y": 580
+        },
+        {
+          "x": 110,
+          "y": 580
+        }
+      ],
+      "label": "creates",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "createRenderer"
+      }
     },
-
     {
       "id": "e-state-subscribe-renderer",
-      "from": { "nodeId": "state-subscribe", "anchor": [0.5, 1] },
-      "to": { "nodeId": "renderer-render", "anchor": [1, 0] },
-      "waypoints": [{ "x": 1230, "y": 790 }, { "x": 780, "y": 790 }, { "x": 520, "y": 640 }],
-      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "from": {
+        "nodeId": "state-subscribe",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-render",
+        "anchor": [
+          1,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1230,
+          "y": 790
+        },
+        {
+          "x": 780,
+          "y": 790
+        },
+        {
+          "x": 520,
+          "y": 640
+        }
+      ],
       "label": "notify → render()",
-      "fileLink": { "path": "src/webview/main.ts", "match": "subscribe" }
+      "color": "#F9A825",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "subscribe"
+      }
     },
-
     {
       "id": "e-renderer-render-edges",
-      "from": { "nodeId": "renderer-render", "anchor": [1, 0.5] },
-      "to": { "nodeId": "renderer-renderEdges", "anchor": [0, 0.5] },
-      "arrow": "end", "label": "calls",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "renderEdges" }
+      "from": {
+        "nodeId": "renderer-render",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-renderEdges",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "label": "calls",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "renderEdges"
+      }
     },
     {
       "id": "e-renderer-buildNodeMap",
-      "from": { "nodeId": "renderer-render", "anchor": [0, 1] },
-      "to": { "nodeId": "renderer-buildNodeMap", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer-render",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-buildNodeMap",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "buildNodeMap" }
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "buildNodeMap"
+      }
     },
     {
       "id": "e-renderer-edgeZ",
-      "from": { "nodeId": "renderer-renderEdges", "anchor": [0.3, 1] },
-      "to": { "nodeId": "renderer-edgeZIndex", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer-renderEdges",
+        "anchor": [
+          0.3,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-edgeZIndex",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "computeEdgeZIndex" }
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "computeEdgeZIndex"
+      }
     },
     {
       "id": "e-renderer-selOv",
-      "from": { "nodeId": "renderer-render", "anchor": [1, 1] },
-      "to": { "nodeId": "renderer-selOverlay", "anchor": [0, 0] },
+      "from": {
+        "nodeId": "renderer-render",
+        "anchor": [
+          1,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-selOverlay",
+        "anchor": [
+          0,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "selectionOverlay.update" }
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "selectionOverlay.update"
+      }
     },
     {
       "id": "e-renderer-edgeHdl",
-      "from": { "nodeId": "renderer-renderEdges", "anchor": [1, 1] },
-      "to": { "nodeId": "renderer-edgeHdlOverlay", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer-renderEdges",
+        "anchor": [
+          1,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "renderer-edgeHdlOverlay",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "edgeHandleOverlay.update" }
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "edgeHandleOverlay.update"
+      }
     },
-
     {
       "id": "e-render-createNode",
-      "from": { "nodeId": "renderer-render", "anchor": [0.3, 1] },
-      "to": { "nodeId": "cn-create", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 360, "y": 930 }, { "x": 150, "y": 930 }],
-      "arrow": "end", "label": "creates",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "createCanvasNode" }
+      "from": {
+        "nodeId": "renderer-render",
+        "anchor": [
+          0.3,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "cn-create",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 360,
+          "y": 930
+        },
+        {
+          "x": 150,
+          "y": 930
+        }
+      ],
+      "label": "creates",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "createCanvasNode"
+      }
     },
     {
       "id": "e-render-updateNode",
-      "from": { "nodeId": "renderer-render", "anchor": [0.5, 1] },
-      "to": { "nodeId": "cn-update", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 410, "y": 940 }, { "x": 390, "y": 940 }],
-      "arrow": "end", "label": "updates",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "updateCanvasNode" }
+      "from": {
+        "nodeId": "renderer-render",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "cn-update",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 410,
+          "y": 940
+        },
+        {
+          "x": 390,
+          "y": 940
+        }
+      ],
+      "label": "updates",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "updateCanvasNode"
+      }
     },
     {
       "id": "e-render-createEdge",
-      "from": { "nodeId": "renderer-renderEdges", "anchor": [0.3, 1] },
-      "to": { "nodeId": "ce-create", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 600, "y": 940 }, { "x": 690, "y": 940 }],
-      "arrow": "end", "label": "creates",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "createCanvasEdge" }
+      "from": {
+        "nodeId": "renderer-renderEdges",
+        "anchor": [
+          0.3,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ce-create",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 600,
+          "y": 940
+        },
+        {
+          "x": 690,
+          "y": 940
+        }
+      ],
+      "label": "creates",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "createCanvasEdge"
+      }
     },
     {
       "id": "e-render-updateEdge",
-      "from": { "nodeId": "renderer-renderEdges", "anchor": [0.7, 1] },
-      "to": { "nodeId": "ce-update", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 694, "y": 950 }, { "x": 930, "y": 950 }],
-      "arrow": "end", "label": "updates",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "updateCanvasEdge" }
+      "from": {
+        "nodeId": "renderer-renderEdges",
+        "anchor": [
+          0.7,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ce-update",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 694,
+          "y": 950
+        },
+        {
+          "x": 930,
+          "y": 950
+        }
+      ],
+      "label": "updates",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "updateCanvasEdge"
+      }
     },
-
     {
       "id": "e-cn-drawShape",
-      "from": { "nodeId": "cn-create", "anchor": [0.3, 1] },
-      "to": { "nodeId": "sd-drawShape", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 106, "y": 1290 }, { "x": 150, "y": 1290 }],
+      "from": {
+        "nodeId": "cn-create",
+        "anchor": [
+          0.3,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "sd-drawShape",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 106,
+          "y": 1290
+        },
+        {
+          "x": 150,
+          "y": 1290
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "drawShape" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "drawShape"
+      }
     },
     {
       "id": "e-cn-labelEdit",
-      "from": { "nodeId": "cn-create", "anchor": [1, 1] },
-      "to": { "nodeId": "int-labelEditor", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 260, "y": 1270 }, { "x": 540, "y": 1270 }, { "x": 540, "y": 1550 }, { "x": 650, "y": 1550 }],
-      "arrow": "end", "label": "dblclick",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "startLabelEdit" }
+      "from": {
+        "nodeId": "cn-create",
+        "anchor": [
+          1,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-labelEditor",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 260,
+          "y": 1270
+        },
+        {
+          "x": 540,
+          "y": 1270
+        },
+        {
+          "x": 540,
+          "y": 1550
+        },
+        {
+          "x": 650,
+          "y": 1550
+        }
+      ],
+      "label": "dblclick",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "startLabelEdit"
+      }
     },
     {
       "id": "e-cn-groupDrag",
-      "from": { "nodeId": "cn-create", "anchor": [1, 0.5] },
-      "to": { "nodeId": "int-groupDragMsg", "anchor": [0, 0] },
-      "waypoints": [{ "x": 535, "y": 1025 }, { "x": 535, "y": 1550 }, { "x": 280, "y": 1750 }],
-      "style": "dashed", "arrow": "end", "label": "drag hint",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "showGroupDragMessage" }
+      "from": {
+        "nodeId": "cn-create",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "int-groupDragMsg",
+        "anchor": [
+          0,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 535,
+          "y": 1025
+        },
+        {
+          "x": 535,
+          "y": 1550
+        },
+        {
+          "x": 280,
+          "y": 1750
+        }
+      ],
+      "label": "drag hint",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "showGroupDragMessage"
+      }
     },
     {
       "id": "e-cn-findNode",
-      "from": { "nodeId": "cn-create", "anchor": [0.5, 1] },
-      "to": { "nodeId": "eu-findNode", "anchor": [0, 0] },
-      "waypoints": [{ "x": 150, "y": 1300 }, { "x": 580, "y": 1300 }],
-      "style": "dashed", "arrow": "end", "label": "group drop",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "findNodeAtPoint" }
+      "from": {
+        "nodeId": "cn-create",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "eu-findNode",
+        "anchor": [
+          0,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 150,
+          "y": 1300
+        },
+        {
+          "x": 580,
+          "y": 1300
+        }
+      ],
+      "label": "group drop",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "findNodeAtPoint"
+      }
     },
-
     {
       "id": "e-ce-resolve",
-      "from": { "nodeId": "ce-update", "anchor": [0, 1] },
-      "to": { "nodeId": "ce-resolve", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "ce-update",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ce-resolve",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "resolveEndpoint" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "resolveEndpoint"
+      }
     },
     {
       "id": "e-ce-polyline",
-      "from": { "nodeId": "ce-update", "anchor": [0.5, 1] },
-      "to": { "nodeId": "ce-polyline", "anchor": [1, 0] },
+      "from": {
+        "nodeId": "ce-update",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ce-polyline",
+        "anchor": [
+          1,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "buildPolylinePoints" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "buildPolylinePoints"
+      }
     },
     {
       "id": "e-ce-midpoint",
-      "from": { "nodeId": "ce-update", "anchor": [1, 1] },
-      "to": { "nodeId": "ce-midpoint", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "ce-update",
+        "anchor": [
+          1,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ce-midpoint",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
       "arrow": "end",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "computePolylineMidpoint" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "computePolylineMidpoint"
+      }
     },
-
     {
       "id": "e-eh-edgeUtils",
-      "from": { "nodeId": "eh-class", "anchor": [0, 1] },
-      "to": { "nodeId": "eu-findNode", "anchor": [1, 0] },
-      "waypoints": [{ "x": 1100, "y": 1300 }, { "x": 800, "y": 1300 }],
-      "style": "dashed", "arrow": "end", "label": "uses",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "findNodeAtPoint" }
+      "from": {
+        "nodeId": "eh-class",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "eu-findNode",
+        "anchor": [
+          1,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1100,
+          "y": 1300
+        },
+        {
+          "x": 800,
+          "y": 1300
+        }
+      ],
+      "label": "uses",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "findNodeAtPoint"
+      }
     },
     {
       "id": "e-eh-resolve",
-      "from": { "nodeId": "eh-class", "anchor": [0, 0.5] },
-      "to": { "nodeId": "ce-resolve", "anchor": [1, 0.5] },
-      "waypoints": [{ "x": 1090, "y": 1225 }, { "x": 1090, "y": 1090 }],
-      "style": "dashed", "arrow": "end",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "resolveEndpoint" }
+      "from": {
+        "nodeId": "eh-class",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "ce-resolve",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1090,
+          "y": 1225
+        },
+        {
+          "x": 1090,
+          "y": 1090
+        }
+      ],
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "resolveEndpoint"
+      }
     },
-
     {
       "id": "e-so-canvasNode",
-      "from": { "nodeId": "so-class", "anchor": [0, 1] },
-      "to": { "nodeId": "cn-setBounds", "anchor": [1, 0] },
-      "waypoints": [{ "x": 1090, "y": 1040 }, { "x": 510, "y": 1040 }],
-      "style": "dashed", "arrow": "end", "label": "setContainerBounds",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "setContainerBounds" }
+      "from": {
+        "nodeId": "so-class",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "cn-setBounds",
+        "anchor": [
+          1,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1090,
+          "y": 1040
+        },
+        {
+          "x": 510,
+          "y": 1040
+        }
+      ],
+      "label": "setContainerBounds",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "setContainerBounds"
+      }
     },
     {
       "id": "e-so-snap",
-      "from": { "nodeId": "so-resize", "anchor": [1, 0.5] },
-      "to": { "nodeId": "ctrl-snap-fn", "anchor": [0, 0] },
-      "waypoints": [{ "x": 1560, "y": 990 }, { "x": 1560, "y": 1570 }, { "x": 840, "y": 1570 }, { "x": 840, "y": 1760 }],
-      "style": "dotted", "arrow": "end", "label": "snap()",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "snap(" }
+      "from": {
+        "nodeId": "so-resize",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "ctrl-snap-fn",
+        "anchor": [
+          0,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1560,
+          "y": 990
+        },
+        {
+          "x": 1560,
+          "y": 1570
+        },
+        {
+          "x": 840,
+          "y": 1570
+        },
+        {
+          "x": 840,
+          "y": 1760
+        }
+      ],
+      "label": "snap()",
+      "style": "dotted",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "snap("
+      }
     },
-
     {
       "id": "e-edgeMode-edgeUtils",
-      "from": { "nodeId": "int-edgeMode", "anchor": [0.5, 1] },
-      "to": { "nodeId": "eu-buildEndpoint", "anchor": [0, 1] },
-      "waypoints": [{ "x": 150, "y": 1880 }, { "x": 150, "y": 1960 }, { "x": 580, "y": 1960 }, { "x": 580, "y": 1480 }],
-      "style": "dashed", "arrow": "end", "label": "buildEndpoint",
-      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "buildEndpoint" }
+      "from": {
+        "nodeId": "int-edgeMode",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "eu-buildEndpoint",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 150,
+          "y": 1880
+        },
+        {
+          "x": 150,
+          "y": 1960
+        },
+        {
+          "x": 580,
+          "y": 1960
+        },
+        {
+          "x": 580,
+          "y": 1480
+        }
+      ],
+      "label": "buildEndpoint",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/interactions/edgeMode.ts",
+        "match": "buildEndpoint"
+      }
     },
-
     {
       "id": "e-main-panZoom",
-      "from": { "nodeId": "main-fn", "anchor": [0, 1] },
-      "to": { "nodeId": "int-panZoom", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": -10, "y": 560 }, { "x": -10, "y": 1560 }, { "x": 150, "y": 1560 }],
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-panZoom",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": -10,
+          "y": 560
+        },
+        {
+          "x": -10,
+          "y": 1560
+        },
+        {
+          "x": 150,
+          "y": 1560
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupPanZoom" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupPanZoom"
+      }
     },
     {
       "id": "e-main-selBox",
-      "from": { "nodeId": "main-fn", "anchor": [0.1, 1] },
-      "to": { "nodeId": "int-selBox", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 62, "y": 580 }, { "x": 0, "y": 580 }, { "x": 0, "y": 1565 }, { "x": 390, "y": 1565 }],
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.1,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-selBox",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 62,
+          "y": 580
+        },
+        {
+          "x": 0,
+          "y": 580
+        },
+        {
+          "x": 0,
+          "y": 1565
+        },
+        {
+          "x": 390,
+          "y": 1565
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupSelectionBox" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupSelectionBox"
+      }
     },
     {
       "id": "e-main-keyboard",
-      "from": { "nodeId": "main-fn", "anchor": [0.9, 1] },
-      "to": { "nodeId": "int-keyboard", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 238, "y": 576 }, { "x": 545, "y": 576 }, { "x": 545, "y": 1568 }, { "x": 650, "y": 1568 }],
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.9,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-keyboard",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 238,
+          "y": 576
+        },
+        {
+          "x": 545,
+          "y": 576
+        },
+        {
+          "x": 545,
+          "y": 1568
+        },
+        {
+          "x": 650,
+          "y": 1568
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupKeyboard" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupKeyboard"
+      }
     },
     {
       "id": "e-main-edgeMode",
-      "from": { "nodeId": "main-fn", "anchor": [0, 0.5] },
-      "to": { "nodeId": "int-edgeMode", "anchor": [0, 0] },
-      "waypoints": [{ "x": -20, "y": 425 }, { "x": -20, "y": 1700 }],
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "int-edgeMode",
+        "anchor": [
+          0,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": -20,
+          "y": 425
+        },
+        {
+          "x": -20,
+          "y": 1700
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupEdgeMode" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupEdgeMode"
+      }
     },
     {
       "id": "e-main-groupStatus",
-      "from": { "nodeId": "main-fn", "anchor": [0.7, 1] },
-      "to": { "nodeId": "int-groupStatus", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 194, "y": 590 }, { "x": 10, "y": 590 }, { "x": 10, "y": 1572 }, { "x": 390, "y": 1572 }, { "x": 390, "y": 1700 }],
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.7,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-groupStatus",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 194,
+          "y": 590
+        },
+        {
+          "x": 10,
+          "y": 590
+        },
+        {
+          "x": 10,
+          "y": 1572
+        },
+        {
+          "x": 390,
+          "y": 1572
+        },
+        {
+          "x": 390,
+          "y": 1700
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupGroupStatus" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupGroupStatus"
+      }
     },
     {
       "id": "e-main-sidebar",
-      "from": { "nodeId": "main-debounce", "anchor": [1, 0.5] },
-      "to": { "nodeId": "ctrl-sidebar", "anchor": [0, 0] },
-      "waypoints": [{ "x": 1075, "y": 425 }, { "x": 1075, "y": 1555 }, { "x": 840, "y": 1555 }],
+      "from": {
+        "nodeId": "main-debounce",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "ctrl-sidebar",
+        "anchor": [
+          0,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1075,
+          "y": 425
+        },
+        {
+          "x": 1075,
+          "y": 1555
+        },
+        {
+          "x": 840,
+          "y": 1555
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupSidebar" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupSidebar"
+      }
     },
     {
       "id": "e-main-lock",
-      "from": { "nodeId": "main-debounce", "anchor": [1, 1] },
-      "to": { "nodeId": "ctrl-lock", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 1082, "y": 460 }, { "x": 1082, "y": 1562 }, { "x": 1190, "y": 1562 }],
+      "from": {
+        "nodeId": "main-debounce",
+        "anchor": [
+          1,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ctrl-lock",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1082,
+          "y": 460
+        },
+        {
+          "x": 1082,
+          "y": 1562
+        },
+        {
+          "x": 1190,
+          "y": 1562
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupLockToggle" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupLockToggle"
+      }
     },
     {
       "id": "e-main-gridSnap",
-      "from": { "nodeId": "main-fn", "anchor": [0.5, 1] },
-      "to": { "nodeId": "ctrl-gridSnap", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 150, "y": 548 }, { "x": 1090, "y": 548 }, { "x": 1090, "y": 1588 }, { "x": 1190, "y": 1588 }],
+      "from": {
+        "nodeId": "main-fn",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "ctrl-gridSnap",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 150,
+          "y": 548
+        },
+        {
+          "x": 1090,
+          "y": 548
+        },
+        {
+          "x": 1090,
+          "y": 1588
+        },
+        {
+          "x": 1190,
+          "y": 1588
+        }
+      ],
       "arrow": "end",
-      "fileLink": { "path": "src/webview/main.ts", "match": "setupGridSnap" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "setupGridSnap"
+      }
     },
-
     {
       "id": "e-panZoom-cursor",
-      "from": { "nodeId": "int-panZoom", "anchor": [0.5, 1] },
-      "to": { "nodeId": "int-cursorMgr", "anchor": [0.5, 0] },
-      "waypoints": [{ "x": 150, "y": 1690 }, { "x": 80, "y": 1690 }, { "x": 80, "y": 1830 }, { "x": 150, "y": 1830 }],
-      "style": "dashed", "arrow": "end", "label": "priority 1",
-      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "cursorManager" }
+      "from": {
+        "nodeId": "int-panZoom",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-cursorMgr",
+        "anchor": [
+          0.5,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 150,
+          "y": 1690
+        },
+        {
+          "x": 80,
+          "y": 1690
+        },
+        {
+          "x": 80,
+          "y": 1830
+        },
+        {
+          "x": 150,
+          "y": 1830
+        }
+      ],
+      "label": "priority 1",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/interactions/panZoom.ts",
+        "match": "cursorManager"
+      }
     },
     {
       "id": "e-selBox-cursor",
-      "from": { "nodeId": "int-selBox", "anchor": [0, 1] },
-      "to": { "nodeId": "int-cursorMgr", "anchor": [1, 0] },
-      "waypoints": [{ "x": 270, "y": 1830 }, { "x": 260, "y": 1830 }],
-      "style": "dashed", "arrow": "end", "label": "priority 2",
-      "fileLink": { "path": "src/webview/interactions/selectionBox.ts", "match": "cursorManager" }
+      "from": {
+        "nodeId": "int-selBox",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "int-cursorMgr",
+        "anchor": [
+          1,
+          0
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 270,
+          "y": 1830
+        },
+        {
+          "x": 260,
+          "y": 1830
+        }
+      ],
+      "label": "priority 2",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/interactions/selectionBox.ts",
+        "match": "cursorManager"
+      }
     },
-
     {
       "id": "e-keyboard-deleteNodes",
-      "from": { "nodeId": "int-keyboard", "anchor": [1, 0.3] },
-      "to": { "nodeId": "state-deleteNodes", "anchor": [0, 1] },
-      "waypoints": [{ "x": 790, "y": 1630 }, { "x": 790, "y": 1968 }, { "x": 1570, "y": 1968 }, { "x": 1570, "y": 748 }, { "x": 1000, "y": 748 }, { "x": 1000, "y": 680 }],
-      "style": "dashed", "arrow": "end", "color": "#F9A825",
-      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "deleteNodes" }
+      "from": {
+        "nodeId": "int-keyboard",
+        "anchor": [
+          1,
+          0.3
+        ]
+      },
+      "to": {
+        "nodeId": "state-deleteNodes",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 790,
+          "y": 1630
+        },
+        {
+          "x": 790,
+          "y": 1968
+        },
+        {
+          "x": 1570,
+          "y": 1968
+        },
+        {
+          "x": 1570,
+          "y": 748
+        },
+        {
+          "x": 1000,
+          "y": 748
+        },
+        {
+          "x": 1000,
+          "y": 680
+        }
+      ],
+      "color": "#F9A825",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/interactions/keyboard.ts",
+        "match": "deleteNodes"
+      }
     },
-
     {
       "id": "e-sidebar-updateNode",
-      "from": { "nodeId": "ctrl-sidebar", "anchor": [1, 0.5] },
-      "to": { "nodeId": "state-updateNode", "anchor": [0, 1] },
-      "waypoints": [{ "x": 1340, "y": 1645 }, { "x": 1340, "y": 1543 }, { "x": 1595, "y": 1543 }, { "x": 1595, "y": 770 }, { "x": 830, "y": 770 }, { "x": 830, "y": 620 }],
-      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "from": {
+        "nodeId": "ctrl-sidebar",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "to": {
+        "nodeId": "state-updateNode",
+        "anchor": [
+          0,
+          1
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1340,
+          "y": 1645
+        },
+        {
+          "x": 1340,
+          "y": 1543
+        },
+        {
+          "x": 1595,
+          "y": 1543
+        },
+        {
+          "x": 1595,
+          "y": 770
+        },
+        {
+          "x": 830,
+          "y": 770
+        },
+        {
+          "x": 830,
+          "y": 620
+        }
+      ],
       "label": "mutates state",
-      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "onNodeChanged" }
+      "color": "#F9A825",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/controls/sidebar.ts",
+        "match": "onNodeChanged"
+      }
     },
-
     {
       "id": "e-lock-setLocked",
-      "from": { "nodeId": "ctrl-lock", "anchor": [0.5, 1] },
-      "to": { "nodeId": "state-getState", "anchor": [1, 0.5] },
-      "waypoints": [{ "x": 1190, "y": 1880 }, { "x": 1612, "y": 1880 }, { "x": 1612, "y": 420 }, { "x": 1060, "y": 420 }],
-      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "from": {
+        "nodeId": "ctrl-lock",
+        "anchor": [
+          0.5,
+          1
+        ]
+      },
+      "to": {
+        "nodeId": "state-getState",
+        "anchor": [
+          1,
+          0.5
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1190,
+          "y": 1880
+        },
+        {
+          "x": 1612,
+          "y": 1880
+        },
+        {
+          "x": 1612,
+          "y": 420
+        },
+        {
+          "x": 1060,
+          "y": 420
+        }
+      ],
       "label": "setLocked()",
-      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "setLocked" }
+      "color": "#F9A825",
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/controls/lockToggle.ts",
+        "match": "setLocked"
+      }
     },
-
     {
       "id": "e-edgeLabelEdit-canvasEdge",
-      "from": { "nodeId": "int-edgeLabelEdit", "anchor": [1, 0] },
-      "to": { "nodeId": "ce-midpoint", "anchor": [1, 1] },
-      "waypoints": [{ "x": 780, "y": 1560 }, { "x": 1070, "y": 1560 }, { "x": 1070, "y": 1170 }],
-      "style": "dashed", "arrow": "end",
-      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "startEdgeLabelEdit" }
+      "from": {
+        "nodeId": "int-edgeLabelEdit",
+        "anchor": [
+          1,
+          0
+        ]
+      },
+      "to": {
+        "nodeId": "ce-midpoint",
+        "anchor": [
+          1,
+          1
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 780,
+          "y": 1560
+        },
+        {
+          "x": 1070,
+          "y": 1560
+        },
+        {
+          "x": 1070,
+          "y": 1170
+        }
+      ],
+      "style": "dashed",
+      "arrow": "end",
+      "fileLink": {
+        "path": "src/webview/interactions/labelEditor.ts",
+        "match": "startEdgeLabelEdit"
+      }
     }
   ]
 }

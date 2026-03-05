@@ -315,3 +315,21 @@ function notify(): void {
     listener();
   }
 }
+
+export function resetState(): void {
+  usedNodeIds = new Set<string>();
+  usedEdgeIds = new Set<string>();
+  nextNodeId = 1;
+  nextEdgeId = 1;
+  state = {
+    document: { nodes: [], edges: [] },
+    selectedNodeIds: [],
+    selectedEdgeIds: [],
+    edgeMode: false,
+    locked: true,
+    snapToGrid: true,
+  };
+  nodeMap = null;
+  edgeMap = null;
+  listeners.clear();
+}

@@ -2,8 +2,9 @@ import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
 import type { Edge, EdgeEndpoint } from "../../schema";
 import { getState, setEdgeMode, subscribe } from "../state";
 import { snap } from "../controls/gridSnap";
-import { resolveAnchor } from "../canvas/canvasEdge";
-import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, findNodeAtPoint, computeAnchor, buildEndpoint } from "../canvas/edgeUtils";
+import { resolveAnchor } from "../canvas/edgeGeometry";
+import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, computeAnchor, buildEndpoint } from "../canvas/edgeUtils";
+import { findNodeAtPoint } from "../canvas/hitTest";
 
 const EDGE_BTN_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
   <line x1="5" y1="18" x2="19" y2="6"/>
@@ -115,7 +116,7 @@ export function setupEdgeMode(
     e.stopPropagation();
 
     const worldPos = viewport.toLocal(e.global);
-    const { endpoint, resolved } = buildEndpoint(worldPos.x, worldPos.y, viewport);
+    const { endpoint, resolved } = buildEndpoint(worldPos.x, worldPos.y, viewport, getState().snapToGrid);
 
     if (!sourceEndpoint) {
       // First click: set source
@@ -162,7 +163,7 @@ export function setupEdgeMode(
     // Update cursor dot
     ensureCursorDot();
     if (hitNode) {
-      const anchor = computeAnchor(sx, sy, hitNode);
+      const anchor = computeAnchor(sx, sy, hitNode, getState().snapToGrid);
       const snappedPos = resolveAnchor(hitNode, anchor);
       drawDot(snappedPos.x, snappedPos.y, DOT_COLOR_NODE);
     } else {
@@ -172,7 +173,7 @@ export function setupEdgeMode(
     // Update preview line
     if (sourceEndpoint && previewLine && sourcePoint) {
       const cursorTarget = hitNode
-        ? resolveAnchor(hitNode, computeAnchor(sx, sy, hitNode))
+        ? resolveAnchor(hitNode, computeAnchor(sx, sy, hitNode, getState().snapToGrid))
         : { x: sx, y: sy };
 
       previewLine.clear();

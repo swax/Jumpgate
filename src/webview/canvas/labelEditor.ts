@@ -1,6 +1,6 @@
 import { Application, Container } from "pixi.js";
-import { getContainerBounds } from "../canvas/canvasNode";
-import type { DomLabelManager } from "../canvas/domLabels";
+import { getContainerBounds } from "./canvasNode";
+import type { DomLabelManager } from "./domLabels";
 import { getChildNodeIds } from "../state";
 
 export interface LabelEditContext {

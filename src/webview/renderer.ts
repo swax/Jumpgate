@@ -3,7 +3,7 @@ import type { Edge } from "../schema";
 import type { NodeChanges } from "./shared";
 import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
 import { resolveEndpoint, buildPolylinePoints, pointToSegmentDistance, type CanvasEdgeCallbacks } from "./canvas/canvasEdge";
-import { startEdgeLabelEdit, type LabelEditContext } from "./interactions/labelEditor";
+import { startEdgeLabelEdit, type LabelEditContext } from "./canvas/labelEditor";
 import { getNodeDepth, getNodeById, getChildNodeIds, getEdgeById, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
 import { SelectionOverlay } from "./canvas/selectionOverlay";

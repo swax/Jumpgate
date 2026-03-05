@@ -51,6 +51,8 @@
     "watch:extension": "npm run build:extension -- --watch",
     "watch:webview": "npm run build:webview -- --watch",
     "watch": "npm run watch:extension & npm run watch:webview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint src/",
     "package": "vsce package",
     "publish": "vsce publish"
@@ -62,7 +64,8 @@
     "esbuild": "^0.24.0",
     "eslint": "^9.0.0",
     "typescript": "^5.7.0",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "pixi.js": "^8.6.0",

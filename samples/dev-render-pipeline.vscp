@@ -1,0 +1,171 @@
+{
+  "theme": "standard",
+  "nodes": [
+    {
+      "id": "title",
+      "bounds": { "x": 80, "y": -50, "width": 300, "height": 40 },
+      "label": "Rendering Pipeline",
+      "shape": "text"
+    },
+    {
+      "id": "subscribe",
+      "bounds": { "x": 100, "y": 20, "width": 240, "height": 60 },
+      "label": "state.subscribe() callback\nmain.ts — triggers on every edit",
+      "nodeColor": "#43A047",
+      "labelColor": "#ffffff",
+      "shape": "ellipse",
+      "fileLink": { "path": "src/webview/main.ts", "match": "subscribe" }
+    },
+    {
+      "id": "render-entry",
+      "bounds": { "x": 100, "y": 160, "width": 240, "height": 60 },
+      "label": "renderer.render(state)\nsyncs isLocked, snapEnabled, edgeMode",
+      "nodeColor": "#1976D2",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "function render" }
+    },
+    {
+      "id": "canvas-node",
+      "bounds": { "x": 100, "y": 300, "width": 240, "height": 60 },
+      "label": "createCanvasNode()\nupdateCanvasNode()\ncanvasNode.ts",
+      "nodeColor": "#1565C0",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "createCanvasNode" }
+    },
+    {
+      "id": "draw-shape",
+      "bounds": { "x": 100, "y": 440, "width": 240, "height": 60 },
+      "label": "shapeDrawing.drawShape()\n+ domLabels.upsertNodeLabel()",
+      "nodeColor": "#0D47A1",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/shapeDrawing.ts", "match": "drawShape" }
+    },
+    {
+      "id": "reconcile",
+      "bounds": { "x": 100, "y": 580, "width": 240, "height": 60 },
+      "label": "renderEdges()\nedgeReconciler.reconcileEdges()",
+      "nodeColor": "#37474F",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/edgeReconciler.ts", "match": "reconcileEdges" }
+    },
+    {
+      "id": "canvas-edge",
+      "bounds": { "x": 100, "y": 720, "width": 240, "height": 60 },
+      "label": "canvasEdge containers\n(polylines + arrowheads + labels)",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts" }
+    },
+    {
+      "id": "sel-overlay",
+      "bounds": { "x": 100, "y": 860, "width": 240, "height": 60 },
+      "label": "selectionOverlay.update()\n(edit: dashed outline + resize handles)",
+      "nodeColor": "#4A148C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts" }
+    },
+    {
+      "id": "glow",
+      "bounds": { "x": 100, "y": 1000, "width": 240, "height": 60 },
+      "label": "glowManager.update()\n(locked: glow behind selected nodes/edges)",
+      "nodeColor": "#6A1B9A",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/selectionGlow.ts" }
+    },
+    {
+      "id": "edge-handles",
+      "bounds": { "x": 100, "y": 1140, "width": 240, "height": 60 },
+      "label": "edgeHandleOverlay.update()\n(waypoint drag handles)",
+      "nodeColor": "#7B1FA2",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts" }
+    },
+    {
+      "id": "ticker",
+      "bounds": { "x": 100, "y": 1280, "width": 240, "height": 40 },
+      "label": "app.ticker (every frame): domLabels.syncPositions() + glowManager.pulse()",
+      "nodeColor": "#78909C",
+      "labelColor": "#ffffff",
+      "shape": "pill",
+      "fileLink": { "path": "src/webview/renderer.ts", "match": "app.ticker" }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": { "nodeId": "subscribe", "anchor": [0.5, 1] },
+      "to": { "nodeId": "render-entry", "anchor": [0.5, 0] },
+      "label": "state changed",
+      "arrow": "end"
+    },
+    {
+      "id": "e2",
+      "from": { "nodeId": "render-entry", "anchor": [0.5, 1] },
+      "to": { "nodeId": "canvas-node", "anchor": [0.5, 0] },
+      "label": "for each node in doc",
+      "arrow": "end"
+    },
+    {
+      "id": "e3",
+      "from": { "nodeId": "canvas-node", "anchor": [0.5, 1] },
+      "to": { "nodeId": "draw-shape", "anchor": [0.5, 0] },
+      "label": "create or update container",
+      "arrow": "end"
+    },
+    {
+      "id": "e4",
+      "from": { "nodeId": "draw-shape", "anchor": [0.5, 1] },
+      "to": { "nodeId": "reconcile", "anchor": [0.5, 0] },
+      "label": "then renderEdges()",
+      "arrow": "end"
+    },
+    {
+      "id": "e5",
+      "from": { "nodeId": "reconcile", "anchor": [0.5, 1] },
+      "to": { "nodeId": "canvas-edge", "anchor": [0.5, 0] },
+      "label": "add / update / remove edges",
+      "arrow": "end"
+    },
+    {
+      "id": "e6",
+      "from": { "nodeId": "canvas-edge", "anchor": [0.5, 1] },
+      "to": { "nodeId": "sel-overlay", "anchor": [0.5, 0] },
+      "label": "then selection visuals",
+      "arrow": "end"
+    },
+    {
+      "id": "e7",
+      "from": { "nodeId": "sel-overlay", "anchor": [0.5, 1] },
+      "to": { "nodeId": "glow", "anchor": [0.5, 0] },
+      "label": "or in locked mode",
+      "arrow": "end"
+    },
+    {
+      "id": "e8",
+      "from": { "nodeId": "glow", "anchor": [0.5, 1] },
+      "to": { "nodeId": "edge-handles", "anchor": [0.5, 0] },
+      "label": "then waypoint handles",
+      "arrow": "end"
+    },
+    {
+      "id": "e-ticker",
+      "from": { "nodeId": "render-entry", "anchor": [1, 0.5] },
+      "to": { "nodeId": "ticker", "anchor": [1, 0.5] },
+      "label": "parallel",
+      "style": "dashed",
+      "arrow": "end",
+      "waypoints": [
+        { "x": 410, "y": 190 },
+        { "x": 410, "y": 1300 }
+      ]
+    }
+  ]
+}

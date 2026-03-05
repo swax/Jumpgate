@@ -1,9 +1,9 @@
 import { Graphics } from "pixi.js";
 import type { NodeDirection, NodeShape } from "../../schema";
-import { drawShapeSpace, drawGlowLayer, drawNebulaBg } from "./spaceShapes";
+import { drawShapeSpace, drawGlowLayer, drawNebulaBg } from "./shapesSpace";
 
 // Re-export space-only functions so existing imports still work
-export { drawGlowLayer, drawNebulaBg } from "./spaceShapes";
+export { drawGlowLayer, drawNebulaBg } from "./shapesSpace";
 
 // ═══════════════════════════════════════════════════════════════════
 //  Shared helpers (exported for spaceShapes.ts)

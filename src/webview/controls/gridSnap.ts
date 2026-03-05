@@ -1,6 +1,6 @@
 import { getState, setSnapToGrid, subscribe } from "../state";
 
-export const GRID_SIZE = 20;
+export const GRID_SIZE = 10;
 
 export function snap(value: number): number {
   return Math.round(value / GRID_SIZE) * GRID_SIZE;

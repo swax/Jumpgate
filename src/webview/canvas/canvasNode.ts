@@ -2,12 +2,12 @@ import { BlurFilter, Container, Graphics, FederatedPointerEvent } from "pixi.js"
 import type { Bounds, Node } from "../../schema";
 import type { NodeChanges } from "../shared";
 import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
-import { startLabelEdit, type LabelEditContext } from "../interactions/labelEditor";
+import { startLabelEdit, type LabelEditContext } from "./labelEditor";
 import { showGroupDragMessage, hideGroupDragMessage } from "../interactions/groupStatus";
 import { getState, getDescendantIds, getChildNodeIds, getNodeById } from "../state";
 import { snap } from "../controls/gridSnap";
-import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapeDrawing";
-import { findNodeAtPoint } from "./edgeUtils";
+import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapes";
+import { findNodeAtPoint } from "./hitTest";
 import { getNodeMeta, setNodeMeta, setNodeRectMeta } from "./metadata";
 
 

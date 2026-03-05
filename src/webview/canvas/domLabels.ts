@@ -1,5 +1,5 @@
 import { BASE_FONT_SIZE } from "./textDefaults";
-import { glyphRadius } from "./shapeDrawing";
+import { glyphRadius } from "./shapes";
 
 interface LabelEntry {
   el: HTMLDivElement;

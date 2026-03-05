@@ -3,7 +3,7 @@ import type { Bounds } from "../../schema";
 import type { NodeChanges } from "../shared";
 import { snap, GRID_SIZE } from "../controls/gridSnap";
 import { setContainerBounds } from "./canvasNode";
-import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapeDrawing";
+import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapes";
 
 import { getNodeRectMeta } from "./metadata";
 
