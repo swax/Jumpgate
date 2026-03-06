@@ -1,12 +1,11 @@
 import { BlurFilter, Container, FederatedPointerEvent, Graphics } from "pixi.js";
 import type { Bounds, Edge, EdgeEndpoint } from "../schema";
 import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
-import type { LabelEditContext } from "./labelEditor";
 import { getEdgeGroupMeta, setEdgeGroupMeta } from "./metadata";
 import { buildEndpoint } from "./edgeUtils";
 import { getState, getEdgeById } from "../state";
 import { snap } from "../controls/gridSnap";
-import { resolveAnchor, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance, PolylineHitArea, type Point } from "./edgeGeometry";
+import { resolveEndpoint, buildPolylinePoints, PolylineHitArea, type Point } from "./edgeGeometry";
 
 export { resolveAnchor, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance, PolylineHitArea, type Point } from "./edgeGeometry";
 
@@ -33,7 +32,7 @@ export function createCanvasEdge(
   edge: Edge,
   labelColor: string,
   callbacks: CanvasEdgeCallbacks,
-  theme?: string
+  _theme?: string
 ): Container {
   const group = new Container();
   group.label = edge.id;

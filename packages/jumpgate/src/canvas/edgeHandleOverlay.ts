@@ -89,7 +89,7 @@ export class EdgeHandleOverlay {
     this.callbacks.onEdgeChanged(edgeId, { waypoints: existing });
   }
 
-  private startDrag(handle: Graphics, which: "from" | "to", e: FederatedPointerEvent): void {
+  private startDrag(handle: Graphics, which: "from" | "to", _e: FederatedPointerEvent): void {
     this.isDragging = true;
     handle.cursor = "grabbing";
 
@@ -230,7 +230,7 @@ export class EdgeHandleOverlay {
     wpIndex: number,
     edge: Edge,
     nodeMap: Map<string, Bounds>,
-    e: FederatedPointerEvent
+    _e: FederatedPointerEvent
   ): void {
     this.isDraggingWaypoint = true;
     this.dragWaypointEdgeId = edge.id;

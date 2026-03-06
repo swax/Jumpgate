@@ -85,7 +85,7 @@ async function linkToNodeCommand(): Promise<void> {
   }
 
   const edgeItems: LinkPickItem[] = parsed.edges.map((e) => ({
-    label: e.label || `${edgeEndpointLabel(e.from as any)} → ${edgeEndpointLabel(e.to as any)}`,
+    label: e.label || `${edgeEndpointLabel(e.from as { nodeId?: string; x?: number; y?: number })} → ${edgeEndpointLabel(e.to as { nodeId?: string; x?: number; y?: number })}`,
     description: e.label ? `Edge: ${e.id}` : "Edge",
     targetId: e.id,
     targetKind: "edge" as const,

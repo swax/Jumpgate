@@ -43,7 +43,7 @@ function computeEdgeZIndex(edge: Edge, nodeZIndexMap: Map<string, number>): numb
 }
 
 export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): Set<string> {
-  const { viewport, edgeCallbacks, edgeHandleOverlay, domLabels, nodeZIndexMap, labelColor, isLocked, isEdgeMode, snapEnabled, prevEdgeIds } = ctx;
+  const { viewport, edgeCallbacks, edgeHandleOverlay, domLabels, nodeZIndexMap, labelColor, isLocked, isEdgeMode, prevEdgeIds } = ctx;
   const { document: doc } = state;
   const selectedEdgeSet = new Set(state.selectedEdgeIds);
   const currentEdgeIds = new Set(doc.edges.map((e) => e.id));

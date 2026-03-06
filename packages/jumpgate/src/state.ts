@@ -1,4 +1,4 @@
-import type { Edge, Node, JgDocument } from "./schema";
+import type { DocumentTheme, Edge, Node, JgDocument } from "./schema";
 import type { NodeChanges } from "./shared";
 
 let usedNodeIds = new Set<string>();
@@ -210,7 +210,7 @@ export function setSnapToGrid(snapToGrid: boolean): void {
 }
 
 export function setDocumentTheme(theme: string | undefined): void {
-  state = { ...state, document: { ...state.document, theme: theme as any } };
+  state = { ...state, document: { ...state.document, theme: theme as DocumentTheme | undefined } };
   notify();
 }
 

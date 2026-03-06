@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 import type { NodeDirection, NodeShape } from "../schema";
-import { drawShapeSpace, drawGlowLayer, drawNebulaBg } from "./shapesSpace";
+import { drawShapeSpace } from "./shapesSpace";
 
 // Re-export space-only functions so existing imports still work
 export { drawGlowLayer, drawNebulaBg } from "./shapesSpace";

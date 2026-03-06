@@ -191,7 +191,6 @@ export function setupSidebar(
 
   rotateBtn.addEventListener("click", () => {
     if (targetIds.length === 0) return;
-    const { document: doc } = getState();
     if (callbacks.onNodesChanged) {
       const updates = targetIds.map((id) => {
         const node = getNodeById(id)!;

@@ -368,7 +368,7 @@ export class SelectionOverlay {
           const strokeClr = rectMeta?.strokeColor ?? null;
           const shape = rectMeta?.nodeShape;
           const dir = rectMeta?.nodeDirection;
-          const isGroup = glow ? (glow as any).__isGroup ?? false : false;
+          const isGroup = glow ? (glow as Graphics & { __isGroup?: boolean }).__isGroup ?? false : false;
           const isSpace = this.theme === "space";
           rect.clear();
           if (isGroup && isSpace && fill !== null) {
@@ -417,7 +417,7 @@ export class SelectionOverlay {
             const strokeClr = rectMeta?.strokeColor ?? 0x333333;
             const shape = rectMeta?.nodeShape;
             const dir = rectMeta?.nodeDirection;
-            const isGroup = glow ? (glow as any).__isGroup ?? false : false;
+            const isGroup = glow ? (glow as Graphics & { __isGroup?: boolean }).__isGroup ?? false : false;
             const isSpace = this.theme === "space";
             rect.clear();
             if (isGroup && isSpace && fill !== null) {

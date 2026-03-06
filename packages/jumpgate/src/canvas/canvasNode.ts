@@ -4,7 +4,7 @@ import type { NodeChanges } from "../shared";
 import { colorToHex, DOUBLE_CLICK_MS, DRAG_THRESHOLD } from "../shared";
 import { startLabelEdit, type LabelEditContext } from "./labelEditor";
 import { showGroupDragMessage, hideGroupDragMessage } from "../interactions/groupStatus";
-import { getState, getDescendantIds, getChildNodeIds, getNodeById } from "../state";
+import { getDescendantIds, getChildNodeIds, getNodeById } from "../state";
 import { snap } from "../controls/gridSnap";
 import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapes";
 import { findNodeAtPoint } from "./hitTest";
@@ -79,7 +79,7 @@ export function createCanvasNode(
   // Glow layer — only for space theme
   const glow = new Graphics();
   glow.label = "node-glow";
-  (glow as any).__isGroup = hasChildren;
+  (glow as Graphics & { __isGroup: boolean }).__isGroup = hasChildren;
   if (isSpace && fillColor !== null) {
     if (hasChildren || node.shape !== "text") {
       drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
@@ -473,7 +473,7 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   // Rebuild glow layer — only for space theme
   if (glow) {
     glow.clear();
-    (glow as any).__isGroup = hasChildren;
+    (glow as Graphics & { __isGroup: boolean }).__isGroup = hasChildren;
     if (isSpace && fillColor !== null && (hasChildren || node.shape !== "text")) {
       drawGlowLayer(glow, node.bounds.width, node.bounds.height, fillColor);
       if (!glow.filters || !(glow.filters as BlurFilter[])[0]) {
