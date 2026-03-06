@@ -2,13 +2,13 @@ import type { Bounds, EdgeEndpoint } from "../../schema";
 
 export type Point = { x: number; y: number };
 
-/** Convert a proportional anchor [0..1, 0..1] to world coordinates. */
+/** Convert a pixel-offset anchor [px, px] from node top-left to world coordinates. */
 export function resolveAnchor(node: Bounds, anchor?: [number, number]): { x: number; y: number } {
-  const ax = anchor ? anchor[0] : 0.5;
-  const ay = anchor ? anchor[1] : 0.5;
+  const ax = anchor ? anchor[0] : node.width / 2;
+  const ay = anchor ? anchor[1] : node.height / 2;
   return {
-    x: node.x + node.width * ax,
-    y: node.y + node.height * ay,
+    x: node.x + ax,
+    y: node.y + ay,
   };
 }
 

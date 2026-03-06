@@ -3,13 +3,23 @@
   "nodes": [
     {
       "id": "title",
-      "bounds": { "x": 80, "y": -50, "width": 300, "height": 40 },
+      "bounds": {
+        "x": 80,
+        "y": -50,
+        "width": 300,
+        "height": 40
+      },
       "label": "Edit / Save Flow",
       "shape": "text"
     },
     {
       "id": "user-action",
-      "bounds": { "x": 100, "y": 20, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 20,
+        "width": 240,
+        "height": 60
+      },
       "label": "User edits diagram\n(drag, label, resize, color…)",
       "nodeColor": "#43A047",
       "labelColor": "#ffffff",
@@ -17,70 +27,130 @@
     },
     {
       "id": "canvas-cb",
-      "bounds": { "x": 100, "y": 160, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 160,
+        "width": 240,
+        "height": 60
+      },
       "label": "CanvasNodeCallbacks\n/ CanvasEdgeCallbacks",
       "nodeColor": "#1976D2",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "CanvasNodeCallbacks" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "CanvasNodeCallbacks"
+      }
     },
     {
       "id": "node-changed",
-      "bounds": { "x": 100, "y": 300, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 300,
+        "width": 240,
+        "height": 60
+      },
       "label": "nodeChanged() / edgeChanged()\nmessaging.ts",
       "nodeColor": "#1565C0",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/messaging.ts", "match": "nodeChanged" }
+      "fileLink": {
+        "path": "src/webview/messaging.ts",
+        "match": "nodeChanged"
+      }
     },
     {
       "id": "state-update",
-      "bounds": { "x": 100, "y": 440, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 440,
+        "width": 240,
+        "height": 60
+      },
       "label": "state.updateNode() /\nstate.updateEdge()",
       "nodeColor": "#00838F",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/state.ts", "match": "updateNode" }
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "updateNode"
+      }
     },
     {
       "id": "debounce",
-      "bounds": { "x": 100, "y": 580, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 580,
+        "width": 240,
+        "height": 60
+      },
       "label": "sendEditDebounced()\n(100 ms debounce)",
       "nodeColor": "#FF9800",
       "labelColor": "#000000",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/messaging.ts", "match": "sendEditDebounced" }
+      "fileLink": {
+        "path": "src/webview/messaging.ts",
+        "match": "sendEditDebounced"
+      }
     },
     {
       "id": "wb-msg",
-      "bounds": { "x": 100, "y": 720, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 720,
+        "width": 240,
+        "height": 60
+      },
       "label": "WebviewToExtensionMessage\n{ type: 'edit', document }",
       "nodeColor": "#7B1FA2",
       "labelColor": "#ffffff",
       "shape": "parallelogram",
-      "fileLink": { "path": "src/messages.ts" }
+      "fileLink": {
+        "path": "src/messages.ts"
+      }
     },
     {
       "id": "provider-recv",
-      "bounds": { "x": 100, "y": 860, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 860,
+        "width": 240,
+        "height": 60
+      },
       "label": "VscpEditorProvider\nwebview.onDidReceiveMessage",
       "nodeColor": "#1976D2",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "onDidReceiveMessage" }
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "onDidReceiveMessage"
+      }
     },
     {
       "id": "apply-edit",
-      "bounds": { "x": 100, "y": 1000, "width": 240, "height": 60 },
+      "bounds": {
+        "x": 100,
+        "y": 1000,
+        "width": 240,
+        "height": 60
+      },
       "label": "workspace.applyEdit()\nJSON.stringify(document)",
       "nodeColor": "#1565C0",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "applyEdit" }
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "applyEdit"
+      }
     },
     {
       "id": "file-saved",
-      "bounds": { "x": 100, "y": 1140, "width": 240, "height": 70 },
+      "bounds": {
+        "x": 100,
+        "y": 1140,
+        "width": 240,
+        "height": 70
+      },
       "label": ".vscp File (updated on disk)",
       "nodeColor": "#546E7A",
       "labelColor": "#ffffff",
@@ -90,57 +160,153 @@
   "edges": [
     {
       "id": "e1",
-      "from": { "nodeId": "user-action", "anchor": [0.5, 1] },
-      "to": { "nodeId": "canvas-cb", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "user-action",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "canvas-cb",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "PixiJS pointer events",
       "arrow": "end"
     },
     {
       "id": "e2",
-      "from": { "nodeId": "canvas-cb", "anchor": [0.5, 1] },
-      "to": { "nodeId": "node-changed", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "canvas-cb",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "node-changed",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "onNodeChanged(id, changes)",
       "arrow": "end"
     },
     {
       "id": "e3",
-      "from": { "nodeId": "node-changed", "anchor": [0.5, 1] },
-      "to": { "nodeId": "state-update", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "node-changed",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "state-update",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "updateNode / updateEdge",
       "arrow": "end"
     },
     {
       "id": "e4",
-      "from": { "nodeId": "state-update", "anchor": [0.5, 1] },
-      "to": { "nodeId": "debounce", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "state-update",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "debounce",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "sendEditDebounced()",
       "arrow": "end"
     },
     {
       "id": "e5",
-      "from": { "nodeId": "debounce", "anchor": [0.5, 1] },
-      "to": { "nodeId": "wb-msg", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "debounce",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "wb-msg",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "postMessage(edit)",
       "arrow": "end"
     },
     {
       "id": "e6",
-      "from": { "nodeId": "wb-msg", "anchor": [0.5, 1] },
-      "to": { "nodeId": "provider-recv", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "wb-msg",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "provider-recv",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "VS Code IPC",
       "arrow": "end"
     },
     {
       "id": "e7",
-      "from": { "nodeId": "provider-recv", "anchor": [0.5, 1] },
-      "to": { "nodeId": "apply-edit", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "provider-recv",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "apply-edit",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "case 'edit'",
       "arrow": "end"
     },
     {
       "id": "e8",
-      "from": { "nodeId": "apply-edit", "anchor": [0.5, 1] },
-      "to": { "nodeId": "file-saved", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "apply-edit",
+        "anchor": [
+          120,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "file-saved",
+        "anchor": [
+          120,
+          0
+        ]
+      },
       "label": "WorkspaceEdit",
       "arrow": "end"
     }

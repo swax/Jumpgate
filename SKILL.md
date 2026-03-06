@@ -121,14 +121,14 @@ An endpoint is either **node-anchored** or a **free point**:
 
 **Node-anchored** (preferred — edge connects to a node):
 ```jsonc
-{ "nodeId": "auth-service", "anchor": [0.5, 0] }
+{ "nodeId": "auth-service", "anchor": [80, 0] }
 ```
 - `nodeId`: the `id` of the target node
-- `anchor`: `[proportionalX, proportionalY]` — position on the node's bounding box
-  - `[0, 0]` = top-left, `[1, 1]` = bottom-right
-  - `[0.5, 0]` = top-center, `[1, 0.5]` = right-center
-  - `[0.5, 1]` = bottom-center, `[0, 0.5]` = left-center
-  - Can be omitted; if omitted the app picks a default anchor
+- `anchor`: `[pixelX, pixelY]` — pixel offset from the node's top-left corner
+  - `[0, 0]` = top-left, `[width, height]` = bottom-right
+  - `[width/2, 0]` = top-center, `[width, height/2]` = right-center
+  - `[width/2, height]` = bottom-center, `[0, height/2]` = left-center
+  - Can be omitted; if omitted the app picks the center of the node
 
 **Free point** (edge ends in empty space):
 ```jsonc
@@ -137,13 +137,13 @@ An endpoint is either **node-anchored** or a **free point**:
 
 ### Common Anchor Patterns
 
-For clean diagrams, connect edges to the nearest sides of the nodes:
+For clean diagrams, connect edges to the nearest sides of the nodes. Use the node's width (`w`) and height (`h`) to compute anchor values:
 
 ```
-Top-to-bottom flow:    from anchor [0.5, 1]  → to anchor [0.5, 0]
-Left-to-right flow:    from anchor [1, 0.5]  → to anchor [0, 0.5]
-Right-to-left flow:    from anchor [0, 0.5]  → to anchor [1, 0.5]
-Bottom-to-top flow:    from anchor [0.5, 0]  → to anchor [0.5, 1]
+Top-to-bottom flow:    from anchor [w/2, h]  → to anchor [w/2, 0]
+Left-to-right flow:    from anchor [w, h/2]  → to anchor [0, h/2]
+Right-to-left flow:    from anchor [0, h/2]  → to anchor [w, h/2]
+Bottom-to-top flow:    from anchor [w/2, 0]  → to anchor [w/2, h]
 ```
 
 ### Waypoints
@@ -156,8 +156,8 @@ Waypoints create polyline routing — the edge goes through each waypoint in ord
 ```jsonc
 {
   "id": "e1",
-  "from": { "nodeId": "a", "anchor": [1, 0.5] },
-  "to": { "nodeId": "b", "anchor": [0, 0.5] },
+  "from": { "nodeId": "a", "anchor": [160, 25] },
+  "to": { "nodeId": "b", "anchor": [0, 25] },
   "waypoints": [
     { "x": 350, "y": 100 },
     { "x": 350, "y": 250 }
@@ -197,11 +197,11 @@ These are critical for producing good-looking diagrams:
 
 **Top-down hierarchy** (org charts, call graphs):
 - Place root nodes at top, children below
-- Use anchors: from `[0.5, 1]` → to `[0.5, 0]`
+- Use anchors: from `[width/2, height]` → to `[width/2, 0]`
 
 **Left-to-right flow** (pipelines, data flow):
 - Place source on left, sink on right
-- Use anchors: from `[1, 0.5]` → to `[0, 0.5]`
+- Use anchors: from `[width, height/2]` → to `[0, height/2]`
 
 **Clustered groups** (microservices, modules):
 - Create a large parent node as background
@@ -279,22 +279,22 @@ A small service architecture diagram:
   "edges": [
     {
       "id": "e-client-api",
-      "from": { "nodeId": "client", "anchor": [1, 0.5] },
-      "to": { "nodeId": "api", "anchor": [0, 0.5] },
+      "from": { "nodeId": "client", "anchor": [160, 25] },
+      "to": { "nodeId": "api", "anchor": [0, 25] },
       "label": "REST",
       "arrow": "end"
     },
     {
       "id": "e-api-orders",
-      "from": { "nodeId": "api", "anchor": [0.5, 1] },
-      "to": { "nodeId": "orders", "anchor": [0.5, 0] },
+      "from": { "nodeId": "api", "anchor": [80, 50] },
+      "to": { "nodeId": "orders", "anchor": [80, 0] },
       "label": "gRPC",
       "arrow": "end"
     },
     {
       "id": "e-orders-db",
-      "from": { "nodeId": "orders", "anchor": [0.5, 1] },
-      "to": { "nodeId": "db", "anchor": [0.5, 0] },
+      "from": { "nodeId": "orders", "anchor": [80, 50] },
+      "to": { "nodeId": "db", "anchor": [80, 0] },
       "label": "queries",
       "style": "dashed",
       "arrow": "end"

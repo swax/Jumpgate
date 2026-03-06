@@ -18,8 +18,8 @@ describe("resolveAnchor", () => {
     expect(result).toEqual({ x: 140, y: 220 });
   });
 
-  it("returns the center when anchor is explicitly [0.5, 0.5]", () => {
-    const result = resolveAnchor(node, [0.5, 0.5]);
+  it("returns the center when anchor is explicitly [40, 20] (half of 80x40)", () => {
+    const result = resolveAnchor(node, [40, 20]);
     expect(result).toEqual({ x: 140, y: 220 });
   });
 
@@ -28,40 +28,40 @@ describe("resolveAnchor", () => {
     expect(result).toEqual({ x: 100, y: 200 });
   });
 
-  it("returns top-right corner for anchor [1, 0]", () => {
-    const result = resolveAnchor(node, [1, 0]);
+  it("returns top-right corner for anchor [80, 0]", () => {
+    const result = resolveAnchor(node, [80, 0]);
     expect(result).toEqual({ x: 180, y: 200 });
   });
 
-  it("returns bottom-left corner for anchor [0, 1]", () => {
-    const result = resolveAnchor(node, [0, 1]);
+  it("returns bottom-left corner for anchor [0, 40]", () => {
+    const result = resolveAnchor(node, [0, 40]);
     expect(result).toEqual({ x: 100, y: 240 });
   });
 
-  it("returns bottom-right corner for anchor [1, 1]", () => {
-    const result = resolveAnchor(node, [1, 1]);
+  it("returns bottom-right corner for anchor [80, 40]", () => {
+    const result = resolveAnchor(node, [80, 40]);
     expect(result).toEqual({ x: 180, y: 240 });
   });
 
-  it("handles midpoints of edges: top-center [0.5, 0]", () => {
-    const result = resolveAnchor(node, [0.5, 0]);
+  it("handles midpoints of edges: top-center [40, 0]", () => {
+    const result = resolveAnchor(node, [40, 0]);
     expect(result).toEqual({ x: 140, y: 200 });
   });
 
-  it("handles midpoints of edges: right-center [1, 0.5]", () => {
-    const result = resolveAnchor(node, [1, 0.5]);
+  it("handles midpoints of edges: right-center [80, 20]", () => {
+    const result = resolveAnchor(node, [80, 20]);
     expect(result).toEqual({ x: 180, y: 220 });
   });
 
-  it("handles a custom fractional anchor [0.25, 0.75]", () => {
-    const result = resolveAnchor(node, [0.25, 0.75]);
+  it("handles a custom pixel anchor [20, 30]", () => {
+    const result = resolveAnchor(node, [20, 30]);
     expect(result).toEqual({ x: 120, y: 230 });
   });
 
   it("works with a zero-size node", () => {
     const zeroNode = { x: 50, y: 50, width: 0, height: 0 };
     expect(resolveAnchor(zeroNode)).toEqual({ x: 50, y: 50 });
-    expect(resolveAnchor(zeroNode, [1, 1])).toEqual({ x: 50, y: 50 });
+    expect(resolveAnchor(zeroNode, [0, 0])).toEqual({ x: 50, y: 50 });
   });
 });
 
@@ -79,7 +79,7 @@ describe("resolveEndpoint", () => {
   });
 
   it("resolves a node-anchored endpoint with explicit anchor", () => {
-    const result = resolveEndpoint({ nodeId: "n2", anchor: [0, 1] }, nodeMap);
+    const result = resolveEndpoint({ nodeId: "n2", anchor: [0, 40] }, nodeMap);
     expect(result).toEqual({ x: 200, y: 140 });
   });
 

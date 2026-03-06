@@ -2,346 +2,877 @@
   "nodes": [
     {
       "id": "schema",
-      "bounds": { "x": 40, "y": 40, "width": 200, "height": 60 },
-      "nodeColor": "#5C6BC0", "labelColor": "white",
+      "bounds": {
+        "x": 40,
+        "y": 40,
+        "width": 200,
+        "height": 60
+      },
+      "nodeColor": "#5C6BC0",
+      "labelColor": "white",
       "label": "schema.ts\nTypes & Zod Validation",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/schema.ts" }
+      "fileLink": {
+        "path": "src/schema.ts"
+      }
     },
     {
       "id": "extension",
-      "bounds": { "x": 300, "y": 40, "width": 220, "height": 60 },
-      "nodeColor": "#43A047", "labelColor": "white",
+      "bounds": {
+        "x": 300,
+        "y": 40,
+        "width": 220,
+        "height": 60
+      },
+      "nodeColor": "#43A047",
+      "labelColor": "white",
       "label": "extension.ts\nactivate() + linkToNode",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/extension.ts", "match": "function activate" }
+      "fileLink": {
+        "path": "src/extension.ts",
+        "match": "function activate"
+      }
     },
     {
       "id": "messages",
-      "bounds": { "x": 580, "y": 40, "width": 200, "height": 60 },
-      "nodeColor": "#5C6BC0", "labelColor": "white",
+      "bounds": {
+        "x": 580,
+        "y": 40,
+        "width": 200,
+        "height": 60
+      },
+      "nodeColor": "#5C6BC0",
+      "labelColor": "white",
       "label": "messages.ts\nIPC Message Types",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/messages.ts" }
+      "fileLink": {
+        "path": "src/messages.ts"
+      }
     },
     {
       "id": "provider",
-      "bounds": { "x": 300, "y": 180, "width": 300, "height": 60 },
-      "nodeColor": "#43A047", "labelColor": "white",
+      "bounds": {
+        "x": 300,
+        "y": 180,
+        "width": 300,
+        "height": 60
+      },
+      "nodeColor": "#43A047",
+      "labelColor": "white",
       "label": "vscpEditorProvider.ts\nCustom Editor + File Links",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "class VscpEditorProvider" }
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "class VscpEditorProvider"
+      }
     },
     {
       "id": "main",
-      "bounds": { "x": 360, "y": 340, "width": 220, "height": 60 },
-      "nodeColor": "#1E88E5", "labelColor": "white",
+      "bounds": {
+        "x": 360,
+        "y": 340,
+        "width": 220,
+        "height": 60
+      },
+      "nodeColor": "#1E88E5",
+      "labelColor": "white",
       "label": "main.ts\nWebview Entry Point",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/main.ts", "match": "async function main" }
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "async function main"
+      }
     },
     {
       "id": "state",
-      "bounds": { "x": 1060, "y": 460, "width": 220, "height": 100 },
-      "nodeColor": "#F9A825", "labelColor": "black",
+      "bounds": {
+        "x": 1060,
+        "y": 460,
+        "width": 220,
+        "height": 100
+      },
+      "nodeColor": "#F9A825",
+      "labelColor": "black",
       "label": "state.ts\nPub/Sub Store\nselection, edgeMode, locked",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/state.ts" }
+      "fileLink": {
+        "path": "src/webview/state.ts"
+      }
     },
-
     {
       "id": "panZoom",
-      "bounds": { "x": 20, "y": 500, "width": 170, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 20,
+        "y": 500,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "panZoom.ts\nPan & Wheel Zoom",
-      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "function setupPanZoom" }
+      "fileLink": {
+        "path": "src/webview/interactions/panZoom.ts",
+        "match": "function setupPanZoom"
+      }
     },
     {
       "id": "selectionBox",
-      "bounds": { "x": 210, "y": 500, "width": 170, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 210,
+        "y": 500,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "selectionBox.ts\nShift+Drag Select",
-      "fileLink": { "path": "src/webview/interactions/selectionBox.ts", "match": "function setupSelectionBox" }
+      "fileLink": {
+        "path": "src/webview/interactions/selectionBox.ts",
+        "match": "function setupSelectionBox"
+      }
     },
     {
       "id": "keyboard",
-      "bounds": { "x": 20, "y": 570, "width": 170, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 20,
+        "y": 570,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "keyboard.ts\nDel / Copy / Paste",
-      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "function setupKeyboard" }
+      "fileLink": {
+        "path": "src/webview/interactions/keyboard.ts",
+        "match": "function setupKeyboard"
+      }
     },
     {
       "id": "edgeMode",
-      "bounds": { "x": 210, "y": 570, "width": 170, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 210,
+        "y": 570,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "edgeMode.ts\nTwo-Click Edges",
-      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "function setupEdgeMode" }
+      "fileLink": {
+        "path": "src/webview/interactions/edgeMode.ts",
+        "match": "function setupEdgeMode"
+      }
     },
     {
       "id": "groupStatus",
-      "bounds": { "x": 20, "y": 640, "width": 170, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 20,
+        "y": 640,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "groupStatus.ts\nGroup Status Bar",
-      "fileLink": { "path": "src/webview/interactions/groupStatus.ts", "match": "function setupGroupStatus" }
+      "fileLink": {
+        "path": "src/webview/interactions/groupStatus.ts",
+        "match": "function setupGroupStatus"
+      }
     },
     {
       "id": "cursorManager",
-      "bounds": { "x": 210, "y": 640, "width": 180, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 210,
+        "y": 640,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "cursorManager.ts\nCursor Priority Stack",
-      "fileLink": { "path": "src/webview/interactions/cursorManager.ts", "match": "function createCursorManager" }
+      "fileLink": {
+        "path": "src/webview/interactions/cursorManager.ts",
+        "match": "function createCursorManager"
+      }
     },
-
     {
       "id": "sidebar",
-      "bounds": { "x": 440, "y": 500, "width": 170, "height": 50 },
-      "nodeColor": "#00897B", "labelColor": "white",
+      "bounds": {
+        "x": 440,
+        "y": 500,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#00897B",
+      "labelColor": "white",
       "label": "sidebar.ts\nColor / Shape / Dir",
-      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "function setupSidebar" }
+      "fileLink": {
+        "path": "src/webview/controls/sidebar.ts",
+        "match": "function setupSidebar"
+      }
     },
     {
       "id": "lockToggle",
-      "bounds": { "x": 440, "y": 570, "width": 170, "height": 50 },
-      "nodeColor": "#00897B", "labelColor": "white",
+      "bounds": {
+        "x": 440,
+        "y": 570,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#00897B",
+      "labelColor": "white",
       "label": "lockToggle.ts\nEdit / Lock Mode",
-      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "function setupLockToggle" }
+      "fileLink": {
+        "path": "src/webview/controls/lockToggle.ts",
+        "match": "function setupLockToggle"
+      }
     },
     {
       "id": "gridSnap",
-      "bounds": { "x": 440, "y": 640, "width": 170, "height": 50 },
-      "nodeColor": "#00897B", "labelColor": "white",
+      "bounds": {
+        "x": 440,
+        "y": 640,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#00897B",
+      "labelColor": "white",
       "label": "gridSnap.ts\nsnap() + Toggle",
-      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function setupGridSnap" }
+      "fileLink": {
+        "path": "src/webview/controls/gridSnap.ts",
+        "match": "function setupGridSnap"
+      }
     },
-
     {
       "id": "renderer",
-      "bounds": { "x": 680, "y": 480, "width": 260, "height": 60 },
-      "nodeColor": "#FB8C00", "labelColor": "white",
+      "bounds": {
+        "x": 680,
+        "y": 480,
+        "width": 260,
+        "height": 60
+      },
+      "nodeColor": "#FB8C00",
+      "labelColor": "white",
       "label": "renderer.ts\nReconcile State → PixiJS Canvas",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "function createRenderer" }
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "function createRenderer"
+      }
     },
-
     {
       "id": "canvasNode",
-      "bounds": { "x": 660, "y": 620, "width": 200, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 660,
+        "y": 620,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "canvasNode.ts\nNode Graphics + Drag",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function createCanvasNode" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function createCanvasNode"
+      }
     },
     {
       "id": "canvasEdge",
-      "bounds": { "x": 880, "y": 620, "width": 200, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 880,
+        "y": 620,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "canvasEdge.ts\nLines + Arrows + Styles",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function createCanvasEdge" }
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function createCanvasEdge"
+      }
     },
     {
       "id": "selectionOverlay",
-      "bounds": { "x": 660, "y": 700, "width": 200, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 660,
+        "y": 700,
+        "width": 200,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "selectionOverlay.ts\nDashed Box + Resize",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "class SelectionOverlay"
+      }
     },
     {
       "id": "edgeHandleOverlay",
-      "bounds": { "x": 880, "y": 700, "width": 210, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 880,
+        "y": 700,
+        "width": 210,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "edgeHandleOverlay.ts\nDraggable Endpoints",
-      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts", "match": "class EdgeHandleOverlay" }
+      "fileLink": {
+        "path": "src/webview/canvas/edgeHandleOverlay.ts",
+        "match": "class EdgeHandleOverlay"
+      }
     },
-
     {
       "id": "shapeDrawing",
-      "bounds": { "x": 640, "y": 800, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 640,
+        "y": 800,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "shapeDrawing.ts\n12 Shapes + Rotation",
-      "fileLink": { "path": "src/webview/canvas/shapeDrawing.ts", "match": "function drawShape" }
+      "fileLink": {
+        "path": "src/webview/canvas/shapeDrawing.ts",
+        "match": "function drawShape"
+      }
     },
     {
       "id": "edgeUtils",
-      "bounds": { "x": 840, "y": 800, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white",
+      "bounds": {
+        "x": 840,
+        "y": 800,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
       "label": "edgeUtils.ts\nHit Test + Anchors",
-      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts", "match": "function findNodeAtPoint" }
+      "fileLink": {
+        "path": "src/webview/canvas/edgeUtils.ts",
+        "match": "function findNodeAtPoint"
+      }
     },
     {
       "id": "labelEditor",
-      "bounds": { "x": 1040, "y": 800, "width": 180, "height": 50 },
-      "nodeColor": "#8E24AA", "labelColor": "white",
+      "bounds": {
+        "x": 1040,
+        "y": 800,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#8E24AA",
+      "labelColor": "white",
       "label": "labelEditor.ts\nInline Text Editing",
-      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startLabelEdit" }
+      "fileLink": {
+        "path": "src/webview/interactions/labelEditor.ts",
+        "match": "function startLabelEdit"
+      }
     }
   ],
   "edges": [
     {
       "id": "e-ext-provider",
-      "from": { "nodeId": "extension", "anchor": [0.5, 1] },
-      "to": { "nodeId": "provider", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "extension",
+        "anchor": [
+          110,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "provider",
+        "anchor": [
+          150,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-provider-schema",
-      "from": { "nodeId": "provider", "anchor": [0, 0.5] },
-      "to": { "nodeId": "schema", "anchor": [1, 0.5] },
-      "style": "dashed", "arrow": "end"
+      "from": {
+        "nodeId": "provider",
+        "anchor": [
+          0,
+          30
+        ]
+      },
+      "to": {
+        "nodeId": "schema",
+        "anchor": [
+          200,
+          30
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end"
     },
     {
       "id": "e-provider-messages",
-      "from": { "nodeId": "provider", "anchor": [1, 0.3] },
-      "to": { "nodeId": "messages", "anchor": [0.5, 1] },
-      "style": "dashed", "arrow": "end"
+      "from": {
+        "nodeId": "provider",
+        "anchor": [
+          300,
+          18
+        ]
+      },
+      "to": {
+        "nodeId": "messages",
+        "anchor": [
+          100,
+          60
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end"
     },
     {
       "id": "e-provider-main",
-      "from": { "nodeId": "provider", "anchor": [0.5, 1] },
-      "to": { "nodeId": "main", "anchor": [0.5, 0] },
-      "style": "dashed", "arrow": "both", "label": "postMessage"
+      "from": {
+        "nodeId": "provider",
+        "anchor": [
+          150,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "main",
+        "anchor": [
+          110,
+          0
+        ]
+      },
+      "style": "dashed",
+      "arrow": "both",
+      "label": "postMessage"
     },
-
     {
       "id": "e-main-state",
-      "from": { "nodeId": "main", "anchor": [1, 0.5] },
-      "to": { "nodeId": "state", "anchor": [0, 0.2] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          220,
+          30
+        ]
+      },
+      "to": {
+        "nodeId": "state",
+        "anchor": [
+          0,
+          20
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-renderer",
-      "from": { "nodeId": "main", "anchor": [0.85, 1] },
-      "to": { "nodeId": "renderer", "anchor": [0.3, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          187,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "renderer",
+        "anchor": [
+          78,
+          0
+        ]
+      },
       "arrow": "end"
     },
-
     {
       "id": "e-main-panZoom",
-      "from": { "nodeId": "main", "anchor": [0, 0.7] },
-      "to": { "nodeId": "panZoom", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          0,
+          42
+        ]
+      },
+      "to": {
+        "nodeId": "panZoom",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-selBox",
-      "from": { "nodeId": "main", "anchor": [0.05, 1] },
-      "to": { "nodeId": "selectionBox", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          11,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "selectionBox",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-keyboard",
-      "from": { "nodeId": "main", "anchor": [0, 0.9] },
-      "to": { "nodeId": "keyboard", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          0,
+          54
+        ]
+      },
+      "to": {
+        "nodeId": "keyboard",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-edgeMode",
-      "from": { "nodeId": "main", "anchor": [0.1, 1] },
-      "to": { "nodeId": "edgeMode", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          22,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "edgeMode",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-groupStatus",
-      "from": { "nodeId": "main", "anchor": [0, 1] },
-      "to": { "nodeId": "groupStatus", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          0,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "groupStatus",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-sidebar",
-      "from": { "nodeId": "main", "anchor": [0.3, 1] },
-      "to": { "nodeId": "sidebar", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          66,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "sidebar",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-lock",
-      "from": { "nodeId": "main", "anchor": [0.25, 1] },
-      "to": { "nodeId": "lockToggle", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          55,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "lockToggle",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-main-gridSnap",
-      "from": { "nodeId": "main", "anchor": [0.2, 1] },
-      "to": { "nodeId": "gridSnap", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          44,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "gridSnap",
+        "anchor": [
+          85,
+          0
+        ]
+      },
       "arrow": "end"
     },
-
     {
       "id": "e-renderer-canvasNode",
-      "from": { "nodeId": "renderer", "anchor": [0.25, 1] },
-      "to": { "nodeId": "canvasNode", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer",
+        "anchor": [
+          65,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "canvasNode",
+        "anchor": [
+          100,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-renderer-canvasEdge",
-      "from": { "nodeId": "renderer", "anchor": [0.75, 1] },
-      "to": { "nodeId": "canvasEdge", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer",
+        "anchor": [
+          195,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "canvasEdge",
+        "anchor": [
+          100,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-renderer-selOverlay",
-      "from": { "nodeId": "renderer", "anchor": [0.15, 1] },
-      "to": { "nodeId": "selectionOverlay", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer",
+        "anchor": [
+          39,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "selectionOverlay",
+        "anchor": [
+          100,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-renderer-edgeHdl",
-      "from": { "nodeId": "renderer", "anchor": [0.85, 1] },
-      "to": { "nodeId": "edgeHandleOverlay", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "renderer",
+        "anchor": [
+          221,
+          60
+        ]
+      },
+      "to": {
+        "nodeId": "edgeHandleOverlay",
+        "anchor": [
+          105,
+          0
+        ]
+      },
       "arrow": "end"
     },
-
     {
       "id": "e-node-shape",
-      "from": { "nodeId": "canvasNode", "anchor": [0.3, 1] },
-      "to": { "nodeId": "shapeDrawing", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "canvasNode",
+        "anchor": [
+          60,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "shapeDrawing",
+        "anchor": [
+          90,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-node-labelEd",
-      "from": { "nodeId": "canvasNode", "anchor": [1, 1] },
-      "to": { "nodeId": "labelEditor", "anchor": [0, 0] },
+      "from": {
+        "nodeId": "canvasNode",
+        "anchor": [
+          200,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "labelEditor",
+        "anchor": [
+          0,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-edge-utils",
-      "from": { "nodeId": "canvasEdge", "anchor": [0.3, 1] },
-      "to": { "nodeId": "edgeUtils", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "canvasEdge",
+        "anchor": [
+          60,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "edgeUtils",
+        "anchor": [
+          90,
+          0
+        ]
+      },
       "arrow": "end"
     },
     {
       "id": "e-edgeMode-utils",
-      "from": { "nodeId": "edgeMode", "anchor": [1, 1] },
-      "to": { "nodeId": "edgeUtils", "anchor": [0, 0.5] },
-      "style": "dashed", "arrow": "end"
+      "from": {
+        "nodeId": "edgeMode",
+        "anchor": [
+          170,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "edgeUtils",
+        "anchor": [
+          0,
+          25
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end"
     },
-
     {
       "id": "e-state-renderer",
-      "from": { "nodeId": "state", "anchor": [0, 0.5] },
-      "to": { "nodeId": "renderer", "anchor": [1, 0.3] },
-      "style": "dashed", "arrow": "end", "color": "#F9A825",
+      "from": {
+        "nodeId": "state",
+        "anchor": [
+          0,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "renderer",
+        "anchor": [
+          260,
+          18
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end",
+      "color": "#F9A825",
       "label": "subscribe"
     },
     {
       "id": "e-keyboard-state",
-      "from": { "nodeId": "keyboard", "anchor": [1, 0.5] },
-      "to": { "nodeId": "state", "anchor": [0, 0.9] },
-      "style": "dashed", "arrow": "end", "color": "#F9A825"
+      "from": {
+        "nodeId": "keyboard",
+        "anchor": [
+          170,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "state",
+        "anchor": [
+          0,
+          90
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end",
+      "color": "#F9A825"
     },
     {
       "id": "e-sidebar-state",
-      "from": { "nodeId": "sidebar", "anchor": [1, 0.5] },
-      "to": { "nodeId": "state", "anchor": [0, 0.6] },
-      "style": "dashed", "arrow": "end", "color": "#F9A825"
+      "from": {
+        "nodeId": "sidebar",
+        "anchor": [
+          170,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "state",
+        "anchor": [
+          0,
+          60
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end",
+      "color": "#F9A825"
     },
     {
       "id": "e-panZoom-cursor",
-      "from": { "nodeId": "panZoom", "anchor": [0.5, 1] },
-      "to": { "nodeId": "cursorManager", "anchor": [0, 0] },
-      "style": "dashed", "arrow": "end"
+      "from": {
+        "nodeId": "panZoom",
+        "anchor": [
+          85,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "cursorManager",
+        "anchor": [
+          0,
+          0
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end"
     },
     {
       "id": "e-selBox-cursor",
-      "from": { "nodeId": "selectionBox", "anchor": [0.5, 1] },
-      "to": { "nodeId": "cursorManager", "anchor": [0.5, 0] },
-      "style": "dashed", "arrow": "end"
+      "from": {
+        "nodeId": "selectionBox",
+        "anchor": [
+          85,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "cursorManager",
+        "anchor": [
+          90,
+          0
+        ]
+      },
+      "style": "dashed",
+      "arrow": "end"
     }
   ]
 }

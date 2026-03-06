@@ -1591,15 +1591,15 @@
       "from": {
         "nodeId": "ext-activate",
         "anchor": [
-          1,
-          0.5
+          200,
+          25
         ]
       },
       "to": {
         "nodeId": "provider-class",
         "anchor": [
           0,
-          0.5
+          25
         ]
       },
       "label": "registers",
@@ -1614,14 +1614,14 @@
       "from": {
         "nodeId": "ext-activate",
         "anchor": [
-          0.5,
-          1
+          100,
+          50
         ]
       },
       "to": {
         "nodeId": "ext-linkToNode",
         "anchor": [
-          0.5,
+          100,
           0
         ]
       },
@@ -1637,14 +1637,14 @@
       "from": {
         "nodeId": "provider-class",
         "anchor": [
-          0.5,
-          1
+          120,
+          50
         ]
       },
       "to": {
         "nodeId": "provider-resolve",
         "anchor": [
-          0.5,
+          120,
           0
         ]
       },
@@ -1659,14 +1659,14 @@
       "from": {
         "nodeId": "provider-resolve",
         "anchor": [
-          0.5,
-          1
+          120,
+          50
         ]
       },
       "to": {
         "nodeId": "provider-html",
         "anchor": [
-          0.5,
+          120,
           0
         ]
       },
@@ -1682,15 +1682,15 @@
       "from": {
         "nodeId": "provider-resolve",
         "anchor": [
-          1,
-          0.5
+          240,
+          25
         ]
       },
       "to": {
         "nodeId": "schema-box",
         "anchor": [
           0,
-          0.5
+          50
         ]
       },
       "label": "validates",
@@ -1706,15 +1706,15 @@
       "from": {
         "nodeId": "provider-resolve",
         "anchor": [
-          1,
-          0.8
+          240,
+          40
         ]
       },
       "to": {
         "nodeId": "messages-box",
         "anchor": [
           0,
-          0.5
+          30
         ]
       },
       "label": "IPC types",
@@ -1734,7 +1734,7 @@
       "to": {
         "nodeId": "main-fn",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -1761,15 +1761,15 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          1,
-          0.5
+          220,
+          25
         ]
       },
       "to": {
         "nodeId": "main-postmsg",
         "anchor": [
           0,
-          0.5
+          25
         ]
       },
       "arrow": "end",
@@ -1783,15 +1783,15 @@
       "from": {
         "nodeId": "main-postmsg",
         "anchor": [
-          1,
-          0.5
+          220,
+          25
         ]
       },
       "to": {
         "nodeId": "main-debounce",
         "anchor": [
           0,
-          0.5
+          25
         ]
       },
       "label": "wraps",
@@ -1806,14 +1806,14 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "main-msglistener",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -1828,15 +1828,15 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          1,
-          0.3
+          220,
+          15
         ]
       },
       "to": {
         "nodeId": "state-setDoc",
         "anchor": [
           0,
-          0.5
+          20
         ]
       },
       "waypoints": [
@@ -1857,14 +1857,14 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          0.3,
-          1
+          66,
+          50
         ]
       },
       "to": {
         "nodeId": "renderer-create",
         "anchor": [
-          0.3,
+          72,
           0
         ]
       },
@@ -1890,14 +1890,14 @@
       "from": {
         "nodeId": "state-subscribe",
         "anchor": [
-          0.5,
-          1
+          70,
+          40
         ]
       },
       "to": {
         "nodeId": "renderer-render",
         "anchor": [
-          1,
+          220,
           0
         ]
       },
@@ -1929,15 +1929,15 @@
       "from": {
         "nodeId": "renderer-render",
         "anchor": [
-          1,
-          0.5
+          220,
+          25
         ]
       },
       "to": {
         "nodeId": "renderer-renderEdges",
         "anchor": [
           0,
-          0.5
+          25
         ]
       },
       "label": "calls",
@@ -1953,13 +1953,13 @@
         "nodeId": "renderer-render",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "to": {
         "nodeId": "renderer-buildNodeMap",
         "anchor": [
-          0.5,
+          120,
           0
         ]
       },
@@ -1974,14 +1974,14 @@
       "from": {
         "nodeId": "renderer-renderEdges",
         "anchor": [
-          0.3,
-          1
+          66,
+          50
         ]
       },
       "to": {
         "nodeId": "renderer-edgeZIndex",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -1996,8 +1996,8 @@
       "from": {
         "nodeId": "renderer-render",
         "anchor": [
-          1,
-          1
+          220,
+          50
         ]
       },
       "to": {
@@ -2018,14 +2018,14 @@
       "from": {
         "nodeId": "renderer-renderEdges",
         "anchor": [
-          1,
-          1
+          220,
+          50
         ]
       },
       "to": {
         "nodeId": "renderer-edgeHdlOverlay",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2040,14 +2040,14 @@
       "from": {
         "nodeId": "renderer-render",
         "anchor": [
-          0.3,
-          1
+          66,
+          50
         ]
       },
       "to": {
         "nodeId": "cn-create",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2073,14 +2073,14 @@
       "from": {
         "nodeId": "renderer-render",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "cn-update",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2106,14 +2106,14 @@
       "from": {
         "nodeId": "renderer-renderEdges",
         "anchor": [
-          0.3,
-          1
+          66,
+          50
         ]
       },
       "to": {
         "nodeId": "ce-create",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2139,14 +2139,14 @@
       "from": {
         "nodeId": "renderer-renderEdges",
         "anchor": [
-          0.7,
-          1
+          154,
+          50
         ]
       },
       "to": {
         "nodeId": "ce-update",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2172,14 +2172,14 @@
       "from": {
         "nodeId": "cn-create",
         "anchor": [
-          0.3,
-          1
+          66,
+          50
         ]
       },
       "to": {
         "nodeId": "sd-drawShape",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2204,14 +2204,14 @@
       "from": {
         "nodeId": "cn-create",
         "anchor": [
-          1,
-          1
+          220,
+          50
         ]
       },
       "to": {
         "nodeId": "int-labelEditor",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2245,8 +2245,8 @@
       "from": {
         "nodeId": "cn-create",
         "anchor": [
-          1,
-          0.5
+          220,
+          25
         ]
       },
       "to": {
@@ -2283,8 +2283,8 @@
       "from": {
         "nodeId": "cn-create",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
@@ -2318,13 +2318,13 @@
         "nodeId": "ce-update",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "to": {
         "nodeId": "ce-resolve",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2339,14 +2339,14 @@
       "from": {
         "nodeId": "ce-update",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "ce-polyline",
         "anchor": [
-          1,
+          220,
           0
         ]
       },
@@ -2361,14 +2361,14 @@
       "from": {
         "nodeId": "ce-update",
         "anchor": [
-          1,
-          1
+          220,
+          50
         ]
       },
       "to": {
         "nodeId": "ce-midpoint",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2384,13 +2384,13 @@
         "nodeId": "eh-class",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "to": {
         "nodeId": "eu-findNode",
         "anchor": [
-          1,
+          220,
           0
         ]
       },
@@ -2418,14 +2418,14 @@
         "nodeId": "eh-class",
         "anchor": [
           0,
-          0.5
+          25
         ]
       },
       "to": {
         "nodeId": "ce-resolve",
         "anchor": [
-          1,
-          0.5
+          220,
+          20
         ]
       },
       "waypoints": [
@@ -2451,13 +2451,13 @@
         "nodeId": "so-class",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "to": {
         "nodeId": "cn-setBounds",
         "anchor": [
-          1,
+          220,
           0
         ]
       },
@@ -2484,8 +2484,8 @@
       "from": {
         "nodeId": "so-resize",
         "anchor": [
-          1,
-          0.5
+          200,
+          20
         ]
       },
       "to": {
@@ -2526,15 +2526,15 @@
       "from": {
         "nodeId": "int-edgeMode",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "eu-buildEndpoint",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "waypoints": [
@@ -2569,13 +2569,13 @@
         "nodeId": "main-fn",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "to": {
         "nodeId": "int-panZoom",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2604,14 +2604,14 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          0.1,
-          1
+          22,
+          50
         ]
       },
       "to": {
         "nodeId": "int-selBox",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2644,14 +2644,14 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          0.9,
-          1
+          198,
+          50
         ]
       },
       "to": {
         "nodeId": "int-keyboard",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2685,7 +2685,7 @@
         "nodeId": "main-fn",
         "anchor": [
           0,
-          0.5
+          25
         ]
       },
       "to": {
@@ -2716,14 +2716,14 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          0.7,
-          1
+          154,
+          50
         ]
       },
       "to": {
         "nodeId": "int-groupStatus",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2760,8 +2760,8 @@
       "from": {
         "nodeId": "main-debounce",
         "anchor": [
-          1,
-          0.5
+          240,
+          25
         ]
       },
       "to": {
@@ -2796,14 +2796,14 @@
       "from": {
         "nodeId": "main-debounce",
         "anchor": [
-          1,
-          1
+          240,
+          50
         ]
       },
       "to": {
         "nodeId": "ctrl-lock",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2832,14 +2832,14 @@
       "from": {
         "nodeId": "main-fn",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "ctrl-gridSnap",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2872,14 +2872,14 @@
       "from": {
         "nodeId": "int-panZoom",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "int-cursorMgr",
         "anchor": [
-          0.5,
+          110,
           0
         ]
       },
@@ -2915,13 +2915,13 @@
         "nodeId": "int-selBox",
         "anchor": [
           0,
-          1
+          50
         ]
       },
       "to": {
         "nodeId": "int-cursorMgr",
         "anchor": [
-          1,
+          220,
           0
         ]
       },
@@ -2948,15 +2948,15 @@
       "from": {
         "nodeId": "int-keyboard",
         "anchor": [
-          1,
-          0.3
+          220,
+          15
         ]
       },
       "to": {
         "nodeId": "state-deleteNodes",
         "anchor": [
           0,
-          1
+          40
         ]
       },
       "waypoints": [
@@ -2998,15 +2998,15 @@
       "from": {
         "nodeId": "ctrl-sidebar",
         "anchor": [
-          1,
-          0.5
+          220,
+          25
         ]
       },
       "to": {
         "nodeId": "state-updateNode",
         "anchor": [
           0,
-          1
+          40
         ]
       },
       "waypoints": [
@@ -3049,15 +3049,15 @@
       "from": {
         "nodeId": "ctrl-lock",
         "anchor": [
-          0.5,
-          1
+          110,
+          50
         ]
       },
       "to": {
         "nodeId": "state-getState",
         "anchor": [
-          1,
-          0.5
+          220,
+          20
         ]
       },
       "waypoints": [
@@ -3092,15 +3092,15 @@
       "from": {
         "nodeId": "int-edgeLabelEdit",
         "anchor": [
-          1,
+          220,
           0
         ]
       },
       "to": {
         "nodeId": "ce-midpoint",
         "anchor": [
-          1,
-          1
+          220,
+          40
         ]
       },
       "waypoints": [

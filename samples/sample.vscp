@@ -2,28 +2,48 @@
   "nodes": [
     {
       "id": "node-1",
-      "bounds": { "x": 280, "y": 300, "width": 100, "height": 100 },
+      "bounds": {
+        "x": 280,
+        "y": 300,
+        "width": 100,
+        "height": 100
+      },
       "nodeColor": "#f2f2f2",
       "labelColor": "black",
       "label": "D"
     },
     {
       "id": "node-2",
-      "bounds": { "x": 160, "y": 180, "width": 100, "height": 100 },
+      "bounds": {
+        "x": 160,
+        "y": 180,
+        "width": 100,
+        "height": 100
+      },
       "nodeColor": "#f2f2f2",
       "labelColor": "#000000",
       "label": "A"
     },
     {
       "id": "ddb8734d-3fe5-40ad-a03e-fb957d400076",
-      "bounds": { "x": 280, "y": 180, "width": 100, "height": 100 },
+      "bounds": {
+        "x": 280,
+        "y": 180,
+        "width": 100,
+        "height": 100
+      },
       "nodeColor": "#ffffff",
       "labelColor": "black",
       "label": "B"
     },
     {
       "id": "1cbaf393-7826-451d-afd1-0e9a98f8a429",
-      "bounds": { "x": 160, "y": 300, "width": 100, "height": 100 },
+      "bounds": {
+        "x": 160,
+        "y": 300,
+        "width": 100,
+        "height": 100
+      },
       "nodeColor": "#f2f2f2",
       "labelColor": "#000000",
       "label": "C"
@@ -32,24 +52,72 @@
   "edges": [
     {
       "id": "edge-1",
-      "from": { "nodeId": "node-2", "anchor": [1, 0.5] },
-      "to": { "nodeId": "ddb8734d-3fe5-40ad-a03e-fb957d400076", "anchor": [0, 0.5] }
+      "from": {
+        "nodeId": "node-2",
+        "anchor": [
+          100,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "ddb8734d-3fe5-40ad-a03e-fb957d400076",
+        "anchor": [
+          0,
+          50
+        ]
+      }
     },
     {
       "id": "edge-2",
-      "from": { "nodeId": "node-2", "anchor": [0.5, 1] },
-      "to": { "nodeId": "1cbaf393-7826-451d-afd1-0e9a98f8a429", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "node-2",
+        "anchor": [
+          50,
+          100
+        ]
+      },
+      "to": {
+        "nodeId": "1cbaf393-7826-451d-afd1-0e9a98f8a429",
+        "anchor": [
+          50,
+          0
+        ]
+      }
     },
     {
       "id": "edge-3",
-      "from": { "nodeId": "ddb8734d-3fe5-40ad-a03e-fb957d400076", "anchor": [0.5, 1] },
-      "to": { "nodeId": "node-1", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "ddb8734d-3fe5-40ad-a03e-fb957d400076",
+        "anchor": [
+          50,
+          100
+        ]
+      },
+      "to": {
+        "nodeId": "node-1",
+        "anchor": [
+          50,
+          0
+        ]
+      },
       "style": "dashed"
     },
     {
       "id": "edge-4",
-      "from": { "nodeId": "1cbaf393-7826-451d-afd1-0e9a98f8a429", "anchor": [1, 0.5] },
-      "to": { "nodeId": "node-1", "anchor": [0, 0.5] },
+      "from": {
+        "nodeId": "1cbaf393-7826-451d-afd1-0e9a98f8a429",
+        "anchor": [
+          100,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "node-1",
+        "anchor": [
+          0,
+          50
+        ]
+      },
       "color": "#ff6600",
       "arrow": "both"
     }

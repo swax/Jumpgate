@@ -1,0 +1,789 @@
+{
+  "theme": "standard",
+  "nodes": [
+    {
+      "id": "title",
+      "bounds": { "x": 200, "y": -60, "width": 500, "height": 50 },
+      "label": "VS Code Perspective \u2014 File Dependencies",
+      "shape": "text"
+    },
+    {
+      "id": "extension",
+      "bounds": { "x": 80, "y": 20, "width": 140, "height": 40 },
+      "label": "extension.ts",
+      "nodeColor": "#1565C0",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/extension.ts" }
+    },
+    {
+      "id": "main",
+      "bounds": { "x": 550, "y": 20, "width": 120, "height": 40 },
+      "label": "main.ts",
+      "nodeColor": "#1565C0",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/main.ts" }
+    },
+    {
+      "id": "vscpEditorProvider",
+      "bounds": { "x": 50, "y": 110, "width": 200, "height": 40 },
+      "label": "vscpEditorProvider.ts",
+      "nodeColor": "#6A1B9A",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/vscpEditorProvider.ts" }
+    },
+    {
+      "id": "renderer",
+      "bounds": { "x": 380, "y": 110, "width": 140, "height": 40 },
+      "label": "renderer.ts",
+      "nodeColor": "#6A1B9A",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/renderer.ts" }
+    },
+    {
+      "id": "messaging",
+      "bounds": { "x": 640, "y": 110, "width": 150, "height": 40 },
+      "label": "messaging.ts",
+      "nodeColor": "#6A1B9A",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/messaging.ts" }
+    },
+    {
+      "id": "state",
+      "bounds": { "x": 530, "y": 200, "width": 120, "height": 40 },
+      "label": "state.ts",
+      "nodeColor": "#00695C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "fileLink": { "path": "src/webview/state.ts" }
+    },
+    {
+      "id": "grp-interactions",
+      "bounds": { "x": 0, "y": 290, "width": 530, "height": 210 },
+      "label": "Interactions",
+      "nodeColor": "#FBE9E7",
+      "borderColor": "#E64A19",
+      "labelColor": "#BF360C"
+    },
+    {
+      "id": "panZoom",
+      "bounds": { "x": 20, "y": 330, "width": 140, "height": 40 },
+      "label": "panZoom.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/panZoom.ts" }
+    },
+    {
+      "id": "keyboard",
+      "bounds": { "x": 180, "y": 330, "width": 140, "height": 40 },
+      "label": "keyboard.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/keyboard.ts" }
+    },
+    {
+      "id": "contextMenu",
+      "bounds": { "x": 340, "y": 330, "width": 170, "height": 40 },
+      "label": "contextMenu.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/contextMenu.ts" }
+    },
+    {
+      "id": "edgeMode",
+      "bounds": { "x": 20, "y": 390, "width": 140, "height": 40 },
+      "label": "edgeMode.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/edgeMode.ts" }
+    },
+    {
+      "id": "selectionBox",
+      "bounds": { "x": 180, "y": 390, "width": 160, "height": 40 },
+      "label": "selectionBox.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/selectionBox.ts" }
+    },
+    {
+      "id": "groupStatus",
+      "bounds": { "x": 360, "y": 390, "width": 150, "height": 40 },
+      "label": "groupStatus.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/groupStatus.ts" }
+    },
+    {
+      "id": "clipboard",
+      "bounds": { "x": 200, "y": 450, "width": 140, "height": 40 },
+      "label": "clipboard.ts",
+      "nodeColor": "#BF360C",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions",
+      "fileLink": { "path": "src/webview/interactions/clipboard.ts" }
+    },
+    {
+      "id": "grp-controls",
+      "bounds": { "x": 570, "y": 290, "width": 380, "height": 150 },
+      "label": "Controls",
+      "nodeColor": "#FFF8E1",
+      "borderColor": "#F9A825",
+      "labelColor": "#E65100"
+    },
+    {
+      "id": "lockToggle",
+      "bounds": { "x": 590, "y": 330, "width": 150, "height": 40 },
+      "label": "lockToggle.ts",
+      "nodeColor": "#E65100",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/lockToggle.ts" }
+    },
+    {
+      "id": "themeToggle",
+      "bounds": { "x": 760, "y": 330, "width": 170, "height": 40 },
+      "label": "themeToggle.ts",
+      "nodeColor": "#E65100",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/themeToggle.ts" }
+    },
+    {
+      "id": "gridSnap",
+      "bounds": { "x": 590, "y": 390, "width": 130, "height": 40 },
+      "label": "gridSnap.ts",
+      "nodeColor": "#E65100",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/gridSnap.ts" }
+    },
+    {
+      "id": "sidebar",
+      "bounds": { "x": 760, "y": 390, "width": 130, "height": 40 },
+      "label": "sidebar.ts",
+      "nodeColor": "#E65100",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls",
+      "fileLink": { "path": "src/webview/controls/sidebar.ts" }
+    },
+    {
+      "id": "grp-canvas",
+      "bounds": { "x": 0, "y": 540, "width": 970, "height": 250 },
+      "label": "Canvas",
+      "nodeColor": "#E8F5E9",
+      "borderColor": "#43A047",
+      "labelColor": "#2E7D32"
+    },
+    {
+      "id": "canvasNode",
+      "bounds": { "x": 20, "y": 580, "width": 150, "height": 40 },
+      "label": "canvasNode.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/canvasNode.ts" }
+    },
+    {
+      "id": "canvasEdge",
+      "bounds": { "x": 190, "y": 580, "width": 150, "height": 40 },
+      "label": "canvasEdge.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts" }
+    },
+    {
+      "id": "edgeReconciler",
+      "bounds": { "x": 360, "y": 580, "width": 180, "height": 40 },
+      "label": "edgeReconciler.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/edgeReconciler.ts" }
+    },
+    {
+      "id": "labelEditor",
+      "bounds": { "x": 560, "y": 580, "width": 150, "height": 40 },
+      "label": "labelEditor.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/labelEditor.ts" }
+    },
+    {
+      "id": "selectionOverlay",
+      "bounds": { "x": 730, "y": 580, "width": 180, "height": 40 },
+      "label": "selectionOverlay.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts" }
+    },
+    {
+      "id": "edgeHandleOverlay",
+      "bounds": { "x": 20, "y": 640, "width": 200, "height": 40 },
+      "label": "edgeHandleOverlay.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/edgeHandleOverlay.ts" }
+    },
+    {
+      "id": "selectionGlow",
+      "bounds": { "x": 240, "y": 640, "width": 170, "height": 40 },
+      "label": "selectionGlow.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/selectionGlow.ts" }
+    },
+    {
+      "id": "starfield",
+      "bounds": { "x": 430, "y": 640, "width": 130, "height": 40 },
+      "label": "starfield.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/starfield.ts" }
+    },
+    {
+      "id": "domLabels",
+      "bounds": { "x": 580, "y": 640, "width": 150, "height": 40 },
+      "label": "domLabels.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/domLabels.ts" }
+    },
+    {
+      "id": "shapes",
+      "bounds": { "x": 20, "y": 700, "width": 120, "height": 40 },
+      "label": "shapes.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/shapes.ts" }
+    },
+    {
+      "id": "shapesSpace",
+      "bounds": { "x": 160, "y": 700, "width": 160, "height": 40 },
+      "label": "shapesSpace.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/shapesSpace.ts" }
+    },
+    {
+      "id": "edgeUtils",
+      "bounds": { "x": 340, "y": 700, "width": 130, "height": 40 },
+      "label": "edgeUtils.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/edgeUtils.ts" }
+    },
+    {
+      "id": "hitTest",
+      "bounds": { "x": 490, "y": 700, "width": 120, "height": 40 },
+      "label": "hitTest.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/hitTest.ts" }
+    },
+    {
+      "id": "edgeGeometry",
+      "bounds": { "x": 630, "y": 700, "width": 170, "height": 40 },
+      "label": "edgeGeometry.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/edgeGeometry.ts" }
+    },
+    {
+      "id": "metadata",
+      "bounds": { "x": 820, "y": 700, "width": 140, "height": 40 },
+      "label": "metadata.ts",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas",
+      "fileLink": { "path": "src/webview/canvas/metadata.ts" }
+    },
+    {
+      "id": "grp-foundation",
+      "bounds": { "x": 50, "y": 830, "width": 900, "height": 120 },
+      "label": "Foundation (no/minimal local imports)",
+      "nodeColor": "#ECEFF1",
+      "borderColor": "#546E7A",
+      "labelColor": "#455A64"
+    },
+    {
+      "id": "schema",
+      "bounds": { "x": 80, "y": 870, "width": 130, "height": 40 },
+      "label": "schema.ts",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-foundation",
+      "fileLink": { "path": "src/schema.ts" }
+    },
+    {
+      "id": "messages",
+      "bounds": { "x": 240, "y": 870, "width": 150, "height": 40 },
+      "label": "messages.ts",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-foundation",
+      "fileLink": { "path": "src/messages.ts" }
+    },
+    {
+      "id": "shared",
+      "bounds": { "x": 420, "y": 870, "width": 120, "height": 40 },
+      "label": "shared.ts",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-foundation",
+      "fileLink": { "path": "src/webview/shared.ts" }
+    },
+    {
+      "id": "textDefaults",
+      "bounds": { "x": 570, "y": 870, "width": 160, "height": 40 },
+      "label": "textDefaults.ts",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-foundation",
+      "fileLink": { "path": "src/webview/canvas/textDefaults.ts" }
+    },
+    {
+      "id": "cursorManager",
+      "bounds": { "x": 760, "y": 870, "width": 170, "height": 40 },
+      "label": "cursorManager.ts",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff",
+      "shape": "rounded-rectangle",
+      "parentId": "grp-foundation",
+      "fileLink": { "path": "src/webview/interactions/cursorManager.ts" }
+    },
+
+    {
+      "id": "grp-legend",
+      "bounds": { "x": 1050, "y": 10, "width": 260, "height": 460 },
+      "label": "Legend",
+      "nodeColor": "#FAFAFA",
+      "borderColor": "#BDBDBD",
+      "labelColor": "#333333"
+    },
+    {
+      "id": "leg-swatch-entry",
+      "bounds": { "x": 1070, "y": 55, "width": 25, "height": 20 },
+      "nodeColor": "#1565C0",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-entry",
+      "bounds": { "x": 1105, "y": 55, "width": 180, "height": 20 },
+      "label": "Entry Points",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-swatch-orch",
+      "bounds": { "x": 1070, "y": 85, "width": 25, "height": 20 },
+      "nodeColor": "#6A1B9A",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-orch",
+      "bounds": { "x": 1105, "y": 85, "width": 180, "height": 20 },
+      "label": "Orchestrators",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-swatch-state",
+      "bounds": { "x": 1070, "y": 115, "width": 25, "height": 20 },
+      "nodeColor": "#00695C",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-state",
+      "bounds": { "x": 1105, "y": 115, "width": 180, "height": 20 },
+      "label": "State Management",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-swatch-inter",
+      "bounds": { "x": 1070, "y": 145, "width": 25, "height": 20 },
+      "nodeColor": "#BF360C",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-inter",
+      "bounds": { "x": 1105, "y": 145, "width": 180, "height": 20 },
+      "label": "Interactions",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-swatch-ctrl",
+      "bounds": { "x": 1070, "y": 175, "width": 25, "height": 20 },
+      "nodeColor": "#E65100",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-ctrl",
+      "bounds": { "x": 1105, "y": 175, "width": 180, "height": 20 },
+      "label": "Controls",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-swatch-canvas",
+      "bounds": { "x": 1070, "y": 205, "width": 25, "height": 20 },
+      "nodeColor": "#2E7D32",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-canvas",
+      "bounds": { "x": 1105, "y": 205, "width": 180, "height": 20 },
+      "label": "Canvas",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-swatch-found",
+      "bounds": { "x": 1070, "y": 235, "width": 25, "height": 20 },
+      "nodeColor": "#455A64",
+      "shape": "rectangle",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-found",
+      "bounds": { "x": 1105, "y": 235, "width": 180, "height": 20 },
+      "label": "Foundation",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-edge-title",
+      "bounds": { "x": 1070, "y": 275, "width": 200, "height": 25 },
+      "label": "Edge Styles",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-dot-s1",
+      "bounds": { "x": 1070, "y": 310, "width": 10, "height": 10 },
+      "nodeColor": "#666666",
+      "shape": "ellipse",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-dot-s2",
+      "bounds": { "x": 1140, "y": 310, "width": 10, "height": 10 },
+      "nodeColor": "#666666",
+      "shape": "ellipse",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-solid",
+      "bounds": { "x": 1160, "y": 305, "width": 130, "height": 20 },
+      "label": "Direct import",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-dot-d1",
+      "bounds": { "x": 1070, "y": 340, "width": 10, "height": 10 },
+      "nodeColor": "#666666",
+      "shape": "ellipse",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-dot-d2",
+      "bounds": { "x": 1140, "y": 340, "width": 10, "height": 10 },
+      "nodeColor": "#666666",
+      "shape": "ellipse",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-dashed",
+      "bounds": { "x": 1160, "y": 335, "width": 130, "height": 20 },
+      "label": "Representative",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-dot-m1",
+      "bounds": { "x": 1070, "y": 370, "width": 10, "height": 10 },
+      "nodeColor": "#666666",
+      "shape": "ellipse",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-dot-m2",
+      "bounds": { "x": 1140, "y": 370, "width": 10, "height": 10 },
+      "nodeColor": "#666666",
+      "shape": "ellipse",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-label-mutual",
+      "bounds": { "x": 1160, "y": 365, "width": 130, "height": 20 },
+      "label": "Mutual dep.",
+      "shape": "text",
+      "parentId": "grp-legend"
+    },
+    {
+      "id": "leg-flow-note",
+      "bounds": { "x": 1070, "y": 410, "width": 220, "height": 40 },
+      "label": "Top = most dependent\nBottom = most independent",
+      "shape": "text",
+      "parentId": "grp-legend"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-ext-provider",
+      "from": { "nodeId": "extension", "anchor": [70, 40] },
+      "to": { "nodeId": "vscpEditorProvider", "anchor": [100, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-main-renderer",
+      "from": { "nodeId": "main", "anchor": [40, 40] },
+      "to": { "nodeId": "renderer", "anchor": [100, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 590, "y": 80 }, { "x": 480, "y": 80 }]
+    },
+    {
+      "id": "e-main-messaging",
+      "from": { "nodeId": "main", "anchor": [80, 40] },
+      "to": { "nodeId": "messaging", "anchor": [75, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 630, "y": 80 }, { "x": 715, "y": 80 }]
+    },
+    {
+      "id": "e-renderer-state",
+      "from": { "nodeId": "renderer", "anchor": [100, 40] },
+      "to": { "nodeId": "state", "anchor": [30, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 480, "y": 175 }, { "x": 560, "y": 175 }]
+    },
+    {
+      "id": "e-messaging-state",
+      "from": { "nodeId": "messaging", "anchor": [75, 40] },
+      "to": { "nodeId": "state", "anchor": [90, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 715, "y": 175 }, { "x": 620, "y": 175 }]
+    },
+    {
+      "id": "e-main-interactions",
+      "from": { "nodeId": "main", "anchor": [0, 20] },
+      "to": { "nodeId": "panZoom", "anchor": [70, 0] },
+      "label": "imports interactions",
+      "style": "dashed",
+      "arrow": "end",
+      "waypoints": [{ "x": -20, "y": 40 }, { "x": -20, "y": 330 }]
+    },
+    {
+      "id": "e-main-controls",
+      "from": { "nodeId": "main", "anchor": [120, 20] },
+      "to": { "nodeId": "lockToggle", "anchor": [75, 0] },
+      "label": "imports controls",
+      "style": "dashed",
+      "arrow": "end",
+      "waypoints": [{ "x": 960, "y": 40 }, { "x": 960, "y": 330 }]
+    },
+    {
+      "id": "e-renderer-canvasNode",
+      "from": { "nodeId": "renderer", "anchor": [20, 40] },
+      "to": { "nodeId": "canvasNode", "anchor": [75, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 400, "y": 510 }, { "x": 95, "y": 510 }]
+    },
+    {
+      "id": "e-renderer-canvasEdge",
+      "from": { "nodeId": "renderer", "anchor": [50, 40] },
+      "to": { "nodeId": "canvasEdge", "anchor": [75, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 430, "y": 520 }, { "x": 265, "y": 520 }]
+    },
+    {
+      "id": "e-renderer-reconciler",
+      "from": { "nodeId": "renderer", "anchor": [90, 40] },
+      "to": { "nodeId": "edgeReconciler", "anchor": [90, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 470, "y": 530 }, { "x": 450, "y": 530 }]
+    },
+    {
+      "id": "e-canvasNode-shapes",
+      "from": { "nodeId": "canvasNode", "anchor": [40, 40] },
+      "to": { "nodeId": "shapes", "anchor": [60, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 60, "y": 655 }, { "x": 80, "y": 655 }]
+    },
+    {
+      "id": "e-canvasNode-hitTest",
+      "from": { "nodeId": "canvasNode", "anchor": [130, 40] },
+      "to": { "nodeId": "hitTest", "anchor": [60, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 150, "y": 665 }, { "x": 550, "y": 665 }]
+    },
+    {
+      "id": "e-canvasEdge-edgeGeometry",
+      "from": { "nodeId": "canvasEdge", "anchor": [130, 40] },
+      "to": { "nodeId": "edgeGeometry", "anchor": [85, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 320, "y": 675 }, { "x": 715, "y": 675 }]
+    },
+    {
+      "id": "e-canvasEdge-edgeUtils",
+      "from": { "nodeId": "canvasEdge", "anchor": [100, 40] },
+      "to": { "nodeId": "edgeUtils", "anchor": [65, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 290, "y": 660 }, { "x": 405, "y": 660 }]
+    },
+    {
+      "id": "e-edgeUtils-hitTest",
+      "from": { "nodeId": "edgeUtils", "anchor": [130, 20] },
+      "to": { "nodeId": "hitTest", "anchor": [0, 20] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-edgeUtils-edgeGeometry",
+      "from": { "nodeId": "edgeUtils", "anchor": [130, 30] },
+      "to": { "nodeId": "edgeGeometry", "anchor": [0, 30] },
+      "arrow": "end",
+      "waypoints": [{ "x": 470, "y": 750 }, { "x": 630, "y": 750 }]
+    },
+    {
+      "id": "e-reconciler-canvasEdge",
+      "from": { "nodeId": "edgeReconciler", "anchor": [0, 20] },
+      "to": { "nodeId": "canvasEdge", "anchor": [150, 20] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-labelEditor-domLabels",
+      "from": { "nodeId": "labelEditor", "anchor": [80, 40] },
+      "to": { "nodeId": "domLabels", "anchor": [60, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-keyboard-clipboard",
+      "from": { "nodeId": "keyboard", "anchor": [60, 40] },
+      "to": { "nodeId": "clipboard", "anchor": [50, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 240, "y": 410 }, { "x": 250, "y": 410 }]
+    },
+    {
+      "id": "e-contextMenu-clipboard",
+      "from": { "nodeId": "contextMenu", "anchor": [85, 40] },
+      "to": { "nodeId": "clipboard", "anchor": [120, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 425, "y": 420 }, { "x": 320, "y": 420 }]
+    },
+    {
+      "id": "e-shapes-shapesSpace",
+      "from": { "nodeId": "shapes", "anchor": [120, 20] },
+      "to": { "nodeId": "shapesSpace", "anchor": [0, 20] },
+      "arrow": "both",
+      "style": "dashed",
+      "label": "mutual"
+    },
+    {
+      "id": "e-domLabels-textDefaults",
+      "from": { "nodeId": "domLabels", "anchor": [75, 40] },
+      "to": { "nodeId": "textDefaults", "anchor": [80, 0] },
+      "arrow": "end",
+      "waypoints": [{ "x": 655, "y": 810 }, { "x": 650, "y": 810 }]
+    },
+    {
+      "id": "e-panZoom-cursorManager",
+      "from": { "nodeId": "panZoom", "anchor": [70, 40] },
+      "to": { "nodeId": "cursorManager", "anchor": [85, 0] },
+      "style": "dashed",
+      "arrow": "end",
+      "waypoints": [{ "x": -20, "y": 370 }, { "x": -20, "y": 810 }, { "x": 845, "y": 810 }]
+    },
+    {
+      "id": "e-messages-schema",
+      "from": { "nodeId": "messages", "anchor": [0, 20] },
+      "to": { "nodeId": "schema", "anchor": [130, 20] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-shared-schema",
+      "from": { "nodeId": "shared", "anchor": [60, 40] },
+      "to": { "nodeId": "schema", "anchor": [65, 40] },
+      "arrow": "end",
+      "waypoints": [{ "x": 480, "y": 935 }, { "x": 145, "y": 935 }]
+    },
+    {
+      "id": "leg-e-solid",
+      "from": { "nodeId": "leg-dot-s1", "anchor": [10, 5] },
+      "to": { "nodeId": "leg-dot-s2", "anchor": [0, 5] },
+      "arrow": "end"
+    },
+    {
+      "id": "leg-e-dashed",
+      "from": { "nodeId": "leg-dot-d1", "anchor": [10, 5] },
+      "to": { "nodeId": "leg-dot-d2", "anchor": [0, 5] },
+      "arrow": "end",
+      "style": "dashed"
+    },
+    {
+      "id": "leg-e-mutual",
+      "from": { "nodeId": "leg-dot-m1", "anchor": [10, 5] },
+      "to": { "nodeId": "leg-dot-m2", "anchor": [0, 5] },
+      "arrow": "both",
+      "style": "dashed"
+    }
+  ]
+}

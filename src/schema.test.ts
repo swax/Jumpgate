@@ -170,10 +170,10 @@ describe("nodeSchema", () => {
 // ---------------------------------------------------------------------------
 describe("edgeEndpointSchema", () => {
   it("accepts a node-anchored endpoint with anchor", () => {
-    const result = edgeEndpointSchema.safeParse({ nodeId: "n1", anchor: [0.5, 1.0] });
+    const result = edgeEndpointSchema.safeParse({ nodeId: "n1", anchor: [80, 50] });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data).toEqual({ nodeId: "n1", anchor: [0.5, 1.0] });
+      expect(result.data).toEqual({ nodeId: "n1", anchor: [80, 50] });
     }
   });
 
@@ -235,7 +235,7 @@ describe("edgeSchema", () => {
   it("accepts a full edge with all optional fields", () => {
     const full = {
       id: "e2",
-      from: { nodeId: "n1", anchor: [0, 0.5] },
+      from: { nodeId: "n1", anchor: [0, 25] },
       to: { x: 300, y: 400 },
       waypoints: [
         { x: 150, y: 200 },
@@ -395,8 +395,8 @@ describe("documentSchema", () => {
       edges: [
         {
           id: "e1",
-          from: { nodeId: "n1", anchor: [1, 0.5] },
-          to: { nodeId: "n2", anchor: [0, 0.5] },
+          from: { nodeId: "n1", anchor: [120, 30] },
+          to: { nodeId: "n2", anchor: [0, 30] },
           label: "flow",
           style: "dashed" as const,
           arrow: "end" as const,

@@ -2,234 +2,674 @@
   "nodes": [
     {
       "id": "activate",
-      "bounds": { "x": 380, "y": 40, "width": 160, "height": 50 },
-      "nodeColor": "#4CAF50", "labelColor": "white", "label": "activate",
-      "fileLink": { "path": "src/extension.ts", "match": "function activate" }
+      "bounds": {
+        "x": 380,
+        "y": 40,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#4CAF50",
+      "labelColor": "white",
+      "label": "activate",
+      "fileLink": {
+        "path": "src/extension.ts",
+        "match": "function activate"
+      }
     },
     {
       "id": "resolveEditor",
-      "bounds": { "x": 330, "y": 140, "width": 240, "height": 50 },
-      "nodeColor": "#4CAF50", "labelColor": "white", "label": "resolveCustomTextEditor",
-      "fileLink": { "path": "src/vscpEditorProvider.ts", "match": "async resolveCustomTextEditor" }
+      "bounds": {
+        "x": 330,
+        "y": 140,
+        "width": 240,
+        "height": 50
+      },
+      "nodeColor": "#4CAF50",
+      "labelColor": "white",
+      "label": "resolveCustomTextEditor",
+      "fileLink": {
+        "path": "src/vscpEditorProvider.ts",
+        "match": "async resolveCustomTextEditor"
+      }
     },
     {
       "id": "postMessage",
-      "bounds": { "x": 680, "y": 140, "width": 160, "height": 50 },
-      "nodeColor": "#2196F3", "labelColor": "white", "label": "postMessage",
-      "fileLink": { "path": "src/webview/main.ts", "match": "function postMessage" }
+      "bounds": {
+        "x": 680,
+        "y": 140,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#2196F3",
+      "labelColor": "white",
+      "label": "postMessage",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "function postMessage"
+      }
     },
     {
       "id": "main",
-      "bounds": { "x": 380, "y": 280, "width": 160, "height": 50 },
-      "nodeColor": "#2196F3", "labelColor": "white", "label": "main",
-      "fileLink": { "path": "src/webview/main.ts", "match": "function main" }
+      "bounds": {
+        "x": 380,
+        "y": 280,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#2196F3",
+      "labelColor": "white",
+      "label": "main",
+      "fileLink": {
+        "path": "src/webview/main.ts",
+        "match": "function main"
+      }
     },
     {
       "id": "subscribe",
-      "bounds": { "x": 900, "y": 280, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "subscribe",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function subscribe" }
+      "bounds": {
+        "x": 900,
+        "y": 280,
+        "width": 140,
+        "height": 50
+      },
+      "nodeColor": "#FFC107",
+      "labelColor": "black",
+      "label": "subscribe",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function subscribe"
+      }
     },
     {
       "id": "setupPanZoom",
-      "bounds": { "x": 20, "y": 420, "width": 160, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupPanZoom",
-      "fileLink": { "path": "src/webview/interactions/panZoom.ts", "match": "function setupPanZoom" }
+      "bounds": {
+        "x": 20,
+        "y": 420,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
+      "label": "setupPanZoom",
+      "fileLink": {
+        "path": "src/webview/interactions/panZoom.ts",
+        "match": "function setupPanZoom"
+      }
     },
     {
       "id": "setupKeyboard",
-      "bounds": { "x": 200, "y": 420, "width": 170, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupKeyboard",
-      "fileLink": { "path": "src/webview/interactions/keyboard.ts", "match": "function setupKeyboard" }
+      "bounds": {
+        "x": 200,
+        "y": 420,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
+      "label": "setupKeyboard",
+      "fileLink": {
+        "path": "src/webview/interactions/keyboard.ts",
+        "match": "function setupKeyboard"
+      }
     },
     {
       "id": "setupEdgeMode",
-      "bounds": { "x": 390, "y": 420, "width": 170, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupEdgeMode",
-      "fileLink": { "path": "src/webview/interactions/edgeMode.ts", "match": "function setupEdgeMode" }
+      "bounds": {
+        "x": 390,
+        "y": 420,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
+      "label": "setupEdgeMode",
+      "fileLink": {
+        "path": "src/webview/interactions/edgeMode.ts",
+        "match": "function setupEdgeMode"
+      }
     },
     {
       "id": "createRenderer",
-      "bounds": { "x": 600, "y": 420, "width": 170, "height": 50 },
-      "nodeColor": "#FF9800", "labelColor": "white", "label": "createRenderer",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "function createRenderer" }
+      "bounds": {
+        "x": 600,
+        "y": 420,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#FF9800",
+      "labelColor": "white",
+      "label": "createRenderer",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "function createRenderer"
+      }
     },
     {
       "id": "updateNode",
-      "bounds": { "x": 900, "y": 420, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "updateNode",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function updateNode" }
+      "bounds": {
+        "x": 900,
+        "y": 420,
+        "width": 140,
+        "height": 50
+      },
+      "nodeColor": "#FFC107",
+      "labelColor": "black",
+      "label": "updateNode",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function updateNode"
+      }
     },
     {
       "id": "setupSidebar",
-      "bounds": { "x": 20, "y": 540, "width": 160, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupSidebar",
-      "fileLink": { "path": "src/webview/controls/sidebar.ts", "match": "function setupSidebar" }
+      "bounds": {
+        "x": 20,
+        "y": 540,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
+      "label": "setupSidebar",
+      "fileLink": {
+        "path": "src/webview/controls/sidebar.ts",
+        "match": "function setupSidebar"
+      }
     },
     {
       "id": "setupLockToggle",
-      "bounds": { "x": 200, "y": 540, "width": 170, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupLockToggle",
-      "fileLink": { "path": "src/webview/controls/lockToggle.ts", "match": "function setupLockToggle" }
+      "bounds": {
+        "x": 200,
+        "y": 540,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
+      "label": "setupLockToggle",
+      "fileLink": {
+        "path": "src/webview/controls/lockToggle.ts",
+        "match": "function setupLockToggle"
+      }
     },
     {
       "id": "setupGridSnap",
-      "bounds": { "x": 390, "y": 540, "width": 160, "height": 50 },
-      "nodeColor": "#9C27B0", "labelColor": "white", "label": "setupGridSnap",
-      "fileLink": { "path": "src/webview/controls/gridSnap.ts", "match": "function setupGridSnap" }
+      "bounds": {
+        "x": 390,
+        "y": 540,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#9C27B0",
+      "labelColor": "white",
+      "label": "setupGridSnap",
+      "fileLink": {
+        "path": "src/webview/controls/gridSnap.ts",
+        "match": "function setupGridSnap"
+      }
     },
     {
       "id": "render",
-      "bounds": { "x": 600, "y": 540, "width": 160, "height": 50 },
-      "nodeColor": "#FF9800", "labelColor": "white", "label": "render",
-      "fileLink": { "path": "src/webview/renderer.ts", "match": "function render" }
+      "bounds": {
+        "x": 600,
+        "y": 540,
+        "width": 160,
+        "height": 50
+      },
+      "nodeColor": "#FF9800",
+      "labelColor": "white",
+      "label": "render",
+      "fileLink": {
+        "path": "src/webview/renderer.ts",
+        "match": "function render"
+      }
     },
     {
       "id": "addNodes",
-      "bounds": { "x": 900, "y": 540, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "addNodes",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function addNodes" }
+      "bounds": {
+        "x": 900,
+        "y": 540,
+        "width": 140,
+        "height": 50
+      },
+      "nodeColor": "#FFC107",
+      "labelColor": "black",
+      "label": "addNodes",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function addNodes"
+      }
     },
     {
       "id": "createCanvasNode",
-      "bounds": { "x": 460, "y": 680, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "createCanvasNode",
-      "fileLink": { "path": "src/webview/canvas/canvasNode.ts", "match": "function createCanvasNode" }
+      "bounds": {
+        "x": 460,
+        "y": 680,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
+      "label": "createCanvasNode",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts",
+        "match": "function createCanvasNode"
+      }
     },
     {
       "id": "createCanvasEdge",
-      "bounds": { "x": 660, "y": 680, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "createCanvasEdge",
-      "fileLink": { "path": "src/webview/canvas/canvasEdge.ts", "match": "function createCanvasEdge" }
+      "bounds": {
+        "x": 660,
+        "y": 680,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
+      "label": "createCanvasEdge",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts",
+        "match": "function createCanvasEdge"
+      }
     },
     {
       "id": "deleteNodes",
-      "bounds": { "x": 900, "y": 680, "width": 140, "height": 50 },
-      "nodeColor": "#FFC107", "labelColor": "black", "label": "deleteNodes",
-      "fileLink": { "path": "src/webview/state.ts", "match": "function deleteNodes" }
+      "bounds": {
+        "x": 900,
+        "y": 680,
+        "width": 140,
+        "height": 50
+      },
+      "nodeColor": "#FFC107",
+      "labelColor": "black",
+      "label": "deleteNodes",
+      "fileLink": {
+        "path": "src/webview/state.ts",
+        "match": "function deleteNodes"
+      }
     },
     {
       "id": "startLabelEdit",
-      "bounds": { "x": 460, "y": 780, "width": 170, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "startLabelEdit",
-      "fileLink": { "path": "src/webview/interactions/labelEditor.ts", "match": "function startLabelEdit" }
+      "bounds": {
+        "x": 460,
+        "y": 780,
+        "width": 170,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
+      "label": "startLabelEdit",
+      "fileLink": {
+        "path": "src/webview/interactions/labelEditor.ts",
+        "match": "function startLabelEdit"
+      }
     },
     {
       "id": "selectionOverlay",
-      "bounds": { "x": 660, "y": 780, "width": 180, "height": 50 },
-      "nodeColor": "#E91E63", "labelColor": "white", "label": "SelectionOverlay",
-      "fileLink": { "path": "src/webview/canvas/selectionOverlay.ts", "match": "class SelectionOverlay" }
+      "bounds": {
+        "x": 660,
+        "y": 780,
+        "width": 180,
+        "height": 50
+      },
+      "nodeColor": "#E91E63",
+      "labelColor": "white",
+      "label": "SelectionOverlay",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionOverlay.ts",
+        "match": "class SelectionOverlay"
+      }
     }
   ],
   "edges": [
     {
       "id": "e-activate-resolve",
-      "from": { "nodeId": "activate", "anchor": [0.5, 1] },
-      "to": { "nodeId": "resolveEditor", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "activate",
+        "anchor": [
+          80,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "resolveEditor",
+        "anchor": [
+          120,
+          0
+        ]
+      }
     },
     {
       "id": "e-resolve-main",
-      "from": { "nodeId": "resolveEditor", "anchor": [0.5, 1] },
-      "to": { "nodeId": "main", "anchor": [0.5, 0] },
+      "from": {
+        "nodeId": "resolveEditor",
+        "anchor": [
+          120,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "main",
+        "anchor": [
+          80,
+          0
+        ]
+      },
       "style": "dashed"
     },
     {
       "id": "e-resolve-postmsg",
-      "from": { "nodeId": "resolveEditor", "anchor": [1, 0.5] },
-      "to": { "nodeId": "postMessage", "anchor": [0, 0.5] },
+      "from": {
+        "nodeId": "resolveEditor",
+        "anchor": [
+          240,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "postMessage",
+        "anchor": [
+          0,
+          25
+        ]
+      },
       "arrow": "both",
       "style": "dashed"
     },
     {
       "id": "e-main-subscribe",
-      "from": { "nodeId": "main", "anchor": [1, 0.5] },
-      "to": { "nodeId": "subscribe", "anchor": [0, 0.5] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          160,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "subscribe",
+        "anchor": [
+          0,
+          25
+        ]
+      }
     },
     {
       "id": "e-main-panzoom",
-      "from": { "nodeId": "main", "anchor": [0, 1] },
-      "to": { "nodeId": "setupPanZoom", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          0,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "setupPanZoom",
+        "anchor": [
+          80,
+          0
+        ]
+      }
     },
     {
       "id": "e-main-keyboard",
-      "from": { "nodeId": "main", "anchor": [0.15, 1] },
-      "to": { "nodeId": "setupKeyboard", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          24,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "setupKeyboard",
+        "anchor": [
+          85,
+          0
+        ]
+      }
     },
     {
       "id": "e-main-edgemode",
-      "from": { "nodeId": "main", "anchor": [0.4, 1] },
-      "to": { "nodeId": "setupEdgeMode", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          64,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "setupEdgeMode",
+        "anchor": [
+          85,
+          0
+        ]
+      }
     },
     {
       "id": "e-main-renderer",
-      "from": { "nodeId": "main", "anchor": [0.85, 1] },
-      "to": { "nodeId": "createRenderer", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          136,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "createRenderer",
+        "anchor": [
+          85,
+          0
+        ]
+      }
     },
     {
       "id": "e-main-sidebar",
-      "from": { "nodeId": "main", "anchor": [0, 0.9] },
-      "to": { "nodeId": "setupSidebar", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          0,
+          45
+        ]
+      },
+      "to": {
+        "nodeId": "setupSidebar",
+        "anchor": [
+          80,
+          0
+        ]
+      }
     },
     {
       "id": "e-main-lock",
-      "from": { "nodeId": "main", "anchor": [0.2, 1] },
-      "to": { "nodeId": "setupLockToggle", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          32,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "setupLockToggle",
+        "anchor": [
+          85,
+          0
+        ]
+      }
     },
     {
       "id": "e-main-gridsnap",
-      "from": { "nodeId": "main", "anchor": [0.5, 1] },
-      "to": { "nodeId": "setupGridSnap", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          80,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "setupGridSnap",
+        "anchor": [
+          80,
+          0
+        ]
+      }
     },
     {
       "id": "e-renderer-render",
-      "from": { "nodeId": "createRenderer", "anchor": [0.5, 1] },
-      "to": { "nodeId": "render", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "createRenderer",
+        "anchor": [
+          85,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "render",
+        "anchor": [
+          80,
+          0
+        ]
+      }
     },
     {
       "id": "e-render-canvasnode",
-      "from": { "nodeId": "render", "anchor": [0.3, 1] },
-      "to": { "nodeId": "createCanvasNode", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "render",
+        "anchor": [
+          48,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "createCanvasNode",
+        "anchor": [
+          90,
+          0
+        ]
+      }
     },
     {
       "id": "e-render-canvasedge",
-      "from": { "nodeId": "render", "anchor": [0.7, 1] },
-      "to": { "nodeId": "createCanvasEdge", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "render",
+        "anchor": [
+          112,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "createCanvasEdge",
+        "anchor": [
+          90,
+          0
+        ]
+      }
     },
     {
       "id": "e-render-overlay",
-      "from": { "nodeId": "render", "anchor": [1, 1] },
-      "to": { "nodeId": "selectionOverlay", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "render",
+        "anchor": [
+          160,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "selectionOverlay",
+        "anchor": [
+          90,
+          0
+        ]
+      }
     },
     {
       "id": "e-canvasnode-label",
-      "from": { "nodeId": "createCanvasNode", "anchor": [0.5, 1] },
-      "to": { "nodeId": "startLabelEdit", "anchor": [0.5, 0] }
+      "from": {
+        "nodeId": "createCanvasNode",
+        "anchor": [
+          90,
+          50
+        ]
+      },
+      "to": {
+        "nodeId": "startLabelEdit",
+        "anchor": [
+          85,
+          0
+        ]
+      }
     },
     {
       "id": "e-keyboard-delete",
-      "from": { "nodeId": "setupKeyboard", "anchor": [1, 0.5] },
-      "to": { "nodeId": "deleteNodes", "anchor": [0, 0.5] },
+      "from": {
+        "nodeId": "setupKeyboard",
+        "anchor": [
+          170,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "deleteNodes",
+        "anchor": [
+          0,
+          25
+        ]
+      },
       "style": "dashed",
       "color": "#FFC107"
     },
     {
       "id": "e-keyboard-add",
-      "from": { "nodeId": "setupKeyboard", "anchor": [1, 0.8] },
-      "to": { "nodeId": "addNodes", "anchor": [0, 0.5] },
+      "from": {
+        "nodeId": "setupKeyboard",
+        "anchor": [
+          170,
+          40
+        ]
+      },
+      "to": {
+        "nodeId": "addNodes",
+        "anchor": [
+          0,
+          25
+        ]
+      },
       "style": "dashed",
       "color": "#FFC107"
     },
     {
       "id": "e-sidebar-update",
-      "from": { "nodeId": "setupSidebar", "anchor": [1, 0.5] },
-      "to": { "nodeId": "updateNode", "anchor": [0, 0.5] },
+      "from": {
+        "nodeId": "setupSidebar",
+        "anchor": [
+          160,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "updateNode",
+        "anchor": [
+          0,
+          25
+        ]
+      },
       "style": "dashed",
       "color": "#FFC107"
     },
     {
       "id": "e-edgemode-add",
-      "from": { "nodeId": "setupEdgeMode", "anchor": [1, 0.5] },
-      "to": { "nodeId": "addNodes", "anchor": [0, 0.3] },
+      "from": {
+        "nodeId": "setupEdgeMode",
+        "anchor": [
+          170,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "addNodes",
+        "anchor": [
+          0,
+          15
+        ]
+      },
       "style": "dashed",
       "color": "#9C27B0"
     }
