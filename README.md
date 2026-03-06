@@ -1,6 +1,6 @@
 # Jumpgate
 
-A code diagramming tool for VS Code optimized for navigating your codebase.
+An interactive diagram editor built on PixiJS. Use it as a standalone library in any web app, or as a VS Code extension for navigating your codebase.
 
 Open it in a side panel, map out subsets of your code as visual diagrams, then pan and zoom around like a canvas. Click any node to open the linked code in an adjacent panel — the graph stays in view so you always have your bearings. It's a spatial index for the parts of your codebase that matter most to you.
 
@@ -51,6 +51,54 @@ Create a `.jg` file (it's JSON) and open it — the diagram editor appears autom
 - Toggle **snap-to-grid** in the toolbar for aligned layouts (20px grid).
 - Toggle the **theme** button to switch between Standard and Space themes.
 
+## Standalone Library
+
+The core editor is published as the `jumpgate` npm package with no VS Code dependency. Install it and render a diagram in any web app:
+
+```ts
+import { createJumpgateEditor } from "jumpgate";
+
+const editor = await createJumpgateEditor(
+  document.getElementById("diagram"),
+  {
+    onDocumentChanged: (doc) => saveToBackend(doc),
+  }
+);
+
+editor.setDocument({ nodes: [...], edges: [...] });
+```
+
+`createJumpgateEditor` takes a container div and optional callbacks, creates the full editor UI (toolbar, sidebar, canvas), and returns a handle with `setDocument()`, `setFileLink()`, and `destroy()`.
+
+## Project Structure
+
+```
+packages/
+  jumpgate/            # Standalone npm package (pixi.js, zod)
+  jumpgate-vscode/     # VS Code extension (thin wrapper)
+```
+
+The VS Code extension is a thin adapter that wires `createJumpgateEditor` callbacks to VS Code's `postMessage` API and adds file-linking integration.
+
+## Development
+
+```sh
+npm install
+npm run build          # Build both packages
+npm test               # Run tests
+```
+
+**VS Code extension** — Press F5 to launch the Extension Development Host.
+
+**Standalone demo** — Run the demo server to test the library in a browser:
+
+```sh
+cd packages/jumpgate
+npm run dev            # Serves at http://localhost:8080
+```
+
+Open a `.jg` file from the `samples/` directory using the Open button or drag-and-drop.
+
 ## Performance
 
 Diagrams render on a PixiJS/WebGL canvas, so panning, zooming, and dragging stay smooth even with large numbers of nodes and edges. Text labels are rendered as native DOM elements overlaid on the canvas — this keeps text crisp and fully legible at any zoom level, even when nodes are tiny. (PixiJS rasterizes text to textures, which gets fuzzy when scaled down; DOM text uses the browser's own font rendering with full hinting and subpixel antialiasing.)
@@ -58,15 +106,6 @@ Diagrams render on a PixiJS/WebGL canvas, so panning, zooming, and dragging stay
 ## AI-Optimized Format
 
 Jumpgate has no auto-layout engine — and that's by design. The `.jg` file format is simple, flat JSON with an explicit structure: node positions, sizes, colors, shapes, and edge connections are all defined directly — no graph language to compile, no layout hints to interpret. This makes it easy for AI to read and write. Just describe what you want (e.g. "lay out a service diagram with auth at the top and database at the bottom") and let AI generate the `.jg` file. AI tends to produce more meaningful spatial arrangements than algorithmic auto-layout because it understands the semantic relationships between your components and can place things where they make sense.
-
-## Development
-
-```sh
-npm install
-npm run build
-```
-
-Press F5 to launch the Extension Development Host.
 
 ## License
 
