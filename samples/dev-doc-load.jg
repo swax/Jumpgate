@@ -20,7 +20,7 @@
         "width": 240,
         "height": 70
       },
-      "label": ".vscp File (JSON on disk)",
+      "label": ".jg File (JSON on disk)",
       "nodeColor": "#546E7A",
       "labelColor": "#ffffff",
       "shape": "document"
@@ -33,12 +33,12 @@
         "width": 240,
         "height": 60
       },
-      "label": "VscpEditorProvider\nresolveCustomTextEditor()",
+      "label": "JgEditorProvider\nresolveCustomTextEditor()",
       "nodeColor": "#1976D2",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts",
+        "path": "src/jgEditorProvider.ts",
         "match": "resolveCustomTextEditor"
       }
     },
@@ -55,7 +55,7 @@
       "labelColor": "#000000",
       "shape": "rounded-rectangle",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts",
+        "path": "src/jgEditorProvider.ts",
         "match": "safeParse"
       }
     },
@@ -157,7 +157,7 @@
           0
         ]
       },
-      "label": "open .vscp in VS Code",
+      "label": "open .jg in VS Code",
       "arrow": "end"
     },
     {

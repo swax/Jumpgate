@@ -28,7 +28,7 @@
       "labelColor": "white",
       "label": "resolveCustomTextEditor",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts",
+        "path": "src/jgEditorProvider.ts",
         "match": "async resolveCustomTextEditor"
       }
     },

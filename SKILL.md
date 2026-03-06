@@ -1,8 +1,8 @@
-# Skill: Generate VS Code Perspective Diagrams (.vscp)
+# Skill: Generate Jumpgate Diagrams (.jg)
 
-You are generating a `.vscp` file for **VS Code Perspective**, a code diagramming extension. The file is plain JSON that the editor renders as an interactive canvas with nodes, edges, labels, and colors.
+You are generating a `.jg` file for **Jumpgate**, a code diagramming extension. The file is plain JSON that the editor renders as an interactive canvas with nodes, edges, labels, and colors.
 
-Read this entire document before generating. The user will describe what they want — a system architecture, a flowchart, a dependency graph, etc. Your job is to produce valid `.vscp` JSON that looks good when opened.
+Read this entire document before generating. The user will describe what they want — a system architecture, a flowchart, a dependency graph, etc. Your job is to produce valid `.jg` JSON that looks good when opened.
 
 ---
 
@@ -316,4 +316,4 @@ A small service architecture diagram:
 7. The JSON is valid (no trailing commas, no comments)
 8. If `parentId` is used, the parent node exists and is large enough to contain children
 9. Layout has enough spacing to be readable (40px minimum between unrelated nodes)
-10. The output is a raw JSON object — no markdown fences, no explanation, just the `.vscp` content
+10. The output is a raw JSON object — no markdown fences, no explanation, just the `.jg` content

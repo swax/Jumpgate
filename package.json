@@ -1,13 +1,13 @@
 {
-  "name": "vscode-perspective",
-  "displayName": "VS Code Perspective",
-  "description": "A viewer for .vscp files",
+  "name": "jumpgate",
+  "displayName": "Jumpgate",
+  "description": "A viewer for .jg files",
   "version": "0.0.1",
   "publisher": "publisher-name",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/username/vscode-perspective"
+    "url": "https://github.com/swax/jumpgate"
   },
   "engines": {
     "vscode": "^1.96.0"
@@ -19,25 +19,25 @@
   "contributes": {
     "commands": [
       {
-        "command": "perspective.linkToNode",
+        "command": "jumpgate.linkToNode",
         "title": "Jumpgate: Link to Node/Edge"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "perspective.linkToNode",
-          "group": "z_perspective"
+          "command": "jumpgate.linkToNode",
+          "group": "z_jumpgate"
         }
       ]
     },
     "customEditors": [
       {
-        "viewType": "perspective.vscpPreview",
-        "displayName": "VSCP Preview",
+        "viewType": "jumpgate.preview",
+        "displayName": "Jumpgate Preview",
         "selector": [
           {
-            "filenamePattern": "*.vscp"
+            "filenamePattern": "*.jg"
           }
         ],
         "priority": "default"

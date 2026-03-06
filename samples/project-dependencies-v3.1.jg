@@ -5,10 +5,10 @@
       "bounds": {
         "x": 20,
         "y": -70,
-        "width": 1200,
+        "width": 920,
         "height": 40
       },
-      "label": "VS Code Perspective - Source File Dependencies (v3) (ChatGPT 5.4 High)",
+      "label": "Jumpgate - Source File Dependencies (v3) (ChatGPT 5.4 High)",
       "shape": "text"
     },
     {
@@ -16,19 +16,19 @@
       "bounds": {
         "x": 20,
         "y": -30,
-        "width": 1300,
+        "width": 900,
         "height": 30
       },
-      "label": "Rows now flow top-down by dependency depth: files that import the most internal modules are higher, leaf contracts and utilities are lower.",
+      "label": "Direct imports inside src/**. Dashed edges mark type or contract-only dependencies.",
       "shape": "text"
     },
     {
-      "id": "grp-entry",
+      "id": "grp-extension",
       "bounds": {
         "x": 20,
         "y": 20,
-        "width": 220,
-        "height": 1380
+        "width": 310,
+        "height": 190
       },
       "nodeColor": "#E3F2FD",
       "labelColor": "#0D47A1",
@@ -36,12 +36,25 @@
       "label": "Extension Host"
     },
     {
+      "id": "grp-contracts",
+      "bounds": {
+        "x": 360,
+        "y": 20,
+        "width": 330,
+        "height": 190
+      },
+      "nodeColor": "#ECEFF1",
+      "labelColor": "#37474F",
+      "borderColor": "#607D8B",
+      "label": "Contracts + Shared Types"
+    },
+    {
       "id": "grp-webview",
       "bounds": {
-        "x": 260,
+        "x": 720,
         "y": 20,
-        "width": 220,
-        "height": 1380
+        "width": 360,
+        "height": 250
       },
       "nodeColor": "#F3E5F5",
       "labelColor": "#4A148C",
@@ -49,25 +62,12 @@
       "label": "Webview Core"
     },
     {
-      "id": "grp-interactions",
-      "bounds": {
-        "x": 500,
-        "y": 20,
-        "width": 260,
-        "height": 1380
-      },
-      "nodeColor": "#FBE9E7",
-      "labelColor": "#BF360C",
-      "borderColor": "#E64A19",
-      "label": "Interactions"
-    },
-    {
       "id": "grp-controls",
       "bounds": {
-        "x": 780,
+        "x": 1110,
         "y": 20,
-        "width": 220,
-        "height": 1380
+        "width": 320,
+        "height": 170
       },
       "nodeColor": "#FFF8E1",
       "labelColor": "#E65100",
@@ -75,12 +75,25 @@
       "label": "Controls"
     },
     {
+      "id": "grp-interactions",
+      "bounds": {
+        "x": 1110,
+        "y": 220,
+        "width": 320,
+        "height": 300
+      },
+      "nodeColor": "#FBE9E7",
+      "labelColor": "#BF360C",
+      "borderColor": "#E64A19",
+      "label": "Interactions"
+    },
+    {
       "id": "grp-canvas",
       "bounds": {
-        "x": 1020,
-        "y": 20,
-        "width": 460,
-        "height": 1380
+        "x": 20,
+        "y": 250,
+        "width": 1060,
+        "height": 540
       },
       "nodeColor": "#E8F5E9",
       "labelColor": "#1B5E20",
@@ -88,25 +101,12 @@
       "label": "Canvas"
     },
     {
-      "id": "grp-contracts",
-      "bounds": {
-        "x": 1500,
-        "y": 20,
-        "width": 220,
-        "height": 1380
-      },
-      "nodeColor": "#ECEFF1",
-      "labelColor": "#37474F",
-      "borderColor": "#607D8B",
-      "label": "Contracts + Shared"
-    },
-    {
       "id": "grp-legend",
       "bounds": {
-        "x": 1740,
-        "y": 20,
-        "width": 250,
-        "height": 320
+        "x": 1110,
+        "y": 550,
+        "width": 320,
+        "height": 240
       },
       "nodeColor": "#FAFAFA",
       "labelColor": "#37474F",
@@ -114,11 +114,96 @@
       "label": "Legend"
     },
     {
+      "id": "extension",
+      "bounds": {
+        "x": 50,
+        "y": 70,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#1565C0",
+      "labelColor": "#FFFFFF",
+      "label": "extension.ts",
+      "fileLink": {
+        "path": "src/extension.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension"
+    },
+    {
+      "id": "provider",
+      "bounds": {
+        "x": 50,
+        "y": 130,
+        "width": 220,
+        "height": 50
+      },
+      "nodeColor": "#1565C0",
+      "labelColor": "#FFFFFF",
+      "label": "jgEditorProvider.ts",
+      "fileLink": {
+        "path": "src/jgEditorProvider.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-extension"
+    },
+    {
+      "id": "schema",
+      "bounds": {
+        "x": 390,
+        "y": 70,
+        "width": 120,
+        "height": 50
+      },
+      "nodeColor": "#546E7A",
+      "labelColor": "#FFFFFF",
+      "label": "schema.ts",
+      "fileLink": {
+        "path": "src/schema.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-contracts"
+    },
+    {
+      "id": "messages",
+      "bounds": {
+        "x": 530,
+        "y": 70,
+        "width": 120,
+        "height": 50
+      },
+      "nodeColor": "#607D8B",
+      "labelColor": "#FFFFFF",
+      "label": "messages.ts",
+      "fileLink": {
+        "path": "src/messages.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-contracts"
+    },
+    {
+      "id": "shared",
+      "bounds": {
+        "x": 450,
+        "y": 140,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#78909C",
+      "labelColor": "#FFFFFF",
+      "label": "shared.ts",
+      "fileLink": {
+        "path": "src/webview/shared.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-contracts"
+    },
+    {
       "id": "main",
       "bounds": {
-        "x": 300,
-        "y": 100,
-        "width": 140,
+        "x": 750,
+        "y": 70,
+        "width": 120,
         "height": 50
       },
       "nodeColor": "#8E24AA",
@@ -133,9 +218,9 @@
     {
       "id": "renderer",
       "bounds": {
-        "x": 290,
-        "y": 220,
-        "width": 160,
+        "x": 900,
+        "y": 70,
+        "width": 140,
         "height": 50
       },
       "nodeColor": "#8E24AA",
@@ -148,11 +233,283 @@
       "parentId": "grp-webview"
     },
     {
+      "id": "state",
+      "bounds": {
+        "x": 750,
+        "y": 150,
+        "width": 120,
+        "height": 50
+      },
+      "nodeColor": "#00695C",
+      "labelColor": "#FFFFFF",
+      "label": "state.ts",
+      "fileLink": {
+        "path": "src/webview/state.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-webview"
+    },
+    {
+      "id": "messaging",
+      "bounds": {
+        "x": 900,
+        "y": 150,
+        "width": 140,
+        "height": 50
+      },
+      "nodeColor": "#6A1B9A",
+      "labelColor": "#FFFFFF",
+      "label": "messaging.ts",
+      "fileLink": {
+        "path": "src/webview/messaging.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-webview"
+    },
+    {
+      "id": "gridSnap",
+      "bounds": {
+        "x": 1140,
+        "y": 70,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#F57F17",
+      "labelColor": "#000000",
+      "label": "gridSnap.ts",
+      "fileLink": {
+        "path": "src/webview/controls/gridSnap.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls"
+    },
+    {
+      "id": "lockToggle",
+      "bounds": {
+        "x": 1280,
+        "y": 70,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#F57F17",
+      "labelColor": "#000000",
+      "label": "lockToggle.ts",
+      "fileLink": {
+        "path": "src/webview/controls/lockToggle.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls"
+    },
+    {
+      "id": "sidebar",
+      "bounds": {
+        "x": 1140,
+        "y": 130,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#F57F17",
+      "labelColor": "#000000",
+      "label": "sidebar.ts",
+      "fileLink": {
+        "path": "src/webview/controls/sidebar.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls"
+    },
+    {
+      "id": "themeToggle",
+      "bounds": {
+        "x": 1280,
+        "y": 130,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#F57F17",
+      "labelColor": "#000000",
+      "label": "themeToggle.ts",
+      "fileLink": {
+        "path": "src/webview/controls/themeToggle.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-controls"
+    },
+    {
+      "id": "cursorManager",
+      "bounds": {
+        "x": 1140,
+        "y": 270,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "cursorManager.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/cursorManager.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "panZoom",
+      "bounds": {
+        "x": 1290,
+        "y": 270,
+        "width": 110,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "panZoom.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/panZoom.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "keyboard",
+      "bounds": {
+        "x": 1140,
+        "y": 330,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "keyboard.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/keyboard.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "contextMenu",
+      "bounds": {
+        "x": 1280,
+        "y": 330,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "contextMenu.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/contextMenu.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "edgeMode",
+      "bounds": {
+        "x": 1140,
+        "y": 390,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "edgeMode.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/edgeMode.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "selectionBox",
+      "bounds": {
+        "x": 1280,
+        "y": 390,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "selectionBox.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/selectionBox.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "groupStatus",
+      "bounds": {
+        "x": 1140,
+        "y": 450,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "groupStatus.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/groupStatus.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "clipboard",
+      "bounds": {
+        "x": 1280,
+        "y": 450,
+        "width": 120,
+        "height": 40
+      },
+      "nodeColor": "#BF360C",
+      "labelColor": "#FFFFFF",
+      "label": "clipboard.ts",
+      "fileLink": {
+        "path": "src/webview/interactions/clipboard.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-interactions"
+    },
+    {
+      "id": "canvasNode",
+      "bounds": {
+        "x": 50,
+        "y": 310,
+        "width": 160,
+        "height": 40
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "canvasNode.ts",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasNode.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas"
+    },
+    {
+      "id": "canvasEdge",
+      "bounds": {
+        "x": 240,
+        "y": 310,
+        "width": 160,
+        "height": 40
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "canvasEdge.ts",
+      "fileLink": {
+        "path": "src/webview/canvas/canvasEdge.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas"
+    },
+    {
       "id": "edgeReconciler",
       "bounds": {
-        "x": 1050,
-        "y": 340,
-        "width": 190,
+        "x": 430,
+        "y": 310,
+        "width": 170,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -167,8 +524,8 @@
     {
       "id": "edgeHandleOverlay",
       "bounds": {
-        "x": 1040,
-        "y": 460,
+        "x": 650,
+        "y": 310,
         "width": 200,
         "height": 40
       },
@@ -182,79 +539,11 @@
       "parentId": "grp-canvas"
     },
     {
-      "id": "contextMenu",
-      "bounds": {
-        "x": 520,
-        "y": 460,
-        "width": 190,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "contextMenu.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/contextMenu.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
-      "id": "canvasEdge",
-      "bounds": {
-        "x": 1050,
-        "y": 580,
-        "width": 180,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "canvasEdge.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/canvasEdge.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "edgeMode",
-      "bounds": {
-        "x": 520,
-        "y": 580,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "edgeMode.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/edgeMode.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
-      "id": "edgeUtils",
-      "bounds": {
-        "x": 1260,
-        "y": 700,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "edgeUtils.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/edgeUtils.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
       "id": "selectionOverlay",
       "bounds": {
-        "x": 1030,
-        "y": 700,
-        "width": 190,
+        "x": 50,
+        "y": 390,
+        "width": 180,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -267,79 +556,11 @@
       "parentId": "grp-canvas"
     },
     {
-      "id": "selectionBox",
-      "bounds": {
-        "x": 520,
-        "y": 700,
-        "width": 190,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "selectionBox.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/selectionBox.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
-      "id": "canvasNode",
-      "bounds": {
-        "x": 1030,
-        "y": 820,
-        "width": 180,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "canvasNode.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/canvasNode.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "hitTest",
-      "bounds": {
-        "x": 1230,
-        "y": 820,
-        "width": 150,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "hitTest.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/hitTest.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "keyboard",
-      "bounds": {
-        "x": 520,
-        "y": 820,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "keyboard.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/keyboard.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
       "id": "labelEditor",
       "bounds": {
-        "x": 1210,
-        "y": 870,
-        "width": 170,
+        "x": 260,
+        "y": 390,
+        "width": 150,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -352,181 +573,11 @@
       "parentId": "grp-canvas"
     },
     {
-      "id": "extension",
-      "bounds": {
-        "x": 50,
-        "y": 940,
-        "width": 150,
-        "height": 40
-      },
-      "nodeColor": "#1565C0",
-      "labelColor": "#FFFFFF",
-      "label": "extension.ts",
-      "fileLink": {
-        "path": "src/extension.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-entry"
-    },
-    {
-      "id": "messaging",
-      "bounds": {
-        "x": 280,
-        "y": 940,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#6A1B9A",
-      "labelColor": "#FFFFFF",
-      "label": "messaging.ts",
-      "fileLink": {
-        "path": "src/webview/messaging.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-webview"
-    },
-    {
-      "id": "sidebar",
-      "bounds": {
-        "x": 790,
-        "y": 940,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#F57F17",
-      "labelColor": "#000000",
-      "label": "sidebar.ts",
-      "fileLink": {
-        "path": "src/webview/controls/sidebar.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-controls"
-    },
-    {
-      "id": "clipboard",
-      "bounds": {
-        "x": 520,
-        "y": 940,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "clipboard.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/clipboard.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
-      "id": "selectionGlow",
-      "bounds": {
-        "x": 1210,
-        "y": 940,
-        "width": 180,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "selectionGlow.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/selectionGlow.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "gridSnap",
-      "bounds": {
-        "x": 790,
-        "y": 990,
-        "width": 160,
-        "height": 40
-      },
-      "nodeColor": "#F57F17",
-      "labelColor": "#000000",
-      "label": "gridSnap.ts",
-      "fileLink": {
-        "path": "src/webview/controls/gridSnap.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-controls"
-    },
-    {
-      "id": "groupStatus",
-      "bounds": {
-        "x": 520,
-        "y": 990,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "groupStatus.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/groupStatus.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
-      "id": "starfield",
-      "bounds": {
-        "x": 1210,
-        "y": 990,
-        "width": 160,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "starfield.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/starfield.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "lockToggle",
-      "bounds": {
-        "x": 790,
-        "y": 1040,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#F57F17",
-      "labelColor": "#000000",
-      "label": "lockToggle.ts",
-      "fileLink": {
-        "path": "src/webview/controls/lockToggle.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-controls"
-    },
-    {
-      "id": "provider",
-      "bounds": {
-        "x": 40,
-        "y": 1060,
-        "width": 190,
-        "height": 50
-      },
-      "nodeColor": "#1565C0",
-      "labelColor": "#FFFFFF",
-      "label": "vscpEditorProvider.ts",
-      "fileLink": {
-        "path": "src/vscpEditorProvider.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-entry"
-    },
-    {
       "id": "domLabels",
       "bounds": {
-        "x": 1040,
-        "y": 1060,
-        "width": 160,
+        "x": 440,
+        "y": 390,
+        "width": 150,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -539,79 +590,96 @@
       "parentId": "grp-canvas"
     },
     {
-      "id": "state",
+      "id": "edgeGeometry",
       "bounds": {
-        "x": 290,
-        "y": 1060,
-        "width": 160,
-        "height": 50
-      },
-      "nodeColor": "#00695C",
-      "labelColor": "#FFFFFF",
-      "label": "state.ts",
-      "fileLink": {
-        "path": "src/webview/state.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-webview"
-    },
-    {
-      "id": "themeToggle",
-      "bounds": {
-        "x": 790,
-        "y": 1090,
-        "width": 180,
-        "height": 40
-      },
-      "nodeColor": "#F57F17",
-      "labelColor": "#000000",
-      "label": "themeToggle.ts",
-      "fileLink": {
-        "path": "src/webview/controls/themeToggle.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-controls"
-    },
-    {
-      "id": "messages",
-      "bounds": {
-        "x": 1530,
-        "y": 1180,
+        "x": 620,
+        "y": 390,
         "width": 160,
         "height": 40
       },
-      "nodeColor": "#607D8B",
+      "nodeColor": "#2E7D32",
       "labelColor": "#FFFFFF",
-      "label": "messages.ts",
+      "label": "edgeGeometry.ts",
       "fileLink": {
-        "path": "src/messages.ts"
+        "path": "src/webview/canvas/edgeGeometry.ts"
       },
       "shape": "rounded-rectangle",
-      "parentId": "grp-contracts"
+      "parentId": "grp-canvas"
     },
     {
-      "id": "panZoom",
+      "id": "edgeUtils",
       "bounds": {
-        "x": 520,
-        "y": 1180,
-        "width": 160,
+        "x": 50,
+        "y": 470,
+        "width": 150,
         "height": 40
       },
-      "nodeColor": "#BF360C",
+      "nodeColor": "#2E7D32",
       "labelColor": "#FFFFFF",
-      "label": "panZoom.ts",
+      "label": "edgeUtils.ts",
       "fileLink": {
-        "path": "src/webview/interactions/panZoom.ts"
+        "path": "src/webview/canvas/edgeUtils.ts"
       },
       "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
+      "parentId": "grp-canvas"
+    },
+    {
+      "id": "hitTest",
+      "bounds": {
+        "x": 230,
+        "y": 470,
+        "width": 130,
+        "height": 40
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "hitTest.ts",
+      "fileLink": {
+        "path": "src/webview/canvas/hitTest.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas"
+    },
+    {
+      "id": "metadata",
+      "bounds": {
+        "x": 390,
+        "y": 470,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "metadata.ts",
+      "fileLink": {
+        "path": "src/webview/canvas/metadata.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas"
+    },
+    {
+      "id": "selectionGlow",
+      "bounds": {
+        "x": 560,
+        "y": 470,
+        "width": 170,
+        "height": 40
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "selectionGlow.ts",
+      "fileLink": {
+        "path": "src/webview/canvas/selectionGlow.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas"
     },
     {
       "id": "shapes",
       "bounds": {
-        "x": 1030,
-        "y": 1180,
-        "width": 150,
+        "x": 50,
+        "y": 550,
+        "width": 130,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -626,9 +694,9 @@
     {
       "id": "shapesSpace",
       "bounds": {
-        "x": 1200,
-        "y": 1180,
-        "width": 180,
+        "x": 220,
+        "y": 550,
+        "width": 150,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -641,96 +709,11 @@
       "parentId": "grp-canvas"
     },
     {
-      "id": "edgeGeometry",
-      "bounds": {
-        "x": 1030,
-        "y": 1240,
-        "width": 180,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "edgeGeometry.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/edgeGeometry.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "metadata",
-      "bounds": {
-        "x": 1230,
-        "y": 1240,
-        "width": 160,
-        "height": 40
-      },
-      "nodeColor": "#2E7D32",
-      "labelColor": "#FFFFFF",
-      "label": "metadata.ts",
-      "fileLink": {
-        "path": "src/webview/canvas/metadata.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-canvas"
-    },
-    {
-      "id": "shared",
-      "bounds": {
-        "x": 1520,
-        "y": 1240,
-        "width": 170,
-        "height": 40
-      },
-      "nodeColor": "#78909C",
-      "labelColor": "#FFFFFF",
-      "label": "shared.ts",
-      "fileLink": {
-        "path": "src/webview/shared.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-contracts"
-    },
-    {
-      "id": "cursorManager",
-      "bounds": {
-        "x": 510,
-        "y": 1300,
-        "width": 190,
-        "height": 40
-      },
-      "nodeColor": "#BF360C",
-      "labelColor": "#FFFFFF",
-      "label": "cursorManager.ts",
-      "fileLink": {
-        "path": "src/webview/interactions/cursorManager.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-interactions"
-    },
-    {
-      "id": "schema",
-      "bounds": {
-        "x": 1530,
-        "y": 1300,
-        "width": 150,
-        "height": 40
-      },
-      "nodeColor": "#546E7A",
-      "labelColor": "#FFFFFF",
-      "label": "schema.ts",
-      "fileLink": {
-        "path": "src/schema.ts"
-      },
-      "shape": "rounded-rectangle",
-      "parentId": "grp-contracts"
-    },
-    {
       "id": "textDefaults",
       "bounds": {
-        "x": 1120,
-        "y": 1300,
-        "width": 180,
+        "x": 410,
+        "y": 550,
+        "width": 150,
         "height": 40
       },
       "nodeColor": "#2E7D32",
@@ -743,11 +726,28 @@
       "parentId": "grp-canvas"
     },
     {
+      "id": "starfield",
+      "bounds": {
+        "x": 590,
+        "y": 550,
+        "width": 140,
+        "height": 40
+      },
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "starfield.ts",
+      "fileLink": {
+        "path": "src/webview/canvas/starfield.ts"
+      },
+      "shape": "rounded-rectangle",
+      "parentId": "grp-canvas"
+    },
+    {
       "id": "legendRuntimeA",
       "bounds": {
-        "x": 1770,
-        "y": 80,
-        "width": 60,
+        "x": 1140,
+        "y": 610,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#546E7A",
@@ -759,9 +759,9 @@
     {
       "id": "legendRuntimeB",
       "bounds": {
-        "x": 1910,
-        "y": 80,
-        "width": 60,
+        "x": 1310,
+        "y": 610,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#546E7A",
@@ -773,9 +773,9 @@
     {
       "id": "legendTypeA",
       "bounds": {
-        "x": 1770,
-        "y": 140,
-        "width": 60,
+        "x": 1140,
+        "y": 670,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#90A4AE",
@@ -787,9 +787,9 @@
     {
       "id": "legendTypeB",
       "bounds": {
-        "x": 1910,
-        "y": 140,
-        "width": 60,
+        "x": 1310,
+        "y": 670,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#90A4AE",
@@ -801,9 +801,9 @@
     {
       "id": "legendHost",
       "bounds": {
-        "x": 1770,
-        "y": 255,
-        "width": 60,
+        "x": 1140,
+        "y": 735,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#1565C0",
@@ -815,9 +815,9 @@
     {
       "id": "legendShared",
       "bounds": {
-        "x": 1840,
-        "y": 255,
-        "width": 60,
+        "x": 1220,
+        "y": 735,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#607D8B",
@@ -829,9 +829,9 @@
     {
       "id": "legendUi",
       "bounds": {
-        "x": 1910,
-        "y": 255,
-        "width": 50,
+        "x": 1300,
+        "y": 735,
+        "width": 70,
         "height": 30
       },
       "nodeColor": "#BF360C",
@@ -841,91 +841,101 @@
       "parentId": "grp-legend"
     },
     {
-      "id": "legendTopDown",
+      "id": "legendCanvas",
       "bounds": {
-        "x": 1770,
-        "y": 40,
-        "width": 200,
-        "height": 24
+        "x": 1360,
+        "y": 735,
+        "width": 70,
+        "height": 30
       },
-      "label": "Higher rows = more internal dependencies",
-      "shape": "text",
+      "nodeColor": "#2E7D32",
+      "labelColor": "#FFFFFF",
+      "label": "Canvas",
+      "shape": "pill",
       "parentId": "grp-legend"
     },
     {
       "id": "legendRuntimeText",
       "bounds": {
-        "x": 1840,
-        "y": 70,
-        "width": 130,
+        "x": 1225,
+        "y": 600,
+        "width": 180,
         "height": 24
       },
-      "label": "Solid = runtime import",
+      "label": "Solid edge = runtime import",
       "shape": "text",
       "parentId": "grp-legend"
     },
     {
       "id": "legendTypeText",
       "bounds": {
-        "x": 1840,
-        "y": 130,
-        "width": 140,
+        "x": 1225,
+        "y": 660,
+        "width": 190,
         "height": 24
       },
-      "label": "Dashed = type/contract",
-      "shape": "text",
-      "parentId": "grp-legend"
-    },
-    {
-      "id": "legendBottomText",
-      "bounds": {
-        "x": 1770,
-        "y": 200,
-        "width": 190,
-        "height": 36
-      },
-      "label": "Lower rows collect leaf contracts\nand utility modules.",
+      "label": "Dashed edge = type/contract",
       "shape": "text",
       "parentId": "grp-legend"
     },
     {
       "id": "legendColorText",
       "bounds": {
-        "x": 1770,
-        "y": 295,
-        "width": 180,
+        "x": 1140,
+        "y": 775,
+        "width": 250,
         "height": 24
       },
-      "label": "Color = subsystem column",
+      "label": "Node colors follow folder/subsystem groups.",
       "shape": "text",
       "parentId": "grp-legend"
     }
   ],
   "edges": [
     {
+      "id": "e-extension-provider",
+      "from": {
+        "nodeId": "extension",
+        "anchor": [
+          60,
+          40
+        ]
+      },
+      "to": {
+        "nodeId": "provider",
+        "anchor": [
+          110,
+          0
+        ]
+      },
+      "color": "#546E7A",
+      "style": "solid",
+      "arrow": "end"
+    },
+    {
       "id": "e-extension-schema",
       "from": {
         "nodeId": "extension",
         "anchor": [
-          75,
-          40
+          120,
+          20
         ]
       },
       "to": {
         "nodeId": "schema",
         "anchor": [
-          75,
-          0
+          0,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 125,
-          "y": 1140
+          "x": 220,
+          "y": 90
         },
         {
-          "x": 1605,
-          "y": 1140
+          "x": 220,
+          "y": 95
         }
       ],
       "color": "#90A4AE",
@@ -933,31 +943,51 @@
       "arrow": "end"
     },
     {
+      "id": "e-provider-schema",
+      "from": {
+        "nodeId": "provider",
+        "anchor": [
+          220,
+          25
+        ]
+      },
+      "to": {
+        "nodeId": "schema",
+        "anchor": [
+          0,
+          25
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 320,
+          "y": 155
+        },
+        {
+          "x": 320,
+          "y": 95
+        }
+      ],
+      "color": "#546E7A",
+      "style": "solid",
+      "arrow": "end"
+    },
+    {
       "id": "e-provider-messages",
       "from": {
         "nodeId": "provider",
         "anchor": [
-          95,
-          50
+          220,
+          25
         ]
       },
       "to": {
         "nodeId": "messages",
         "anchor": [
-          80,
-          0
+          0,
+          25
         ]
       },
-      "waypoints": [
-        {
-          "x": 135,
-          "y": 1150
-        },
-        {
-          "x": 1610,
-          "y": 1150
-        }
-      ],
       "color": "#90A4AE",
       "style": "dashed",
       "arrow": "end"
@@ -967,27 +997,17 @@
       "from": {
         "nodeId": "messages",
         "anchor": [
-          80,
-          40
+          0,
+          25
         ]
       },
       "to": {
         "nodeId": "schema",
         "anchor": [
-          75,
-          0
+          120,
+          25
         ]
       },
-      "waypoints": [
-        {
-          "x": 1610,
-          "y": 1260
-        },
-        {
-          "x": 1605,
-          "y": 1260
-        }
-      ],
       "color": "#90A4AE",
       "style": "dashed",
       "arrow": "end"
@@ -997,27 +1017,17 @@
       "from": {
         "nodeId": "shared",
         "anchor": [
-          85,
-          40
+          70,
+          0
         ]
       },
       "to": {
         "nodeId": "schema",
         "anchor": [
-          75,
-          0
+          60,
+          50
         ]
       },
-      "waypoints": [
-        {
-          "x": 1605,
-          "y": 1290
-        },
-        {
-          "x": 1605,
-          "y": 1290
-        }
-      ],
       "color": "#90A4AE",
       "style": "dashed",
       "arrow": "end"
@@ -1027,25 +1037,25 @@
       "from": {
         "nodeId": "state",
         "anchor": [
-          80,
-          50
+          0,
+          25
         ]
       },
       "to": {
         "nodeId": "schema",
         "anchor": [
-          75,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 1210
+          "x": 700,
+          "y": 175
         },
         {
-          "x": 1605,
-          "y": 1210
+          "x": 700,
+          "y": 95
         }
       ],
       "color": "#90A4AE",
@@ -1057,27 +1067,17 @@
       "from": {
         "nodeId": "state",
         "anchor": [
-          80,
-          50
+          0,
+          25
         ]
       },
       "to": {
         "nodeId": "shared",
         "anchor": [
-          85,
-          0
+          140,
+          20
         ]
       },
-      "waypoints": [
-        {
-          "x": 370,
-          "y": 1180
-        },
-        {
-          "x": 1605,
-          "y": 1180
-        }
-      ],
       "color": "#90A4AE",
       "style": "dashed",
       "arrow": "end"
@@ -1087,27 +1087,17 @@
       "from": {
         "nodeId": "messaging",
         "anchor": [
-          85,
-          40
+          70,
+          0
         ]
       },
       "to": {
         "nodeId": "messages",
         "anchor": [
-          80,
-          0
+          60,
+          50
         ]
       },
-      "waypoints": [
-        {
-          "x": 365,
-          "y": 1080
-        },
-        {
-          "x": 1610,
-          "y": 1080
-        }
-      ],
       "color": "#90A4AE",
       "style": "dashed",
       "arrow": "end"
@@ -1117,149 +1107,29 @@
       "from": {
         "nodeId": "messaging",
         "anchor": [
-          85,
-          40
+          0,
+          25
         ]
       },
       "to": {
         "nodeId": "shared",
         "anchor": [
-          85,
-          0
+          140,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 365,
-          "y": 1110
+          "x": 680,
+          "y": 175
         },
         {
-          "x": 1605,
-          "y": 1110
+          "x": 680,
+          "y": 160
         }
       ],
       "color": "#90A4AE",
       "style": "dashed",
-      "arrow": "end"
-    },
-    {
-      "id": "e-main-messages",
-      "from": {
-        "nodeId": "main",
-        "anchor": [
-          70,
-          50
-        ]
-      },
-      "to": {
-        "nodeId": "messages",
-        "anchor": [
-          80,
-          0
-        ]
-      },
-      "waypoints": [
-        {
-          "x": 370,
-          "y": 670
-        },
-        {
-          "x": 1610,
-          "y": 670
-        }
-      ],
-      "color": "#90A4AE",
-      "style": "dashed",
-      "arrow": "end"
-    },
-    {
-      "id": "e-sidebar-schema",
-      "from": {
-        "nodeId": "sidebar",
-        "anchor": [
-          85,
-          40
-        ]
-      },
-      "to": {
-        "nodeId": "schema",
-        "anchor": [
-          75,
-          0
-        ]
-      },
-      "waypoints": [
-        {
-          "x": 875,
-          "y": 1140
-        },
-        {
-          "x": 1605,
-          "y": 1140
-        }
-      ],
-      "color": "#90A4AE",
-      "style": "dashed",
-      "arrow": "end"
-    },
-    {
-      "id": "e-extension-provider",
-      "from": {
-        "nodeId": "extension",
-        "anchor": [
-          75,
-          40
-        ]
-      },
-      "to": {
-        "nodeId": "provider",
-        "anchor": [
-          95,
-          0
-        ]
-      },
-      "waypoints": [
-        {
-          "x": 125,
-          "y": 1020
-        },
-        {
-          "x": 135,
-          "y": 1020
-        }
-      ],
-      "color": "#546E7A",
-      "style": "solid",
-      "arrow": "end"
-    },
-    {
-      "id": "e-provider-schema",
-      "from": {
-        "nodeId": "provider",
-        "anchor": [
-          95,
-          50
-        ]
-      },
-      "to": {
-        "nodeId": "schema",
-        "anchor": [
-          75,
-          0
-        ]
-      },
-      "waypoints": [
-        {
-          "x": 135,
-          "y": 1210
-        },
-        {
-          "x": 1605,
-          "y": 1210
-        }
-      ],
-      "color": "#546E7A",
-      "style": "solid",
       "arrow": "end"
     },
     {
@@ -1267,29 +1137,49 @@
       "from": {
         "nodeId": "messaging",
         "anchor": [
-          85,
-          40
+          0,
+          25
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
+          120,
+          25
+        ]
+      },
+      "color": "#546E7A",
+      "style": "solid",
+      "arrow": "end"
+    },
+    {
+      "id": "e-main-messages",
+      "from": {
+        "nodeId": "main",
+        "anchor": [
+          60,
           0
+        ]
+      },
+      "to": {
+        "nodeId": "messages",
+        "anchor": [
+          60,
+          50
         ]
       },
       "waypoints": [
         {
-          "x": 365,
-          "y": 1020
+          "x": 810,
+          "y": 40
         },
         {
-          "x": 370,
-          "y": 1020
+          "x": 590,
+          "y": 40
         }
       ],
-      "color": "#546E7A",
-      "style": "solid",
+      "color": "#90A4AE",
+      "style": "dashed",
       "arrow": "end"
     },
     {
@@ -1297,27 +1187,17 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
+          60,
           50
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
+          60,
           0
         ]
       },
-      "waypoints": [
-        {
-          "x": 370,
-          "y": 610
-        },
-        {
-          "x": 370,
-          "y": 610
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -1327,27 +1207,17 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "renderer",
         "anchor": [
-          80,
-          0
+          0,
+          25
         ]
       },
-      "waypoints": [
-        {
-          "x": 370,
-          "y": 190
-        },
-        {
-          "x": 370,
-          "y": 190
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -1357,25 +1227,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
+          60,
           50
         ]
       },
       "to": {
         "nodeId": "messaging",
         "anchor": [
-          85,
+          70,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 550
+          "x": 810,
+          "y": 230
         },
         {
-          "x": 365,
-          "y": 550
+          "x": 970,
+          "y": 230
         }
       ],
       "color": "#546E7A",
@@ -1387,25 +1257,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "lockToggle",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 600
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 875,
-          "y": 600
+          "x": 1060,
+          "y": 90
         }
       ],
       "color": "#546E7A",
@@ -1417,25 +1287,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "sidebar",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 550
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 875,
-          "y": 550
+          "x": 1060,
+          "y": 150
         }
       ],
       "color": "#546E7A",
@@ -1447,25 +1317,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "gridSnap",
         "anchor": [
-          80,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 570
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 870,
-          "y": 570
+          "x": 1060,
+          "y": 90
         }
       ],
       "color": "#546E7A",
@@ -1477,25 +1347,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "themeToggle",
         "anchor": [
-          90,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 620
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 880,
-          "y": 620
+          "x": 1060,
+          "y": 150
         }
       ],
       "color": "#546E7A",
@@ -1507,25 +1377,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "panZoom",
         "anchor": [
-          80,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 670
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 600,
-          "y": 670
+          "x": 1060,
+          "y": 290
         }
       ],
       "color": "#546E7A",
@@ -1537,25 +1407,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "keyboard",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 490
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 605,
-          "y": 490
+          "x": 1060,
+          "y": 350
         }
       ],
       "color": "#546E7A",
@@ -1567,25 +1437,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "contextMenu",
         "anchor": [
-          95,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 310
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 615,
-          "y": 310
+          "x": 1060,
+          "y": 350
         }
       ],
       "color": "#546E7A",
@@ -1597,25 +1467,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "edgeMode",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 370
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 605,
-          "y": 370
+          "x": 1060,
+          "y": 410
         }
       ],
       "color": "#546E7A",
@@ -1627,25 +1497,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "selectionBox",
         "anchor": [
-          95,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 430
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 615,
-          "y": 430
+          "x": 1060,
+          "y": 410
         }
       ],
       "color": "#546E7A",
@@ -1657,25 +1527,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "cursorManager",
         "anchor": [
-          95,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 730
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 605,
-          "y": 730
+          "x": 1060,
+          "y": 290
         }
       ],
       "color": "#546E7A",
@@ -1687,25 +1557,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
-          50
+          120,
+          25
         ]
       },
       "to": {
         "nodeId": "groupStatus",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 570
+          "x": 1060,
+          "y": 95
         },
         {
-          "x": 605,
-          "y": 570
+          "x": 1060,
+          "y": 470
         }
       ],
       "color": "#546E7A",
@@ -1717,25 +1587,25 @@
       "from": {
         "nodeId": "main",
         "anchor": [
-          70,
+          60,
           50
         ]
       },
       "to": {
         "nodeId": "starfield",
         "anchor": [
-          80,
+          70,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 570
+          "x": 810,
+          "y": 280
         },
         {
-          "x": 1290,
-          "y": 570
+          "x": 660,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -1747,25 +1617,25 @@
       "from": {
         "nodeId": "gridSnap",
         "anchor": [
-          80,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 870,
-          "y": 1050
+          "x": 1090,
+          "y": 90
         },
         {
-          "x": 370,
-          "y": 1050
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -1784,18 +1654,18 @@
       "to": {
         "nodeId": "state",
         "anchor": [
-          160,
+          120,
           25
         ]
       },
       "waypoints": [
         {
-          "x": 620,
-          "y": 1060
+          "x": 1090,
+          "y": 90
         },
         {
-          "x": 620,
-          "y": 1085
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -1807,25 +1677,25 @@
       "from": {
         "nodeId": "sidebar",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 875,
-          "y": 1020
+          "x": 1090,
+          "y": 150
         },
         {
-          "x": 370,
-          "y": 1020
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -1844,18 +1714,18 @@
       "to": {
         "nodeId": "state",
         "anchor": [
-          160,
+          120,
           25
         ]
       },
       "waypoints": [
         {
-          "x": 620,
-          "y": 1110
+          "x": 1090,
+          "y": 150
         },
         {
-          "x": 620,
-          "y": 1085
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -1863,31 +1733,51 @@
       "arrow": "end"
     },
     {
+      "id": "e-sidebar-schema",
+      "from": {
+        "nodeId": "sidebar",
+        "anchor": [
+          0,
+          20
+        ]
+      },
+      "to": {
+        "nodeId": "schema",
+        "anchor": [
+          120,
+          25
+        ]
+      },
+      "waypoints": [
+        {
+          "x": 1080,
+          "y": 150
+        },
+        {
+          "x": 1080,
+          "y": 95
+        }
+      ],
+      "color": "#90A4AE",
+      "style": "dashed",
+      "arrow": "end"
+    },
+    {
       "id": "e-panZoom-cursor",
       "from": {
         "nodeId": "panZoom",
         "anchor": [
-          80,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "cursorManager",
         "anchor": [
-          95,
-          0
+          140,
+          20
         ]
       },
-      "waypoints": [
-        {
-          "x": 600,
-          "y": 1260
-        },
-        {
-          "x": 605,
-          "y": 1260
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -1897,25 +1787,25 @@
       "from": {
         "nodeId": "keyboard",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 960
+          "x": 1090,
+          "y": 350
         },
         {
-          "x": 370,
-          "y": 960
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -1927,25 +1817,25 @@
       "from": {
         "nodeId": "keyboard",
         "anchor": [
-          85,
-          40
+          120,
+          20
         ]
       },
       "to": {
         "nodeId": "clipboard",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 900
+          "x": 1340,
+          "y": 350
         },
         {
-          "x": 605,
-          "y": 900
+          "x": 1340,
+          "y": 470
         }
       ],
       "color": "#546E7A",
@@ -1957,25 +1847,25 @@
       "from": {
         "nodeId": "contextMenu",
         "anchor": [
-          95,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "messaging",
         "anchor": [
-          85,
-          0
+          140,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 615,
-          "y": 720
+          "x": 1080,
+          "y": 350
         },
         {
-          "x": 365,
-          "y": 720
+          "x": 1080,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -1987,27 +1877,17 @@
       "from": {
         "nodeId": "contextMenu",
         "anchor": [
-          95,
+          70,
           40
         ]
       },
       "to": {
         "nodeId": "clipboard",
         "anchor": [
-          85,
+          60,
           0
         ]
       },
-      "waypoints": [
-        {
-          "x": 615,
-          "y": 720
-        },
-        {
-          "x": 605,
-          "y": 720
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -2017,25 +1897,29 @@
       "from": {
         "nodeId": "contextMenu",
         "anchor": [
-          95,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
-          0
+          160,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 615,
-          "y": 540
+          "x": 1080,
+          "y": 350
         },
         {
-          "x": 1140,
-          "y": 540
+          "x": 1080,
+          "y": 290
+        },
+        {
+          "x": 400,
+          "y": 290
         }
       ],
       "color": "#546E7A",
@@ -2047,25 +1931,25 @@
       "from": {
         "nodeId": "edgeMode",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 840
+          "x": 1090,
+          "y": 410
         },
         {
-          "x": 370,
-          "y": 840
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -2077,25 +1961,25 @@
       "from": {
         "nodeId": "edgeMode",
         "anchor": [
-          85,
-          40
+          60,
+          0
         ]
       },
       "to": {
         "nodeId": "gridSnap",
         "anchor": [
-          80,
-          0
+          60,
+          40
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 810
+          "x": 1200,
+          "y": 250
         },
         {
-          "x": 870,
-          "y": 810
+          "x": 1200,
+          "y": 250
         }
       ],
       "color": "#546E7A",
@@ -2107,25 +1991,29 @@
       "from": {
         "nodeId": "edgeMode",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "edgeUtils",
         "anchor": [
-          85,
-          0
+          150,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 660
+          "x": 1080,
+          "y": 410
         },
         {
-          "x": 1345,
-          "y": 660
+          "x": 1080,
+          "y": 430
+        },
+        {
+          "x": 200,
+          "y": 430
         }
       ],
       "color": "#546E7A",
@@ -2137,25 +2025,29 @@
       "from": {
         "nodeId": "edgeMode",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "hitTest",
         "anchor": [
-          75,
-          0
+          130,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 720
+          "x": 1080,
+          "y": 410
         },
         {
-          "x": 1305,
-          "y": 720
+          "x": 1080,
+          "y": 450
+        },
+        {
+          "x": 360,
+          "y": 450
         }
       ],
       "color": "#546E7A",
@@ -2167,25 +2059,25 @@
       "from": {
         "nodeId": "selectionBox",
         "anchor": [
-          95,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 615,
-          "y": 900
+          "x": 1090,
+          "y": 410
         },
         {
-          "x": 370,
-          "y": 900
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -2197,25 +2089,25 @@
       "from": {
         "nodeId": "selectionBox",
         "anchor": [
-          95,
-          40
+          70,
+          0
         ]
       },
       "to": {
         "nodeId": "cursorManager",
         "anchor": [
-          95,
-          0
+          70,
+          40
         ]
       },
       "waypoints": [
         {
-          "x": 615,
-          "y": 1020
+          "x": 1350,
+          "y": 350
         },
         {
-          "x": 605,
-          "y": 1020
+          "x": 1210,
+          "y": 350
         }
       ],
       "color": "#546E7A",
@@ -2227,25 +2119,29 @@
       "from": {
         "nodeId": "selectionBox",
         "anchor": [
-          95,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
-          0
+          160,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 615,
-          "y": 780
+          "x": 1080,
+          "y": 410
         },
         {
-          "x": 1120,
-          "y": 780
+          "x": 1080,
+          "y": 280
+        },
+        {
+          "x": 210,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2257,25 +2153,25 @@
       "from": {
         "nodeId": "groupStatus",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 1050
+          "x": 1090,
+          "y": 470
         },
         {
-          "x": 370,
-          "y": 1050
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -2287,25 +2183,25 @@
       "from": {
         "nodeId": "clipboard",
         "anchor": [
-          85,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          120,
+          25
         ]
       },
       "waypoints": [
         {
-          "x": 605,
-          "y": 1020
+          "x": 1090,
+          "y": 470
         },
         {
-          "x": 370,
-          "y": 1020
+          "x": 1090,
+          "y": 175
         }
       ],
       "color": "#546E7A",
@@ -2317,25 +2213,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
+          60,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 670
+          "x": 970,
+          "y": 220
         },
         {
-          "x": 370,
-          "y": 670
+          "x": 810,
+          "y": 220
         }
       ],
       "color": "#546E7A",
@@ -2347,25 +2243,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
+          80,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 550
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1120,
-          "y": 550
+          "x": 130,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2377,25 +2273,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
+          80,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 430
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1140,
-          "y": 430
+          "x": 320,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2407,25 +2303,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "selectionOverlay",
         "anchor": [
-          95,
+          90,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 490
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1125,
-          "y": 490
+          "x": 140,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2437,7 +2333,7 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
@@ -2450,12 +2346,12 @@
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 370
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1140,
-          "y": 370
+          "x": 750,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2467,25 +2363,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "edgeReconciler",
         "anchor": [
-          95,
+          85,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 310
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1145,
-          "y": 310
+          "x": 515,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2497,25 +2393,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "domLabels",
         "anchor": [
-          80,
+          75,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 670
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1120,
-          "y": 670
+          "x": 515,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2527,25 +2423,25 @@
       "from": {
         "nodeId": "renderer",
         "anchor": [
-          80,
+          70,
           50
         ]
       },
       "to": {
         "nodeId": "selectionGlow",
         "anchor": [
-          90,
+          85,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 370,
-          "y": 610
+          "x": 970,
+          "y": 280
         },
         {
-          "x": 1300,
-          "y": 610
+          "x": 645,
+          "y": 280
         }
       ],
       "color": "#546E7A",
@@ -2557,27 +2453,17 @@
       "from": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
+          80,
           40
         ]
       },
       "to": {
         "nodeId": "labelEditor",
         "anchor": [
-          85,
+          75,
           0
         ]
       },
-      "waypoints": [
-        {
-          "x": 1120,
-          "y": 870
-        },
-        {
-          "x": 1295,
-          "y": 870
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -2587,25 +2473,25 @@
       "from": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
-          40
+          160,
+          20
         ]
       },
       "to": {
         "nodeId": "groupStatus",
         "anchor": [
-          85,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 1120,
-          "y": 930
+          "x": 1080,
+          "y": 330
         },
         {
-          "x": 605,
-          "y": 930
+          "x": 1080,
+          "y": 470
         }
       ],
       "color": "#546E7A",
@@ -2617,25 +2503,25 @@
       "from": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
+          80,
           40
         ]
       },
       "to": {
         "nodeId": "shapes",
         "anchor": [
-          75,
+          65,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1120,
-          "y": 1020
+          "x": 130,
+          "y": 520
         },
         {
-          "x": 1105,
-          "y": 1020
+          "x": 115,
+          "y": 520
         }
       ],
       "color": "#546E7A",
@@ -2647,25 +2533,25 @@
       "from": {
         "nodeId": "canvasNode",
         "anchor": [
-          180,
-          20
+          80,
+          40
         ]
       },
       "to": {
         "nodeId": "hitTest",
         "anchor": [
-          0,
-          20
+          65,
+          0
         ]
       },
       "waypoints": [
         {
-          "x": 1220,
-          "y": 840
+          "x": 130,
+          "y": 440
         },
         {
-          "x": 1220,
-          "y": 840
+          "x": 295,
+          "y": 440
         }
       ],
       "color": "#546E7A",
@@ -2677,25 +2563,25 @@
       "from": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
+          80,
           40
         ]
       },
       "to": {
         "nodeId": "metadata",
         "anchor": [
-          80,
+          70,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1120,
-          "y": 1050
+          "x": 130,
+          "y": 450
         },
         {
-          "x": 1310,
-          "y": 1050
+          "x": 460,
+          "y": 450
         }
       ],
       "color": "#546E7A",
@@ -2707,25 +2593,25 @@
       "from": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
+          80,
           40
         ]
       },
       "to": {
         "nodeId": "edgeUtils",
         "anchor": [
-          85,
+          75,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1140,
-          "y": 660
+          "x": 320,
+          "y": 440
         },
         {
-          "x": 1345,
-          "y": 660
+          "x": 125,
+          "y": 440
         }
       ],
       "color": "#546E7A",
@@ -2737,25 +2623,25 @@
       "from": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
+          80,
           40
         ]
       },
       "to": {
         "nodeId": "edgeGeometry",
         "anchor": [
-          90,
+          80,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1140,
-          "y": 930
+          "x": 320,
+          "y": 360
         },
         {
-          "x": 1120,
-          "y": 930
+          "x": 700,
+          "y": 360
         }
       ],
       "color": "#546E7A",
@@ -2767,25 +2653,25 @@
       "from": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
-          40
+          80,
+          0
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          60,
+          50
         ]
       },
       "waypoints": [
         {
-          "x": 1140,
-          "y": 840
+          "x": 320,
+          "y": 250
         },
         {
-          "x": 370,
-          "y": 840
+          "x": 810,
+          "y": 250
         }
       ],
       "color": "#546E7A",
@@ -2797,25 +2683,25 @@
       "from": {
         "nodeId": "edgeHandleOverlay",
         "anchor": [
-          100,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
-          0
+          160,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 1140,
-          "y": 540
+          "x": 620,
+          "y": 330
         },
         {
-          "x": 1140,
-          "y": 540
+          "x": 620,
+          "y": 330
         }
       ],
       "color": "#546E7A",
@@ -2834,18 +2720,18 @@
       "to": {
         "nodeId": "edgeUtils",
         "anchor": [
-          85,
+          75,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1140,
-          "y": 600
+          "x": 750,
+          "y": 440
         },
         {
-          "x": 1345,
-          "y": 600
+          "x": 125,
+          "y": 440
         }
       ],
       "color": "#546E7A",
@@ -2864,18 +2750,18 @@
       "to": {
         "nodeId": "hitTest",
         "anchor": [
-          75,
+          65,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1140,
-          "y": 660
+          "x": 750,
+          "y": 450
         },
         {
-          "x": 1305,
-          "y": 660
+          "x": 295,
+          "y": 450
         }
       ],
       "color": "#546E7A",
@@ -2887,27 +2773,17 @@
       "from": {
         "nodeId": "edgeReconciler",
         "anchor": [
-          95,
-          40
+          0,
+          20
         ]
       },
       "to": {
         "nodeId": "canvasEdge",
         "anchor": [
-          90,
-          0
+          160,
+          20
         ]
       },
-      "waypoints": [
-        {
-          "x": 1145,
-          "y": 480
-        },
-        {
-          "x": 1140,
-          "y": 480
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -2917,27 +2793,17 @@
       "from": {
         "nodeId": "edgeReconciler",
         "anchor": [
-          95,
+          85,
           40
         ]
       },
       "to": {
         "nodeId": "domLabels",
         "anchor": [
-          80,
+          75,
           0
         ]
       },
-      "waypoints": [
-        {
-          "x": 1145,
-          "y": 720
-        },
-        {
-          "x": 1120,
-          "y": 720
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -2947,27 +2813,17 @@
       "from": {
         "nodeId": "selectionOverlay",
         "anchor": [
-          95,
-          40
+          90,
+          0
         ]
       },
       "to": {
         "nodeId": "canvasNode",
         "anchor": [
-          90,
-          0
+          80,
+          40
         ]
       },
-      "waypoints": [
-        {
-          "x": 1125,
-          "y": 780
-        },
-        {
-          "x": 1120,
-          "y": 780
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -2977,25 +2833,25 @@
       "from": {
         "nodeId": "selectionOverlay",
         "anchor": [
-          95,
+          90,
           40
         ]
       },
       "to": {
         "nodeId": "shapes",
         "anchor": [
-          75,
+          65,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1125,
-          "y": 960
+          "x": 140,
+          "y": 520
         },
         {
-          "x": 1105,
-          "y": 960
+          "x": 115,
+          "y": 520
         }
       ],
       "color": "#546E7A",
@@ -3007,27 +2863,17 @@
       "from": {
         "nodeId": "labelEditor",
         "anchor": [
-          85,
-          40
+          150,
+          20
         ]
       },
       "to": {
         "nodeId": "domLabels",
         "anchor": [
-          80,
-          0
+          0,
+          20
         ]
       },
-      "waypoints": [
-        {
-          "x": 1295,
-          "y": 990
-        },
-        {
-          "x": 1120,
-          "y": 990
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -3037,25 +2883,25 @@
       "from": {
         "nodeId": "labelEditor",
         "anchor": [
-          85,
-          40
+          75,
+          0
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          60,
+          50
         ]
       },
       "waypoints": [
         {
-          "x": 1295,
-          "y": 990
+          "x": 335,
+          "y": 250
         },
         {
-          "x": 370,
-          "y": 990
+          "x": 810,
+          "y": 250
         }
       ],
       "color": "#546E7A",
@@ -3067,25 +2913,25 @@
       "from": {
         "nodeId": "domLabels",
         "anchor": [
-          80,
+          75,
           40
         ]
       },
       "to": {
         "nodeId": "textDefaults",
         "anchor": [
-          90,
+          75,
           0
         ]
       },
       "waypoints": [
         {
-          "x": 1120,
-          "y": 1200
+          "x": 515,
+          "y": 520
         },
         {
-          "x": 1210,
-          "y": 1200
+          "x": 485,
+          "y": 520
         }
       ],
       "color": "#546E7A",
@@ -3097,25 +2943,25 @@
       "from": {
         "nodeId": "edgeUtils",
         "anchor": [
-          85,
-          40
+          150,
+          20
         ]
       },
       "to": {
         "nodeId": "edgeGeometry",
         "anchor": [
-          90,
-          0
+          0,
+          20
         ]
       },
       "waypoints": [
         {
-          "x": 1345,
-          "y": 990
+          "x": 330,
+          "y": 490
         },
         {
-          "x": 1120,
-          "y": 990
+          "x": 330,
+          "y": 410
         }
       ],
       "color": "#546E7A",
@@ -3127,25 +2973,25 @@
       "from": {
         "nodeId": "hitTest",
         "anchor": [
-          75,
-          40
+          65,
+          0
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          60,
+          50
         ]
       },
       "waypoints": [
         {
-          "x": 1305,
-          "y": 960
+          "x": 295,
+          "y": 250
         },
         {
-          "x": 370,
-          "y": 960
+          "x": 810,
+          "y": 250
         }
       ],
       "color": "#546E7A",
@@ -3157,7 +3003,7 @@
       "from": {
         "nodeId": "shapes",
         "anchor": [
-          150,
+          130,
           20
         ]
       },
@@ -3168,16 +3014,6 @@
           20
         ]
       },
-      "waypoints": [
-        {
-          "x": 1190,
-          "y": 1200
-        },
-        {
-          "x": 1190,
-          "y": 1200
-        }
-      ],
       "color": "#546E7A",
       "style": "solid",
       "arrow": "end"
@@ -3187,25 +3023,25 @@
       "from": {
         "nodeId": "shapesSpace",
         "anchor": [
-          0,
-          20
+          75,
+          0
         ]
       },
       "to": {
         "nodeId": "shapes",
         "anchor": [
-          150,
-          20
+          65,
+          0
         ]
       },
       "waypoints": [
         {
-          "x": 1190,
-          "y": 1200
+          "x": 295,
+          "y": 520
         },
         {
-          "x": 1190,
-          "y": 1200
+          "x": 115,
+          "y": 520
         }
       ],
       "color": "#546E7A",
@@ -3217,25 +3053,25 @@
       "from": {
         "nodeId": "selectionGlow",
         "anchor": [
-          90,
-          40
+          85,
+          0
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          60,
+          50
         ]
       },
       "waypoints": [
         {
-          "x": 1300,
-          "y": 1020
+          "x": 645,
+          "y": 250
         },
         {
-          "x": 370,
-          "y": 1020
+          "x": 810,
+          "y": 250
         }
       ],
       "color": "#546E7A",
@@ -3247,25 +3083,25 @@
       "from": {
         "nodeId": "starfield",
         "anchor": [
-          80,
-          40
+          70,
+          0
         ]
       },
       "to": {
         "nodeId": "state",
         "anchor": [
-          80,
-          0
+          60,
+          50
         ]
       },
       "waypoints": [
         {
-          "x": 1290,
-          "y": 1050
+          "x": 660,
+          "y": 250
         },
         {
-          "x": 370,
-          "y": 1050
+          "x": 810,
+          "y": 250
         }
       ],
       "color": "#546E7A",
@@ -3277,7 +3113,7 @@
       "from": {
         "nodeId": "legendRuntimeA",
         "anchor": [
-          60,
+          70,
           15
         ]
       },
@@ -3290,12 +3126,8 @@
       },
       "waypoints": [
         {
-          "x": 1870,
-          "y": 95
-        },
-        {
-          "x": 1870,
-          "y": 95
+          "x": 1260,
+          "y": 625
         }
       ],
       "label": "runtime",
@@ -3309,7 +3141,7 @@
       "from": {
         "nodeId": "legendTypeA",
         "anchor": [
-          60,
+          70,
           15
         ]
       },
@@ -3322,12 +3154,8 @@
       },
       "waypoints": [
         {
-          "x": 1870,
-          "y": 155
-        },
-        {
-          "x": 1870,
-          "y": 155
+          "x": 1260,
+          "y": 685
         }
       ],
       "label": "types",

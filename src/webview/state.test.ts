@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { Edge, Node, VscpDocument } from "../schema";
+import type { Edge, Node, JgDocument } from "../schema";
 import {
   getState,
   setDocument,
@@ -47,7 +47,7 @@ function makeEdge(id: string, fromNodeId: string, toNodeId: string, overrides: P
   };
 }
 
-function emptyDoc(): VscpDocument {
+function emptyDoc(): JgDocument {
   return { nodes: [], edges: [] };
 }
 
@@ -59,7 +59,7 @@ describe("state", () => {
 
   describe("setDocument / getState", () => {
     it("sets document and resets state", () => {
-      const doc: VscpDocument = {
+      const doc: JgDocument = {
         nodes: [makeNode("node-1")],
         edges: [makeEdge("edge-1", "node-1", "node-1")],
       };
@@ -72,7 +72,7 @@ describe("state", () => {
     });
 
     it("initializes ID tracking from existing nodes and edges", () => {
-      const doc: VscpDocument = {
+      const doc: JgDocument = {
         nodes: [makeNode("node-5"), makeNode("node-3")],
         edges: [makeEdge("edge-4", "node-5", "node-3")],
       };
@@ -98,7 +98,7 @@ describe("state", () => {
     });
 
     it("skips already-used node IDs", () => {
-      const doc: VscpDocument = {
+      const doc: JgDocument = {
         nodes: [makeNode("node-1"), makeNode("node-2")],
         edges: [],
       };
@@ -108,7 +108,7 @@ describe("state", () => {
     });
 
     it("skips already-used edge IDs", () => {
-      const doc: VscpDocument = {
+      const doc: JgDocument = {
         nodes: [makeNode("node-1"), makeNode("node-2")],
         edges: [makeEdge("edge-1", "node-1", "node-2"), makeEdge("edge-2", "node-1", "node-2")],
       };
@@ -117,7 +117,7 @@ describe("state", () => {
     });
 
     it("continues from highest existing ID in document", () => {
-      const doc: VscpDocument = {
+      const doc: JgDocument = {
         nodes: [makeNode("node-10")],
         edges: [makeEdge("edge-7", "node-10", "node-10")],
       };

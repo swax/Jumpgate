@@ -4,7 +4,7 @@
     {
       "id": "title",
       "bounds": { "x": 200, "y": -60, "width": 500, "height": 50 },
-      "label": "VS Code Perspective \u2014 File Dependencies",
+      "label": "Jumpgate \u2014 File Dependencies",
       "shape": "text"
     },
     {
@@ -26,13 +26,13 @@
       "fileLink": { "path": "src/webview/main.ts" }
     },
     {
-      "id": "vscpEditorProvider",
+      "id": "jgEditorProvider",
       "bounds": { "x": 50, "y": 110, "width": 200, "height": 40 },
-      "label": "vscpEditorProvider.ts",
+      "label": "jgEditorProvider.ts",
       "nodeColor": "#6A1B9A",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
-      "fileLink": { "path": "src/vscpEditorProvider.ts" }
+      "fileLink": { "path": "src/jgEditorProvider.ts" }
     },
     {
       "id": "renderer",
@@ -592,7 +592,7 @@
     {
       "id": "e-ext-provider",
       "from": { "nodeId": "extension", "anchor": [70, 40] },
-      "to": { "nodeId": "vscpEditorProvider", "anchor": [100, 0] },
+      "to": { "nodeId": "jgEditorProvider", "anchor": [100, 0] },
       "arrow": "end"
     },
     {

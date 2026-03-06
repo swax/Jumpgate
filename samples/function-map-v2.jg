@@ -59,11 +59,11 @@
       },
       "nodeColor": "#43A047",
       "labelColor": "white",
-      "label": "vscpEditorProvider.ts\nCustom Editor + File Links",
+      "label": "jgEditorProvider.ts\nCustom Editor + File Links",
       "shape": "rounded-rectangle",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts",
-        "match": "class VscpEditorProvider"
+        "path": "src/jgEditorProvider.ts",
+        "match": "class JgEditorProvider"
       }
     },
     {

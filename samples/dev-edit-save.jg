@@ -117,12 +117,12 @@
         "width": 240,
         "height": 60
       },
-      "label": "VscpEditorProvider\nwebview.onDidReceiveMessage",
+      "label": "JgEditorProvider\nwebview.onDidReceiveMessage",
       "nodeColor": "#1976D2",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts",
+        "path": "src/jgEditorProvider.ts",
         "match": "onDidReceiveMessage"
       }
     },
@@ -139,7 +139,7 @@
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts",
+        "path": "src/jgEditorProvider.ts",
         "match": "applyEdit"
       }
     },
@@ -151,7 +151,7 @@
         "width": 240,
         "height": 70
       },
-      "label": ".vscp File (updated on disk)",
+      "label": ".jg File (updated on disk)",
       "nodeColor": "#546E7A",
       "labelColor": "#ffffff",
       "shape": "document"

@@ -1,8 +1,8 @@
 # 004 - Regression Test Plan
 
-Basic manual test plan for the VS Code Perspective diagram editor.
+Basic manual test plan for the Jumpgate diagram editor.
 
-**Setup**: Open a `.vscp` file in VS Code. Start with a file containing a few nodes and edges.
+**Setup**: Open a `.jg` file in VS Code. Start with a file containing a few nodes and edges.
 
 ---
 
@@ -92,7 +92,7 @@ Basic manual test plan for the VS Code Perspective diagram editor.
 - [ ] Make changes, press Ctrl+S to save
 - [ ] Close and reopen the file — all changes persisted
 - [ ] Ctrl+Z to undo changes (VS Code native undo)
-- [ ] Verify the `.vscp` file contains valid JSON with nodes and edges
+- [ ] Verify the `.jg` file contains valid JSON with nodes and edges
 
 ## 14. Zoom Consistency
 

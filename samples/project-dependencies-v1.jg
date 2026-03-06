@@ -9,7 +9,7 @@
         "width": 600,
         "height": 40
       },
-      "label": "VS Code Perspective — Dependency Graph",
+      "label": "Jumpgate — Dependency Graph",
       "shape": "text"
     },
     {
@@ -45,19 +45,19 @@
       }
     },
     {
-      "id": "vscpEditorProvider",
+      "id": "jgEditorProvider",
       "bounds": {
         "x": 400,
         "y": 130,
         "width": 200,
         "height": 60
       },
-      "label": "vscpEditorProvider",
+      "label": "jgEditorProvider",
       "nodeColor": "#1565C0",
       "labelColor": "#ffffff",
       "shape": "rounded-rectangle",
       "fileLink": {
-        "path": "src/vscpEditorProvider.ts"
+        "path": "src/jgEditorProvider.ts"
       }
     },
     {
@@ -761,7 +761,7 @@
         ]
       },
       "to": {
-        "nodeId": "vscpEditorProvider",
+        "nodeId": "jgEditorProvider",
         "anchor": [
           100,
           0
@@ -790,7 +790,7 @@
     {
       "id": "e-provider-messages",
       "from": {
-        "nodeId": "vscpEditorProvider",
+        "nodeId": "jgEditorProvider",
         "anchor": [
           100,
           60

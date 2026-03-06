@@ -1,11 +1,11 @@
 # Architecture
 
-VS Code custom editor extension for `.vscp` files. Renders an interactive PixiJS canvas where users can select, drag, resize, color, and label nodes. Changes sync bidirectionally with the underlying JSON document.
+VS Code custom editor extension for `.jg` files. Renders an interactive PixiJS canvas where users can select, drag, resize, color, and label nodes. Changes sync bidirectionally with the underlying JSON document.
 
 ## Data Flow
 
 ```
-.vscp file (JSON on disk)
+.jg file (JSON on disk)
     ↕ Ctrl+S saves / Ctrl+Z undoes
 In-memory TextDocument (VS Code)
     ↕ postMessage (update ↓, edit ↑)
@@ -18,10 +18,10 @@ Edits from the canvas apply via `WorkspaceEdit` which marks the tab dirty (does 
 
 ```
 src/
-  extension.ts            Activation: registers VscpEditorProvider + perspective.linkToNode command
+  extension.ts            Activation: registers JgEditorProvider + jumpgate.linkToNode command
   schema.ts               Zod schemas (nodeSchema, edgeSchema, fileLinkSchema, documentSchema) + types; nodeSchema includes optional shape (enum), direction ("up"|"right"|"down"|"left", omitted when "up"), borderColor (per-node stroke override), and parentId (string, for node grouping); edgeSchema includes optional waypoints, label, color, labelColor, style, arrow, and fileLink
   messages.ts             Typed message protocol (extension ↔ webview) — includes openFileLink, editFileLink/fileLinkResult
-  vscpEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler, editFileLink handler (QuickPick for workspace files/URL/remove + optional match InputBox)
+  jgEditorProvider.ts   CustomTextEditorProvider — HTML shell, CSP, two-way messaging, openFileLink handler, editFileLink handler (QuickPick for workspace files/URL/remove + optional match InputBox)
   webview/
     main.ts               Entry point — PixiJS Application, viewport container, wires up all modules; delegates messaging, starfield, context menu, and Ctrl-key suppression to dedicated modules
     messaging.ts          VS Code postMessage wrapper, debounced edit sender, nodeChanged/nodesChanged/edgeChanged helpers
@@ -94,7 +94,7 @@ Two esbuild bundles (`npm run build`):
 
 - **Pub/sub store** (`state.ts`): Simple reactive state — `EditorState` holds document, `selectedNodeIds[]`, `selectedEdgeIds[]`, edgeMode, locked, and snapToGrid flags. Subscribers (renderer) are notified on any change. `updateNodes()` batches multiple node changes into a single notify.
 - **Reconciliation** (`renderer.ts`, `edgeReconciler.ts`): Diffs state against existing PixiJS containers by ID — creates, updates, or destroys as needed. Node reconciliation lives in `renderer.ts`; edge reconciliation is in `edgeReconciler.ts` via `reconcileEdges()`. Skips nodes mid-drag to avoid fighting user input. Upserts DOM labels for nodes and edges on each render; removes DOM labels when nodes/edges are deleted.
-- **Echo guard** (`vscpEditorProvider.ts`): `isApplyingEdit` flag prevents `onDidChangeTextDocument` from echoing back edits the webview just made.
+- **Echo guard** (`jgEditorProvider.ts`): `isApplyingEdit` flag prevents `onDidChangeTextDocument` from echoing back edits the webview just made.
 - **Debounced edits** (`messaging.ts`): Canvas changes are batched (100ms) before posting to the extension to avoid spamming WorkspaceEdits.
 
 ### Rendering
@@ -130,4 +130,4 @@ Two esbuild bundles (`npm run build`):
 ### Navigation
 
 - **Lock mode** (`lockToggle.ts`, `canvasNode.ts`, `canvasEdge.ts`, `renderer.ts`, `selectionGlow.ts`, `panZoom.ts`): Toggles editing off — hides sidebar, disables dragging/resize/delete. All nodes and edges remain clickable for selection. Click (no drag) selects a node and highlights its connected edges, or selects an edge and highlights its connected nodes. Selection is shown as a glow effect (concentric semi-transparent rounded rects behind nodes; layered semi-transparent strokes behind edges) rather than dashed outlines. Click+drag pans the canvas even when starting on a node (panZoom accepts any target in locked mode); the click only registers if the pointer doesn’t move (Windows-button pattern). Double-click on a linked node/edge opens its file link.
-- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`, `canvasEdge.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file or URL. Right-click in any editor → "Link to Perspective Node" sets the link via a QuickPick that lists both nodes and edges. Edges without a label display as "from label → to label". Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Double-click)". In edit mode, Ctrl+Click opens the file and jumps to the matched text. In locked mode, double-click on a linked item opens the file; a plain click selects and highlights connections. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document. Right-click a node/edge in edit mode shows "Set File Link" (or "Edit File Link" if one exists); this sends an `editFileLink` message to the extension which shows a QuickPick with workspace files, a URL entry option, and (if a link exists) a remove option, followed by an optional match text InputBox; the result flows back via `fileLinkResult`. Right-click ignores double-click timing to prevent accidental file-link opens.
+- **File linking** (`schema.ts`, `extension.ts`, `canvasNode.ts`, `canvasEdge.ts`): Nodes and edges support an optional `fileLink` (`{ path, match? }`) that references a workspace file or URL. Right-click in any editor → "Link to Jumpgate Node" sets the link via a QuickPick that lists both nodes and edges. Edges without a label display as "from label → to label". Linked nodes/edges show a pointer cursor; hovering shows a tooltip with the path and "(Double-click)". In edit mode, Ctrl+Click opens the file and jumps to the matched text. In locked mode, double-click on a linked item opens the file; a plain click selects and highlights connections. The `openFileLink` message flows from webview → extension, which resolves the relative path and opens the document. Right-click a node/edge in edit mode shows "Set File Link" (or "Edit File Link" if one exists); this sends an `editFileLink` message to the extension which shows a QuickPick with workspace files, a URL entry option, and (if a link exists) a remove option, followed by an optional match text InputBox; the result flows back via `fileLinkResult`. Right-click ignores double-click timing to prevent accidental file-link opens.

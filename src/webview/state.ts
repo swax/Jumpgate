@@ -1,4 +1,4 @@
-import type { Edge, Node, VscpDocument } from "../schema";
+import type { Edge, Node, JgDocument } from "../schema";
 import type { NodeChanges } from "./shared";
 
 let usedNodeIds = new Set<string>();
@@ -6,7 +6,7 @@ let usedEdgeIds = new Set<string>();
 let nextNodeId = 1;
 let nextEdgeId = 1;
 
-function initializeIdTracking(document: VscpDocument): void {
+function initializeIdTracking(document: JgDocument): void {
   usedNodeIds = new Set(document.nodes.map((n) => n.id));
   usedEdgeIds = new Set(document.edges.map((e) => e.id));
 
@@ -28,7 +28,7 @@ function initializeIdTracking(document: VscpDocument): void {
 }
 
 export interface EditorState {
-  document: VscpDocument;
+  document: JgDocument;
   selectedNodeIds: string[];
   selectedEdgeIds: string[];
   edgeMode: boolean;
@@ -53,7 +53,7 @@ export function getState(): EditorState {
   return state;
 }
 
-export function setDocument(document: VscpDocument): void {
+export function setDocument(document: JgDocument): void {
   initializeIdTracking(document);
   state = { ...state, document };
   notify();

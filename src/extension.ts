@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import { VscpEditorProvider } from "./vscpEditorProvider";
+import { JgEditorProvider } from "./jgEditorProvider";
 import { documentSchema } from "./schema";
 
 export function activate(context: vscode.ExtensionContext): void {
-  context.subscriptions.push(VscpEditorProvider.register(context));
+  context.subscriptions.push(JgEditorProvider.register(context));
   context.subscriptions.push(
-    vscode.commands.registerCommand("perspective.linkToNode", linkToNodeCommand)
+    vscode.commands.registerCommand("jumpgate.linkToNode", linkToNodeCommand)
   );
 }
 
@@ -19,48 +19,48 @@ async function linkToNodeCommand(): Promise<void> {
   const filePath = vscode.workspace.asRelativePath(editor.document.uri);
   const selection = editor.document.getText(editor.selection) || undefined;
 
-  // Find open .vscp documents
-  const vscpDocs = vscode.workspace.textDocuments.filter((d) =>
-    d.uri.fsPath.endsWith(".vscp")
+  // Find open .jg documents
+  const jgDocs = vscode.workspace.textDocuments.filter((d) =>
+    d.uri.fsPath.endsWith(".jg")
   );
 
-  if (vscpDocs.length === 0) {
-    vscode.window.showErrorMessage("No .vscp file is currently open.");
+  if (jgDocs.length === 0) {
+    vscode.window.showErrorMessage("No .jg file is currently open.");
     return;
   }
 
-  let vscpDoc: vscode.TextDocument;
-  if (vscpDocs.length === 1) {
-    vscpDoc = vscpDocs[0];
+  let jgDoc: vscode.TextDocument;
+  if (jgDocs.length === 1) {
+    jgDoc = jgDocs[0];
   } else {
     const pick = await vscode.window.showQuickPick(
-      vscpDocs.map((d) => ({
+      jgDocs.map((d) => ({
         label: vscode.workspace.asRelativePath(d.uri),
         doc: d,
       })),
-      { placeHolder: "Choose a .vscp file" }
+      { placeHolder: "Choose a .jg file" }
     );
     if (!pick) return;
-    vscpDoc = pick.doc;
+    jgDoc = pick.doc;
   }
 
   // Parse document
   let parsed;
   try {
-    const json: unknown = JSON.parse(vscpDoc.getText());
+    const json: unknown = JSON.parse(jgDoc.getText());
     const result = documentSchema.safeParse(json);
     if (!result.success) {
-      vscode.window.showErrorMessage("Failed to parse .vscp file.");
+      vscode.window.showErrorMessage("Failed to parse .jg file.");
       return;
     }
     parsed = result.data;
   } catch {
-    vscode.window.showErrorMessage("Failed to parse .vscp file.");
+    vscode.window.showErrorMessage("Failed to parse .jg file.");
     return;
   }
 
   if (parsed.nodes.length === 0 && parsed.edges.length === 0) {
-    vscode.window.showErrorMessage("No nodes or edges found in .vscp file.");
+    vscode.window.showErrorMessage("No nodes or edges found in .jg file.");
     return;
   }
 
@@ -99,7 +99,7 @@ async function linkToNodeCommand(): Promise<void> {
   if (!pick) return;
 
   // Update the target's fileLink in the JSON
-  const fullJson = JSON.parse(vscpDoc.getText());
+  const fullJson = JSON.parse(jgDoc.getText());
   const fileLink = { path: filePath, ...(selection ? { match: selection } : {}) };
 
   if (pick.targetKind === "node") {
@@ -119,8 +119,8 @@ async function linkToNodeCommand(): Promise<void> {
   const newContent = JSON.stringify(fullJson, null, 2) + "\n";
   const edit = new vscode.WorkspaceEdit();
   edit.replace(
-    vscpDoc.uri,
-    new vscode.Range(0, 0, vscpDoc.lineCount, 0),
+    jgDoc.uri,
+    new vscode.Range(0, 0, jgDoc.lineCount, 0),
     newContent
   );
   await vscode.workspace.applyEdit(edit);

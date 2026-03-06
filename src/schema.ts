@@ -79,4 +79,4 @@ export const documentSchema = z.object({
 export type Node = z.infer<typeof nodeSchema>;
 export type EdgeEndpoint = z.infer<typeof edgeEndpointSchema>;
 export type Edge = z.infer<typeof edgeSchema>;
-export type VscpDocument = z.infer<typeof documentSchema>;
+export type JgDocument = z.infer<typeof documentSchema>;

@@ -6,13 +6,13 @@ import type {
   WebviewToExtensionMessage,
 } from "./messages";
 
-export class VscpEditorProvider implements vscode.CustomTextEditorProvider {
-  public static readonly viewType = "perspective.vscpPreview";
+export class JgEditorProvider implements vscode.CustomTextEditorProvider {
+  public static readonly viewType = "jumpgate.preview";
 
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     return vscode.window.registerCustomEditorProvider(
-      VscpEditorProvider.viewType,
-      new VscpEditorProvider(context),
+      JgEditorProvider.viewType,
+      new JgEditorProvider(context),
       {
         webviewOptions: { retainContextWhenHidden: true },
       }
