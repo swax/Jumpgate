@@ -46,7 +46,7 @@ export class DomLabelManager {
     width: number,
     height: number,
     hasChildren: boolean,
-    isSpace: boolean
+    isSpace: boolean,
   ): void {
     let entry = this.labels.get(id);
     if (!entry) {
@@ -67,7 +67,17 @@ export class DomLabelManager {
         lineHeight: "1.2",
       });
       this.overlay.appendChild(el);
-      entry = { el, worldX, worldY, width, height, kind: "node", hasChildren, isSpace, dirty: true };
+      entry = {
+        el,
+        worldX,
+        worldY,
+        width,
+        height,
+        kind: "node",
+        hasChildren,
+        isSpace,
+        dirty: true,
+      };
       this.labels.set(id, entry);
       // Force zoom-dependent styles on next sync
       this.lastAppliedZoom = -1;
@@ -75,7 +85,12 @@ export class DomLabelManager {
 
     entry.worldX = worldX;
     entry.worldY = worldY;
-    if (entry.width !== width || entry.height !== height || entry.hasChildren !== hasChildren || entry.isSpace !== isSpace) {
+    if (
+      entry.width !== width ||
+      entry.height !== height ||
+      entry.hasChildren !== hasChildren ||
+      entry.isSpace !== isSpace
+    ) {
       entry.dirty = true;
     }
     entry.width = width;
@@ -95,7 +110,7 @@ export class DomLabelManager {
     fontFamily: string,
     worldX: number,
     worldY: number,
-    isSpace: boolean
+    isSpace: boolean,
   ): void {
     let entry = this.labels.get(id);
     if (!entry) {
@@ -110,7 +125,17 @@ export class DomLabelManager {
         lineHeight: "1.2",
       });
       this.overlay.appendChild(el);
-      entry = { el, worldX, worldY, width: 0, height: 0, kind: "edge", hasChildren: false, isSpace, dirty: false };
+      entry = {
+        el,
+        worldX,
+        worldY,
+        width: 0,
+        height: 0,
+        kind: "edge",
+        hasChildren: false,
+        isSpace,
+        dirty: false,
+      };
       this.labels.set(id, entry);
       this.lastAppliedZoom = -1;
     }
@@ -125,13 +150,25 @@ export class DomLabelManager {
     entry.el.style.display = text ? "" : "none";
   }
 
-  updateWorldPosition(id: string, worldX: number, worldY: number, width?: number, height?: number): void {
+  updateWorldPosition(
+    id: string,
+    worldX: number,
+    worldY: number,
+    width?: number,
+    height?: number,
+  ): void {
     const entry = this.labels.get(id);
     if (!entry) return;
     entry.worldX = worldX;
     entry.worldY = worldY;
-    if (width !== undefined && entry.width !== width) { entry.width = width; entry.dirty = true; }
-    if (height !== undefined && entry.height !== height) { entry.height = height; entry.dirty = true; }
+    if (width !== undefined && entry.width !== width) {
+      entry.width = width;
+      entry.dirty = true;
+    }
+    if (height !== undefined && entry.height !== height) {
+      entry.height = height;
+      entry.dirty = true;
+    }
   }
 
   removeLabel(id: string): void {

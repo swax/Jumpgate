@@ -7,7 +7,10 @@ export interface EditorElements {
   themeBtn: HTMLButtonElement;
 }
 
-export function buildEditorDOM(container: HTMLDivElement): { elements: EditorElements; styleEl: HTMLStyleElement } {
+export function buildEditorDOM(container: HTMLDivElement): {
+  elements: EditorElements;
+  styleEl: HTMLStyleElement;
+} {
   container.innerHTML = "";
 
   const styleEl = document.createElement("style");
@@ -82,7 +85,14 @@ export function buildEditorDOM(container: HTMLDivElement): { elements: EditorEle
   container.appendChild(sidebar);
 
   return {
-    elements: { canvasContainer, lockBtn, resetViewBtn, snapBtn, edgeBtn, themeBtn },
+    elements: {
+      canvasContainer,
+      lockBtn,
+      resetViewBtn,
+      snapBtn,
+      edgeBtn,
+      themeBtn,
+    },
     styleEl,
   };
 }

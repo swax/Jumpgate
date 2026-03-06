@@ -14,7 +14,12 @@ import {
 // ---------------------------------------------------------------------------
 describe("boundsSchema", () => {
   it("accepts valid bounds", () => {
-    const result = boundsSchema.safeParse({ x: 0, y: -5, width: 100, height: 200 });
+    const result = boundsSchema.safeParse({
+      x: 0,
+      y: -5,
+      width: 100,
+      height: 200,
+    });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toEqual({ x: 0, y: -5, width: 100, height: 200 });
@@ -22,7 +27,12 @@ describe("boundsSchema", () => {
   });
 
   it("accepts fractional positive width/height", () => {
-    const result = boundsSchema.safeParse({ x: 1, y: 2, width: 0.5, height: 0.001 });
+    const result = boundsSchema.safeParse({
+      x: 1,
+      y: 2,
+      width: 0.5,
+      height: 0.001,
+    });
     expect(result.success).toBe(true);
   });
 
@@ -37,12 +47,22 @@ describe("boundsSchema", () => {
   });
 
   it("rejects negative width", () => {
-    const result = boundsSchema.safeParse({ x: 0, y: 0, width: -1, height: 10 });
+    const result = boundsSchema.safeParse({
+      x: 0,
+      y: 0,
+      width: -1,
+      height: 10,
+    });
     expect(result.success).toBe(false);
   });
 
   it("rejects negative height", () => {
-    const result = boundsSchema.safeParse({ x: 0, y: 0, width: 10, height: -5 });
+    const result = boundsSchema.safeParse({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: -5,
+    });
     expect(result.success).toBe(false);
   });
 
@@ -107,14 +127,22 @@ describe("nodeSchema", () => {
 
   it("accepts every valid shape value", () => {
     for (const shape of shapeValues) {
-      const result = nodeSchema.safeParse({ id: "s", bounds: validBounds, shape });
+      const result = nodeSchema.safeParse({
+        id: "s",
+        bounds: validBounds,
+        shape,
+      });
       expect(result.success).toBe(true);
     }
   });
 
   it("accepts every valid direction value", () => {
     for (const direction of directionValues) {
-      const result = nodeSchema.safeParse({ id: "d", bounds: validBounds, direction });
+      const result = nodeSchema.safeParse({
+        id: "d",
+        bounds: validBounds,
+        direction,
+      });
       expect(result.success).toBe(true);
     }
   });
@@ -170,7 +198,10 @@ describe("nodeSchema", () => {
 // ---------------------------------------------------------------------------
 describe("edgeEndpointSchema", () => {
   it("accepts a node-anchored endpoint with anchor", () => {
-    const result = edgeEndpointSchema.safeParse({ nodeId: "n1", anchor: [80, 50] });
+    const result = edgeEndpointSchema.safeParse({
+      nodeId: "n1",
+      anchor: [80, 50],
+    });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toEqual({ nodeId: "n1", anchor: [80, 50] });
@@ -204,12 +235,18 @@ describe("edgeEndpointSchema", () => {
   });
 
   it("rejects an anchor with wrong tuple length", () => {
-    const result = edgeEndpointSchema.safeParse({ nodeId: "n1", anchor: [0.5] });
+    const result = edgeEndpointSchema.safeParse({
+      nodeId: "n1",
+      anchor: [0.5],
+    });
     expect(result.success).toBe(false);
   });
 
   it("rejects an anchor with non-number elements", () => {
-    const result = edgeEndpointSchema.safeParse({ nodeId: "n1", anchor: ["a", "b"] });
+    const result = edgeEndpointSchema.safeParse({
+      nodeId: "n1",
+      anchor: ["a", "b"],
+    });
     expect(result.success).toBe(false);
   });
 });
@@ -285,12 +322,18 @@ describe("edgeSchema", () => {
   });
 
   it("rejects waypoints with missing y coordinate", () => {
-    const result = edgeSchema.safeParse({ ...minimalEdge, waypoints: [{ x: 10 }] });
+    const result = edgeSchema.safeParse({
+      ...minimalEdge,
+      waypoints: [{ x: 10 }],
+    });
     expect(result.success).toBe(false);
   });
 
   it("rejects an edge missing id", () => {
-    const result = edgeSchema.safeParse({ from: { nodeId: "n1" }, to: { nodeId: "n2" } });
+    const result = edgeSchema.safeParse({
+      from: { nodeId: "n1" },
+      to: { nodeId: "n2" },
+    });
     expect(result.success).toBe(false);
   });
 

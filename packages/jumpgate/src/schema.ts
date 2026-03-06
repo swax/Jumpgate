@@ -50,7 +50,10 @@ export type Bounds = z.infer<typeof boundsSchema>;
 export type FileLink = z.infer<typeof fileLinkSchema>;
 
 export const edgeEndpointSchema = z.union([
-  z.object({ nodeId: z.string(), anchor: z.tuple([z.number(), z.number()]).optional() }),
+  z.object({
+    nodeId: z.string(),
+    anchor: z.tuple([z.number(), z.number()]).optional(),
+  }),
   z.object({ x: z.number(), y: z.number() }),
 ]);
 

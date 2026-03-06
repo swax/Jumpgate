@@ -1,8 +1,19 @@
 import { Application, Container } from "pixi.js";
 import type { Edge } from "./schema";
 import type { NodeChanges } from "./shared";
-import { createCanvasNode, updateCanvasNode, isDraggingNode, getContainerBounds, type CanvasNodeCallbacks } from "./canvas/canvasNode";
-import { resolveEndpoint, buildPolylinePoints, pointToSegmentDistance, type CanvasEdgeCallbacks } from "./canvas/canvasEdge";
+import {
+  createCanvasNode,
+  updateCanvasNode,
+  isDraggingNode,
+  getContainerBounds,
+  type CanvasNodeCallbacks,
+} from "./canvas/canvasNode";
+import {
+  resolveEndpoint,
+  buildPolylinePoints,
+  pointToSegmentDistance,
+  type CanvasEdgeCallbacks,
+} from "./canvas/canvasEdge";
 import { startEdgeLabelEdit, type LabelEditContext } from "./canvas/labelEditor";
 import { getNodeDepth, getNodeById, getChildNodeIds, getEdgeById, type EditorState } from "./state";
 import { snap } from "./controls/gridSnap";
@@ -19,13 +30,16 @@ export interface RendererCallbacks {
   onSelect: (id: string, shiftKey: boolean) => void;
   onOpenFileLink: (id: string, kind: "node" | "edge", preview?: boolean) => void;
   onEdgeSelect: (edgeId: string) => void;
-  onEdgeChanged: (id: string, changes: Partial<Pick<Edge, "from" | "to" | "label" | "waypoints">>) => void;
+  onEdgeChanged: (
+    id: string,
+    changes: Partial<Pick<Edge, "from" | "to" | "label" | "waypoints">>,
+  ) => void;
 }
 
 export function createRenderer(
   app: Application,
   viewport: Container,
-  callbacks: RendererCallbacks
+  callbacks: RendererCallbacks,
 ) {
   let prevNodeIds: Set<string> = new Set();
   let prevEdgeIds: Set<string> = new Set();
@@ -55,25 +69,19 @@ export function createRenderer(
   let selectedNodeIds: string[] = [];
   let selectedEdgeIds: string[] = [];
 
-  const selectionOverlay = new SelectionOverlay(
-    () => viewport,
-    {
-      onNodeChanged: callbacks.onNodeChanged,
-      onNodesChanged: callbacks.onNodesChanged,
-      isSnapEnabled: () => snapEnabled,
-      onDragUpdate: () => renderEdges(lastState),
-    }
-  );
+  const selectionOverlay = new SelectionOverlay(() => viewport, {
+    onNodeChanged: callbacks.onNodeChanged,
+    onNodesChanged: callbacks.onNodesChanged,
+    isSnapEnabled: () => snapEnabled,
+    onDragUpdate: () => renderEdges(lastState),
+  });
   selectionOverlay.container.zIndex = 9000;
   viewport.addChild(selectionOverlay.container);
 
-  const edgeHandleOverlay = new EdgeHandleOverlay(
-    () => viewport,
-    {
-      onEdgeChanged: callbacks.onEdgeChanged,
-      onDragMove: () => renderEdges(lastState),
-    }
-  );
+  const edgeHandleOverlay = new EdgeHandleOverlay(() => viewport, {
+    onEdgeChanged: callbacks.onEdgeChanged,
+    onDragMove: () => renderEdges(lastState),
+  });
   edgeHandleOverlay.container.zIndex = 9001;
   viewport.addChild(edgeHandleOverlay.container);
 
@@ -134,9 +142,12 @@ export function createRenderer(
           let bestIdx = 0;
           for (let s = 1; s < pts.length; s++) {
             const d = pointToSegmentDistance(
-              worldPos.x, worldPos.y,
-              pts[s - 1].x, pts[s - 1].y,
-              pts[s].x, pts[s].y
+              worldPos.x,
+              worldPos.y,
+              pts[s - 1].x,
+              pts[s - 1].y,
+              pts[s].x,
+              pts[s].y,
             );
             if (d < bestDist) {
               bestDist = d;
@@ -179,23 +190,32 @@ export function createRenderer(
 
   function renderEdges(state: EditorState | null): void {
     if (!state) return;
-    prevEdgeIds = reconcileEdges({
-      viewport,
-      edgeCallbacks,
-      edgeHandleOverlay,
-      domLabels,
-      nodeZIndexMap,
-      labelColor,
-      isLocked,
-      isEdgeMode,
-      snapEnabled,
-      prevEdgeIds,
-    }, state);
+    prevEdgeIds = reconcileEdges(
+      {
+        viewport,
+        edgeCallbacks,
+        edgeHandleOverlay,
+        domLabels,
+        nodeZIndexMap,
+        labelColor,
+        isLocked,
+        isEdgeMode,
+        snapEnabled,
+        prevEdgeIds,
+      },
+      state,
+    );
   }
 
   function render(state: EditorState): void {
     lastState = state;
-    const { document: doc, selectedNodeIds: stateSelectedNodeIds, locked, snapToGrid, edgeMode } = state;
+    const {
+      document: doc,
+      selectedNodeIds: stateSelectedNodeIds,
+      locked,
+      snapToGrid,
+      edgeMode,
+    } = state;
     selectedNodeIds = stateSelectedNodeIds;
     selectedEdgeIds = state.selectedEdgeIds;
     isLocked = locked;
@@ -253,7 +273,7 @@ export function createRenderer(
         node.bounds.width,
         node.bounds.height,
         hasChildren,
-        isSpace
+        isSpace,
       );
     }
 
@@ -261,7 +281,13 @@ export function createRenderer(
     if (locked) {
       // Locked mode: glow behind selected nodes (no overlay)
       selectionOverlay.update([], viewport.scale.x, doc.theme);
-      glowManager.update(stateSelectedNodeIds, state.selectedEdgeIds, true, nodeZIndexMap, doc.theme);
+      glowManager.update(
+        stateSelectedNodeIds,
+        state.selectedEdgeIds,
+        true,
+        nodeZIndexMap,
+        doc.theme,
+      );
     } else {
       // Edit mode: dashed overlay + resize handles
       glowManager.update([], [], false, nodeZIndexMap);

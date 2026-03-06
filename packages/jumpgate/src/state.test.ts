@@ -38,7 +38,12 @@ function makeNode(id: string, overrides: Partial<Node> = {}): Node {
   };
 }
 
-function makeEdge(id: string, fromNodeId: string, toNodeId: string, overrides: Partial<Edge> = {}): Edge {
+function makeEdge(
+  id: string,
+  fromNodeId: string,
+  toNodeId: string,
+  overrides: Partial<Edge> = {},
+): Edge {
   return {
     id,
     from: { nodeId: fromNodeId },
@@ -202,7 +207,11 @@ describe("state", () => {
     it("updates edge properties", () => {
       addNodes([makeNode("node-1"), makeNode("node-2")]);
       addEdge(makeEdge("edge-1", "node-1", "node-2"));
-      updateEdge("edge-1", { label: "hello", style: "dashed", color: "#ff0000" });
+      updateEdge("edge-1", {
+        label: "hello",
+        style: "dashed",
+        color: "#ff0000",
+      });
       const edge = getState().document.edges[0];
       expect(edge.label).toBe("hello");
       expect(edge.style).toBe("dashed");
@@ -220,7 +229,11 @@ describe("state", () => {
 
   describe("updateNode / updateNodes", () => {
     it("applies partial bounds update", () => {
-      addNodes([makeNode("node-1", { bounds: { x: 10, y: 20, width: 100, height: 50 } })]);
+      addNodes([
+        makeNode("node-1", {
+          bounds: { x: 10, y: 20, width: 100, height: 50 },
+        }),
+      ]);
       updateNode("node-1", { bounds: { x: 30 } });
       const node = getState().document.nodes[0];
       expect(node.bounds).toEqual({ x: 30, y: 20, width: 100, height: 50 });

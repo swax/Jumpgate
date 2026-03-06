@@ -13,7 +13,7 @@ export function setupPanZoom(
   viewport: Container,
   cursorManager: CursorManager,
   isLocked?: () => boolean,
-  isEdgeMode?: () => boolean
+  isEdgeMode?: () => boolean,
 ): PanZoomControls {
   let isPanning = false;
   let lastPointer = { x: 0, y: 0 };
@@ -75,27 +75,31 @@ export function setupPanZoom(
   });
 
   // Zoom: mouse wheel to cursor position
-  app.canvas.addEventListener("wheel", (e: WheelEvent) => {
-    e.preventDefault();
-    const oldScale = viewport.scale.x;
-    const rect = app.canvas.getBoundingClientRect();
-    const pointerX = e.clientX - rect.left;
-    const pointerY = e.clientY - rect.top;
-    const mousePointTo = {
-      x: (pointerX - viewport.position.x) / oldScale,
-      y: (pointerY - viewport.position.y) / oldScale,
-    };
-    const direction = e.deltaY > 0 ? -1 : 1;
-    const newScale = Math.max(
-      0.1,
-      Math.min(5, direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY)
-    );
-    viewport.scale.set(newScale);
-    viewport.position.set(
-      pointerX - mousePointTo.x * newScale,
-      pointerY - mousePointTo.y * newScale
-    );
-  }, { passive: false });
+  app.canvas.addEventListener(
+    "wheel",
+    (e: WheelEvent) => {
+      e.preventDefault();
+      const oldScale = viewport.scale.x;
+      const rect = app.canvas.getBoundingClientRect();
+      const pointerX = e.clientX - rect.left;
+      const pointerY = e.clientY - rect.top;
+      const mousePointTo = {
+        x: (pointerX - viewport.position.x) / oldScale,
+        y: (pointerY - viewport.position.y) / oldScale,
+      };
+      const direction = e.deltaY > 0 ? -1 : 1;
+      const newScale = Math.max(
+        0.1,
+        Math.min(5, direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY),
+      );
+      viewport.scale.set(newScale);
+      viewport.position.set(
+        pointerX - mousePointTo.x * newScale,
+        pointerY - mousePointTo.y * newScale,
+      );
+    },
+    { passive: false },
+  );
 
   // Ctrl key suppresses the grab cursor so arrow/pointer cursors show
   window.addEventListener("keydown", (e) => {

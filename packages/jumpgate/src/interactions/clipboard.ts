@@ -37,9 +37,7 @@ export function copySelectedNodes(): void {
         expandedIds.add(descId);
       }
     }
-    clipboard = state.document.nodes
-      .filter((n) => expandedIds.has(n.id))
-      .map((n) => ({ ...n }));
+    clipboard = state.document.nodes.filter((n) => expandedIds.has(n.id)).map((n) => ({ ...n }));
   }
 }
 
@@ -51,7 +49,10 @@ export function pasteNodes(onEdit: () => void): void {
     }
 
     // Compute bounding box center of clipboard nodes
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
     for (const n of clipboard) {
       minX = Math.min(minX, n.bounds.x);
       minY = Math.min(minY, n.bounds.y);
@@ -69,7 +70,11 @@ export function pasteNodes(onEdit: () => void): void {
       const pasted: Node = {
         ...n,
         id: idMap.get(n.id)!,
-        bounds: { ...n.bounds, x: n.bounds.x + offsetX, y: n.bounds.y + offsetY },
+        bounds: {
+          ...n.bounds,
+          x: n.bounds.x + offsetX,
+          y: n.bounds.y + offsetY,
+        },
       };
       if (n.parentId && idMap.has(n.parentId)) {
         pasted.parentId = idMap.get(n.parentId);
@@ -80,9 +85,7 @@ export function pasteNodes(onEdit: () => void): void {
     });
     addNodes(pastedNodes);
     const pastedIdSet = new Set(pastedNodes.map((n) => n.id));
-    const rootNodes = pastedNodes.filter(
-      (n) => !n.parentId || !pastedIdSet.has(n.parentId)
-    );
+    const rootNodes = pastedNodes.filter((n) => !n.parentId || !pastedIdSet.has(n.parentId));
     setSelectedNodeIds(rootNodes.map((n) => n.id));
     clipboard = pastedNodes.map((n) => ({ ...n }));
     onEdit();

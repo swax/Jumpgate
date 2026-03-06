@@ -1,7 +1,16 @@
 import { Container } from "pixi.js";
 import type { Bounds, Edge } from "../schema";
 import type { EditorState } from "../state";
-import { createCanvasEdge, updateCanvasEdge, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, PolylineHitArea, getSegmentDragOverride, type CanvasEdgeCallbacks } from "./canvasEdge";
+import {
+  createCanvasEdge,
+  updateCanvasEdge,
+  resolveEndpoint,
+  buildPolylinePoints,
+  computePolylineMidpoint,
+  PolylineHitArea,
+  getSegmentDragOverride,
+  type CanvasEdgeCallbacks,
+} from "./canvasEdge";
 import { getContainerBounds } from "./canvasNode";
 import type { EdgeHandleOverlay } from "./edgeHandleOverlay";
 import type { DomLabelManager } from "./domLabels";
@@ -43,7 +52,17 @@ function computeEdgeZIndex(edge: Edge, nodeZIndexMap: Map<string, number>): numb
 }
 
 export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): Set<string> {
-  const { viewport, edgeCallbacks, edgeHandleOverlay, domLabels, nodeZIndexMap, labelColor, isLocked, isEdgeMode, prevEdgeIds } = ctx;
+  const {
+    viewport,
+    edgeCallbacks,
+    edgeHandleOverlay,
+    domLabels,
+    nodeZIndexMap,
+    labelColor,
+    isLocked,
+    isEdgeMode,
+    prevEdgeIds,
+  } = ctx;
   const { document: doc } = state;
   const selectedEdgeSet = new Set(state.selectedEdgeIds);
   const currentEdgeIds = new Set(doc.edges.map((e) => e.id));
@@ -70,9 +89,10 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
   for (let i = 0; i < doc.edges.length; i++) {
     const edge = doc.edges[i];
     // Apply endpoint override during handle drag
-    let renderEdge = (handleOverride && edge.id === handleOverride.edgeId)
-      ? { ...edge, [handleOverride.which]: handleOverride.endpoint }
-      : edge;
+    let renderEdge =
+      handleOverride && edge.id === handleOverride.edgeId
+        ? { ...edge, [handleOverride.which]: handleOverride.endpoint }
+        : edge;
 
     // Apply waypoint override during waypoint drag
     if (wpOverride && edge.id === wpOverride.edgeId) {
@@ -81,10 +101,13 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
 
     // Apply segment drag override
     if (segOverride && edge.id === segOverride.edgeId) {
-      renderEdge = { ...renderEdge,
+      renderEdge = {
+        ...renderEdge,
         ...(segOverride.from && { from: segOverride.from }),
         ...(segOverride.to && { to: segOverride.to }),
-        ...(segOverride.waypoints !== undefined && { waypoints: segOverride.waypoints }),
+        ...(segOverride.waypoints !== undefined && {
+          waypoints: segOverride.waypoints,
+        }),
       };
     }
 
@@ -99,14 +122,27 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
       viewport.addChild(edgeContainer);
     }
 
-    edgeContainer.zIndex = ((handleOverride && edge.id === handleOverride.edgeId) || (segOverride && edge.id === segOverride.edgeId)) ? 8999 : computeEdgeZIndex(edge, nodeZIndexMap);
+    edgeContainer.zIndex =
+      (handleOverride && edge.id === handleOverride.edgeId) ||
+      (segOverride && edge.id === segOverride.edgeId)
+        ? 8999
+        : computeEdgeZIndex(edge, nodeZIndexMap);
 
     const edgeGfx = edgeContainer.getChildByLabel("edge-line");
     if (edgeGfx) {
       edgeGfx.eventMode = "static";
     }
 
-    updateCanvasEdge(edgeContainer, renderEdge, nodeMap, selectedEdgeSet.has(edge.id), viewport.scale.x, labelColor, doc.theme, isLocked);
+    updateCanvasEdge(
+      edgeContainer,
+      renderEdge,
+      nodeMap,
+      selectedEdgeSet.has(edge.id),
+      viewport.scale.x,
+      labelColor,
+      doc.theme,
+      isLocked,
+    );
 
     // Upsert DOM label for this edge
     const points = buildPolylinePoints(from, to, renderEdge.waypoints);
@@ -114,7 +150,15 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
     const isSpace = doc.theme === "space";
     const edgeFontFamily = isSpace ? "Consolas, 'Courier New', monospace" : DEFAULT_FONT_FAMILY;
     const edgeLabelColor = edge.labelColor ?? labelColor;
-    domLabels.upsertEdgeLabel(edge.id, edge.label || "", edgeLabelColor, edgeFontFamily, mid.x, mid.y, isSpace);
+    domLabels.upsertEdgeLabel(
+      edge.id,
+      edge.label || "",
+      edgeLabelColor,
+      edgeFontFamily,
+      mid.x,
+      mid.y,
+      isSpace,
+    );
 
     // Expand edge hit area to include the label bounding box
     if (edge.label && edgeGfx) {
@@ -139,7 +183,7 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
     nodeMap,
     viewport.scale.x,
     isLocked,
-    isEdgeMode
+    isEdgeMode,
   );
 
   return currentEdgeIds;

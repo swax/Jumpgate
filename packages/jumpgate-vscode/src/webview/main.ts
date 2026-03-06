@@ -14,7 +14,13 @@ async function main(): Promise<void> {
       vscode.postMessage({ type: "openFileLink", path, match, preview });
     },
     onEditFileLink: (targetId, targetKind, currentPath, currentMatch) => {
-      vscode.postMessage({ type: "editFileLink", targetId, targetKind, currentPath, currentMatch });
+      vscode.postMessage({
+        type: "editFileLink",
+        targetId,
+        targetKind,
+        currentPath,
+        currentMatch,
+      });
     },
     onViewSource: () => {
       vscode.postMessage({ type: "viewSource" });

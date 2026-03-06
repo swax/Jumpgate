@@ -3,3 +3,4 @@ dist/
 *.vsix
 packages/jumpgate/demo/demo.js
 packages/jumpgate/demo/demo.js.map
+*.code-workspace

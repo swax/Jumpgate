@@ -7,24 +7,40 @@ import { getState, getEdgeById } from "../state";
 import { snap } from "../controls/gridSnap";
 import { resolveEndpoint, buildPolylinePoints, PolylineHitArea, type Point } from "./edgeGeometry";
 
-export { resolveAnchor, resolveEndpoint, buildPolylinePoints, computePolylineMidpoint, pointToSegmentDistance, PolylineHitArea, type Point } from "./edgeGeometry";
+export {
+  resolveAnchor,
+  resolveEndpoint,
+  buildPolylinePoints,
+  computePolylineMidpoint,
+  pointToSegmentDistance,
+  PolylineHitArea,
+  type Point,
+} from "./edgeGeometry";
 
 const DEFAULT_EDGE_COLOR = 0x888888;
 const SELECTED_EDGE_COLOR = 0x4488ff;
 const SPACE_EDGE_COLOR = 0x335577;
-const SPACE_SELECTED_COLOR = 0x44CCFF;
+const SPACE_SELECTED_COLOR = 0x44ccff;
 const HIT_TOLERANCE = 8;
 const ARROWHEAD_SIZE = 10;
 
 export interface CanvasEdgeCallbacks {
   onSelect: (edgeId: string) => void;
-  onDoubleClick: (edgeId: string, container: Container, worldPos?: Point, ctrlKey?: boolean) => void;
+  onDoubleClick: (
+    edgeId: string,
+    container: Container,
+    worldPos?: Point,
+    ctrlKey?: boolean,
+  ) => void;
   onOpenFileLink: (edgeId: string, preview?: boolean) => void;
   isLocked: () => boolean;
   isEdgeMode: () => boolean;
   getSelectedEdgeIds: () => string[];
   onDragUpdate: () => void;
-  onEdgeChanged: (edgeId: string, changes: Partial<Pick<Edge, "from" | "to" | "waypoints">>) => void;
+  onEdgeChanged: (
+    edgeId: string,
+    changes: Partial<Pick<Edge, "from" | "to" | "waypoints">>,
+  ) => void;
   getViewport: () => Container;
 }
 
@@ -32,7 +48,7 @@ export function createCanvasEdge(
   edge: Edge,
   labelColor: string,
   callbacks: CanvasEdgeCallbacks,
-  _theme?: string
+  _theme?: string,
 ): Container {
   const group = new Container();
   group.label = edge.id;
@@ -182,9 +198,10 @@ export function createCanvasEdge(
         if (!origFromResolved || !origToResolved) return;
 
         const hitArea = gfx.hitArea;
-        const segmentIndex = (hitArea instanceof PolylineHitArea)
-          ? hitArea.findSegmentIndex(startWorld.x, startWorld.y)
-          : 0;
+        const segmentIndex =
+          hitArea instanceof PolylineHitArea
+            ? hitArea.findSegmentIndex(startWorld.x, startWorld.y)
+            : 0;
 
         const numWaypoints = currentEdge.waypoints?.length ?? 0;
         let moveFrom: boolean;
@@ -210,7 +227,9 @@ export function createCanvasEdge(
           waypointIndices,
           origFromResolved,
           origToResolved,
-          origWaypoints: currentEdge.waypoints ? currentEdge.waypoints.map(wp => ({ ...wp })) : [],
+          origWaypoints: currentEdge.waypoints
+            ? currentEdge.waypoints.map((wp) => ({ ...wp }))
+            : [],
         };
       }
 
@@ -225,7 +244,7 @@ export function createCanvasEdge(
           segmentDrag.origFromResolved.x + deltaX,
           segmentDrag.origFromResolved.y + deltaY,
           viewport,
-          getState().snapToGrid
+          getState().snapToGrid,
         );
         segmentDrag.inFlightFrom = endpoint;
       }
@@ -235,13 +254,13 @@ export function createCanvasEdge(
           segmentDrag.origToResolved.x + deltaX,
           segmentDrag.origToResolved.y + deltaY,
           viewport,
-          getState().snapToGrid
+          getState().snapToGrid,
         );
         segmentDrag.inFlightTo = endpoint;
       }
 
       if (segmentDrag.origWaypoints.length > 0) {
-        const newWaypoints = segmentDrag.origWaypoints.map(wp => ({ ...wp }));
+        const newWaypoints = segmentDrag.origWaypoints.map((wp) => ({ ...wp }));
         const snapEnabled = getState().snapToGrid;
         for (const wpIdx of segmentDrag.waypointIndices) {
           const newX = segmentDrag.origWaypoints[wpIdx].x + deltaX;
@@ -267,7 +286,8 @@ export function createCanvasEdge(
         const changes: Partial<Pick<Edge, "from" | "to" | "waypoints">> = {};
         if (segmentDrag.inFlightFrom) changes.from = segmentDrag.inFlightFrom;
         if (segmentDrag.inFlightTo) changes.to = segmentDrag.inFlightTo;
-        if (segmentDrag.inFlightWaypoints !== undefined) changes.waypoints = segmentDrag.inFlightWaypoints;
+        if (segmentDrag.inFlightWaypoints !== undefined)
+          changes.waypoints = segmentDrag.inFlightWaypoints;
         segmentDrag = null;
         callbacks.onEdgeChanged(edge.id, changes);
       } else {
@@ -303,7 +323,7 @@ export function updateCanvasEdge(
   viewportScale: number,
   labelColor: string,
   theme?: string,
-  locked = false
+  locked = false,
 ): void {
   const edgeGlow = group.getChildByLabel("edge-glow") as Graphics;
   const gfx = group.getChildByLabel("edge-line") as Graphics;
@@ -356,7 +376,16 @@ export function updateCanvasEdge(
     gfx.stroke({ width: lineWidth, color });
   } else {
     for (let i = 1; i < points.length; i++) {
-      drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, lineWidth, color, style);
+      drawDashedLine(
+        gfx,
+        points[i - 1].x,
+        points[i - 1].y,
+        points[i].x,
+        points[i].y,
+        lineWidth,
+        color,
+        style,
+      );
     }
   }
 
@@ -372,14 +401,22 @@ export function updateCanvasEdge(
   // Draw selection overlay along all segments (unlocked mode only)
   if (isSelected && !locked) {
     for (let i = 1; i < points.length; i++) {
-      drawDashedLine(gfx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, 3, isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR, "dashed");
+      drawDashedLine(
+        gfx,
+        points[i - 1].x,
+        points[i - 1].y,
+        points[i].x,
+        points[i].y,
+        3,
+        isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR,
+        "dashed",
+      );
     }
   }
 
   // Hit area for click detection (wider than the visual line)
   const tolerance = HIT_TOLERANCE / viewportScale;
   gfx.hitArea = new PolylineHitArea(points, Math.max(tolerance, HIT_TOLERANCE));
-
 }
 
 function drawPolyline(gfx: Graphics, points: Point[]): void {
@@ -397,7 +434,7 @@ function drawDashedLine(
   y2: number,
   width: number,
   color: number,
-  style: "dashed" | "dotted"
+  style: "dashed" | "dotted",
 ): void {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -421,12 +458,7 @@ function drawDashedLine(
   }
 }
 
-function drawArrowhead(
-  gfx: Graphics,
-  from: Point,
-  to: Point,
-  color: number
-): void {
+function drawArrowhead(gfx: Graphics, from: Point, to: Point, color: number): void {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
@@ -446,11 +478,16 @@ function drawArrowhead(
 
   const halfWidth = ARROWHEAD_SIZE * 0.5;
 
-  gfx.poly([
-    tipX, tipY,
-    baseX + px * halfWidth, baseY + py * halfWidth,
-    baseX - px * halfWidth, baseY - py * halfWidth,
-  ]).fill(color);
+  gfx
+    .poly([
+      tipX,
+      tipY,
+      baseX + px * halfWidth,
+      baseY + py * halfWidth,
+      baseX - px * halfWidth,
+      baseY - py * halfWidth,
+    ])
+    .fill(color);
 }
 
 // ── Segment drag state ─────────────────────────────────────────────
@@ -472,13 +509,20 @@ type SegmentDragState = {
 
 let segmentDrag: SegmentDragState | null = null;
 
-export function getSegmentDragOverride(): { edgeId: string; from?: EdgeEndpoint; to?: EdgeEndpoint; waypoints?: Point[] } | null {
+export function getSegmentDragOverride(): {
+  edgeId: string;
+  from?: EdgeEndpoint;
+  to?: EdgeEndpoint;
+  waypoints?: Point[];
+} | null {
   if (!segmentDrag) return null;
   return {
     edgeId: segmentDrag.edgeId,
     ...(segmentDrag.inFlightFrom && { from: segmentDrag.inFlightFrom }),
     ...(segmentDrag.inFlightTo && { to: segmentDrag.inFlightTo }),
-    ...(segmentDrag.inFlightWaypoints !== undefined && { waypoints: segmentDrag.inFlightWaypoints }),
+    ...(segmentDrag.inFlightWaypoints !== undefined && {
+      waypoints: segmentDrag.inFlightWaypoints,
+    }),
   };
 }
 

@@ -293,8 +293,11 @@ describe("PolylineHitArea", () => {
   describe("contains", () => {
     it("returns true for a point within tolerance of a horizontal segment", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        10,
       );
       // 5 units above the segment, tolerance is 10
       expect(hitArea.contains(50, 5)).toBe(true);
@@ -302,40 +305,56 @@ describe("PolylineHitArea", () => {
 
     it("returns true for a point exactly on the segment", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        10,
       );
       expect(hitArea.contains(50, 0)).toBe(true);
     });
 
     it("returns true for a point at exactly the tolerance distance", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        10,
       );
       expect(hitArea.contains(50, 10)).toBe(true);
     });
 
     it("returns false for a point just outside tolerance", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        10,
       );
       expect(hitArea.contains(50, 11)).toBe(false);
     });
 
     it("returns false for a point far from any segment", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        10,
       );
       expect(hitArea.contains(50, 100)).toBe(false);
     });
 
     it("checks multiple segments in a polyline", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }],
-        5
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+        ],
+        5,
       );
       // Near first segment
       expect(hitArea.contains(50, 3)).toBe(true);
@@ -347,8 +366,11 @@ describe("PolylineHitArea", () => {
 
     it("returns true when a point is inside the labelRect", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        5
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        5,
       );
       hitArea.labelRect = { x: 40, y: 10, width: 20, height: 10 };
       // Point (45, 15) is inside the label rect but far from the segment
@@ -357,8 +379,11 @@ describe("PolylineHitArea", () => {
 
     it("returns true when on the edge of the labelRect", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        5
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        5,
       );
       hitArea.labelRect = { x: 40, y: 10, width: 20, height: 10 };
       // Exact corners/edges of the rect
@@ -368,8 +393,11 @@ describe("PolylineHitArea", () => {
 
     it("returns false when outside both labelRect and tolerance", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        5
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        5,
       );
       hitArea.labelRect = { x: 40, y: 10, width: 20, height: 10 };
       expect(hitArea.contains(70, 30)).toBe(false);
@@ -377,8 +405,11 @@ describe("PolylineHitArea", () => {
 
     it("works without a labelRect (null by default)", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        5
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        5,
       );
       expect(hitArea.labelRect).toBeNull();
       // Should still work based on segment distance
@@ -390,16 +421,23 @@ describe("PolylineHitArea", () => {
   describe("findSegmentIndex", () => {
     it("returns 0 for a single-segment polyline", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+        ],
+        10,
       );
       expect(hitArea.findSegmentIndex(50, 5)).toBe(0);
     });
 
     it("returns the index of the closest segment in a multi-segment polyline", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+        ],
+        10,
       );
       // Near the first segment (horizontal)
       expect(hitArea.findSegmentIndex(50, 1)).toBe(0);
@@ -409,8 +447,12 @@ describe("PolylineHitArea", () => {
 
     it("returns the first segment index when at the shared vertex", () => {
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+        ],
+        10,
       );
       // At the corner (100,0): equidistant to both segments (dist=0), first wins
       expect(hitArea.findSegmentIndex(100, 0)).toBe(0);
@@ -424,7 +466,7 @@ describe("PolylineHitArea", () => {
           { x: 100, y: 100 },
           { x: 200, y: 100 },
         ],
-        10
+        10,
       );
       // Near segment 0
       expect(hitArea.findSegmentIndex(50, 0)).toBe(0);
@@ -437,8 +479,12 @@ describe("PolylineHitArea", () => {
     it("returns 0 for a point equidistant to all segments (strict < comparison picks first)", () => {
       // L-shape: all segments at distance 10 from some point... just verify determinism
       const hitArea = new PolylineHitArea(
-        [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 20, y: 0 }],
-        10
+        [
+          { x: 0, y: 0 },
+          { x: 10, y: 0 },
+          { x: 20, y: 0 },
+        ],
+        10,
       );
       // Point at (10, 5): dist to seg0 = 5, dist to seg1 = 5 => first one (index 0) wins
       expect(hitArea.findSegmentIndex(10, 5)).toBe(0);

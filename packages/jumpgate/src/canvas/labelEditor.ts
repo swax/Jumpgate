@@ -34,8 +34,19 @@ interface TextareaOpts {
 
 function openTextarea(opts: TextareaOpts): void {
   const {
-    entityId, domLabels, initialText, globalPos, width, height, scale, container,
-    labelColor, fontFamily, background, border, onCommit,
+    entityId,
+    domLabels,
+    initialText,
+    globalPos,
+    width,
+    height,
+    scale,
+    container,
+    labelColor,
+    fontFamily,
+    background,
+    border,
+    onCommit,
     visibleWhenEmpty = true,
   } = opts;
 
@@ -119,11 +130,7 @@ function openTextarea(opts: TextareaOpts): void {
   textarea.addEventListener("blur", commit);
 }
 
-export function startLabelEdit(
-  ctx: LabelEditContext,
-  group: Container,
-  nodeId: string
-): void {
+export function startLabelEdit(ctx: LabelEditContext, group: Container, nodeId: string): void {
   const { width, height } = getContainerBounds(group);
   const initialText = ctx.domLabels.getLabelText(nodeId);
   const hasChildren = getChildNodeIds(nodeId).length > 0;
@@ -151,11 +158,7 @@ export function startLabelEdit(
   });
 }
 
-export function startEdgeLabelEdit(
-  ctx: LabelEditContext,
-  group: Container,
-  edgeId: string
-): void {
+export function startEdgeLabelEdit(ctx: LabelEditContext, group: Container, edgeId: string): void {
   const initialText = ctx.domLabels.getLabelText(edgeId);
 
   // Get position from DOM element if available, else fall back to group global pos
@@ -185,7 +188,10 @@ export function startEdgeLabelEdit(
     entityId: edgeId,
     domLabels: ctx.domLabels,
     initialText,
-    globalPos: { x: globalPos.x - boxWidth / 2, y: globalPos.y - boxHeight / 2 },
+    globalPos: {
+      x: globalPos.x - boxWidth / 2,
+      y: globalPos.y - boxHeight / 2,
+    },
     width: boxWidth,
     height: boxHeight,
     scale,

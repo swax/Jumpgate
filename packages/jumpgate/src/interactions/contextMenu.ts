@@ -7,7 +7,14 @@ import {
   setSelectedEdgeIds,
 } from "../state";
 import { resolveEndpoint, buildPolylinePoints, pointToSegmentDistance } from "../canvas/canvasEdge";
-import { copySelectedNodes, pasteNodes, cutSelectedNodes, deleteSelected, hasClipboard, setLastMouseWorldPos } from "./clipboard";
+import {
+  copySelectedNodes,
+  pasteNodes,
+  cutSelectedNodes,
+  deleteSelected,
+  hasClipboard,
+  setLastMouseWorldPos,
+} from "./clipboard";
 import { getCallbacks, sendEditDebounced } from "../messaging";
 
 export interface ContextMenuOptions {
@@ -92,13 +99,17 @@ export function showContextMenu(x: number, y: number, options: ContextMenuOption
     itemCount++;
   }
 
-  const hasFileLinkActions = (options.showOpenFile && options.onOpenFile) || (options.showEditFileLink && options.onEditFileLink);
+  const hasFileLinkActions =
+    (options.showOpenFile && options.onOpenFile) ||
+    (options.showEditFileLink && options.onEditFileLink);
   if (itemCount > 0 && hasFileLinkActions) {
     menu.appendChild(createSeparator());
   }
 
   if (options.showEditFileLink && options.onEditFileLink) {
-    menu.appendChild(createMenuItem(options.editFileLinkLabel ?? "Set File Link", options.onEditFileLink));
+    menu.appendChild(
+      createMenuItem(options.editFileLinkLabel ?? "Set File Link", options.onEditFileLink),
+    );
     itemCount++;
   }
   if (options.showOpenFile && options.onOpenFile) {
@@ -159,8 +170,12 @@ export function setupContextMenu(app: Application, viewport: Container): void {
     let targetKind: "node" | "edge" | null = null;
     for (let i = nodes.length - 1; i >= 0; i--) {
       const n = nodes[i];
-      if (worldX >= n.bounds.x && worldX <= n.bounds.x + n.bounds.width &&
-          worldY >= n.bounds.y && worldY <= n.bounds.y + n.bounds.height) {
+      if (
+        worldX >= n.bounds.x &&
+        worldX <= n.bounds.x + n.bounds.width &&
+        worldY >= n.bounds.y &&
+        worldY <= n.bounds.y + n.bounds.height
+      ) {
         targetId = n.id;
         targetKind = "node";
         break;
@@ -179,9 +194,12 @@ export function setupContextMenu(app: Application, viewport: Container): void {
         const points = buildPolylinePoints(from, to, edge.waypoints);
         for (let s = 1; s < points.length; s++) {
           const dist = pointToSegmentDistance(
-            worldX, worldY,
-            points[s - 1].x, points[s - 1].y,
-            points[s].x, points[s].y
+            worldX,
+            worldY,
+            points[s - 1].x,
+            points[s - 1].y,
+            points[s].x,
+            points[s].y,
           );
           if (dist <= hitTolerance) {
             targetId = edge.id;
@@ -194,9 +212,8 @@ export function setupContextMenu(app: Application, viewport: Container): void {
     }
 
     if (targetId && targetKind) {
-      const fileLink = targetKind === "edge"
-        ? getEdgeById(targetId)?.fileLink
-        : getNodeById(targetId)?.fileLink;
+      const fileLink =
+        targetKind === "edge" ? getEdgeById(targetId)?.fileLink : getNodeById(targetId)?.fileLink;
       const hasFileLink = !!fileLink;
 
       if (state.locked) {
@@ -208,9 +225,11 @@ export function setupContextMenu(app: Application, viewport: Container): void {
           showPaste: false,
           showDelete: false,
           showViewSource: true,
-          onOpenFile: hasFileLink ? () => {
-            getCallbacks().onOpenFileLink?.(fileLink!.path, fileLink!.match);
-          } : undefined,
+          onOpenFile: hasFileLink
+            ? () => {
+                getCallbacks().onOpenFileLink?.(fileLink!.path, fileLink!.match);
+              }
+            : undefined,
           onViewSource: () => getCallbacks().onViewSource?.(),
         });
       } else {
@@ -234,11 +253,18 @@ export function setupContextMenu(app: Application, viewport: Container): void {
           showPaste: hasClipboard(),
           showDelete: true,
           showViewSource: true,
-          onOpenFile: hasFileLink ? () => {
-            getCallbacks().onOpenFileLink?.(fileLink!.path, fileLink!.match);
-          } : undefined,
+          onOpenFile: hasFileLink
+            ? () => {
+                getCallbacks().onOpenFileLink?.(fileLink!.path, fileLink!.match);
+              }
+            : undefined,
           onEditFileLink: () => {
-            getCallbacks().onEditFileLink?.(targetId!, targetKind!, fileLink?.path, fileLink?.match);
+            getCallbacks().onEditFileLink?.(
+              targetId!,
+              targetKind!,
+              fileLink?.path,
+              fileLink?.match,
+            );
           },
           onCut: () => cutSelectedNodes(sendEditDebounced),
           onCopy: () => copySelectedNodes(),

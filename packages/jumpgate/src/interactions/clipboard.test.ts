@@ -108,9 +108,7 @@ describe("copySelectedNodes", () => {
     const state = getState();
     // Original 2 + 1 pasted = 3
     expect(state.document.nodes.length).toBe(3);
-    const pastedNodes = state.document.nodes.filter(
-      (n) => n.id !== "node-1" && n.id !== "node-2"
-    );
+    const pastedNodes = state.document.nodes.filter((n) => n.id !== "node-1" && n.id !== "node-2");
     expect(pastedNodes.length).toBe(1);
     expect(pastedNodes[0].label).toBe("selected");
   });
@@ -120,7 +118,10 @@ describe("pasteNodes", () => {
   beforeEach(() => {
     setDocument({
       nodes: [
-        makeNode({ id: "node-1", bounds: { x: 100, y: 100, width: 100, height: 50 } }),
+        makeNode({
+          id: "node-1",
+          bounds: { x: 100, y: 100, width: 100, height: 50 },
+        }),
       ],
       edges: [],
     });
@@ -154,10 +155,7 @@ describe("pasteNodes", () => {
 
   it("preserves parent relationships when both parent and child are pasted", () => {
     setDocument({
-      nodes: [
-        makeNode({ id: "node-1" }),
-        makeNode({ id: "node-2", parentId: "node-1" }),
-      ],
+      nodes: [makeNode({ id: "node-1" }), makeNode({ id: "node-2", parentId: "node-1" })],
       edges: [],
     });
     setSelectedNodeIds(["node-1"]);
@@ -167,9 +165,7 @@ describe("pasteNodes", () => {
     pasteNodes(onEdit);
 
     const state = getState();
-    const pastedNodes = state.document.nodes.filter(
-      (n) => n.id !== "node-1" && n.id !== "node-2"
-    );
+    const pastedNodes = state.document.nodes.filter((n) => n.id !== "node-1" && n.id !== "node-2");
     expect(pastedNodes.length).toBe(2);
 
     const pastedChild = pastedNodes.find((n) => n.parentId !== undefined);
@@ -197,7 +193,7 @@ describe("pasteNodes", () => {
 
     const state = getState();
     const pastedNode = state.document.nodes.find(
-      (n) => n.id !== "node-1" && n.id !== "node-2" && n.id !== "node-3"
+      (n) => n.id !== "node-1" && n.id !== "node-2" && n.id !== "node-3",
     );
     expect(pastedNode).toBeDefined();
     expect(pastedNode!.parentId).toBeUndefined();
@@ -226,7 +222,7 @@ describe("pasteNodes", () => {
     expect(stateAfterSecond.document.nodes.length).toBe(3);
 
     const secondPasted = stateAfterSecond.document.nodes.find(
-      (n) => n.id !== "node-1" && n.id !== firstPasted.id
+      (n) => n.id !== "node-1" && n.id !== firstPasted.id,
     )!;
     expect(secondPasted).toBeDefined();
     // Second paste should be at a different position from the first
@@ -235,10 +231,7 @@ describe("pasteNodes", () => {
 
   it("selects root nodes of the pasted group", () => {
     setDocument({
-      nodes: [
-        makeNode({ id: "node-1" }),
-        makeNode({ id: "node-2", parentId: "node-1" }),
-      ],
+      nodes: [makeNode({ id: "node-1" }), makeNode({ id: "node-2", parentId: "node-1" })],
       edges: [],
     });
     setSelectedNodeIds(["node-1"]);
@@ -248,11 +241,13 @@ describe("pasteNodes", () => {
     pasteNodes(onEdit);
 
     const state = getState();
-    const pastedNodes = state.document.nodes.filter(
-      (n) => n.id !== "node-1" && n.id !== "node-2"
+    const pastedNodes = state.document.nodes.filter((n) => n.id !== "node-1" && n.id !== "node-2");
+    const pastedRoot = pastedNodes.find(
+      (n) => !n.parentId || !pastedNodes.some((p) => p.id === n.parentId),
     );
-    const pastedRoot = pastedNodes.find((n) => !n.parentId || !pastedNodes.some((p) => p.id === n.parentId));
-    const pastedChild = pastedNodes.find((n) => n.parentId && pastedNodes.some((p) => p.id === n.parentId));
+    const pastedChild = pastedNodes.find(
+      (n) => n.parentId && pastedNodes.some((p) => p.id === n.parentId),
+    );
 
     // Only the root should be selected, not the child
     expect(state.selectedNodeIds).toContain(pastedRoot!.id);
@@ -308,9 +303,7 @@ describe("deleteSelected", () => {
   it("calls onEdit for nodes and edges separately", () => {
     setDocument({
       nodes: [makeNode({ id: "node-1" }), makeNode({ id: "node-2" })],
-      edges: [
-        { id: "edge-1", from: { nodeId: "node-1" }, to: { nodeId: "node-2" } },
-      ],
+      edges: [{ id: "edge-1", from: { nodeId: "node-1" }, to: { nodeId: "node-2" } }],
     });
     // We need both nodes and edges selected. setSelectedNodeIds clears edges
     // and setSelectedEdgeIds clears nodes. We need to manipulate state so both are set.
@@ -341,9 +334,7 @@ describe("deleteSelected", () => {
     // Set up again:
     setDocument({
       nodes: [makeNode({ id: "node-3" }), makeNode({ id: "node-4" })],
-      edges: [
-        { id: "edge-2", from: { nodeId: "node-3" }, to: { nodeId: "node-4" } },
-      ],
+      edges: [{ id: "edge-2", from: { nodeId: "node-3" }, to: { nodeId: "node-4" } }],
     });
     setSelectedEdgeIds(["edge-2"]);
     const onEdit2 = vi.fn();
@@ -354,9 +345,7 @@ describe("deleteSelected", () => {
   it("does nothing with empty selection", () => {
     setDocument({
       nodes: [makeNode({ id: "node-1" })],
-      edges: [
-        { id: "edge-1", from: { x: 0, y: 0 }, to: { x: 100, y: 100 } },
-      ],
+      edges: [{ id: "edge-1", from: { x: 0, y: 0 }, to: { x: 100, y: 100 } }],
     });
     // No selection
     const onEdit = vi.fn();
@@ -395,9 +384,7 @@ describe("cutSelectedNodes", () => {
     setLastMouseWorldPos(0, 0);
     pasteNodes(onEdit);
     const stateAfterPaste = getState();
-    const pasted = stateAfterPaste.document.nodes.find(
-      (n) => n.id !== "node-2"
-    );
+    const pasted = stateAfterPaste.document.nodes.find((n) => n.id !== "node-2");
     expect(pasted).toBeDefined();
     expect(pasted!.label).toBe("Cut me");
   });
@@ -419,7 +406,10 @@ describe("setLastMouseWorldPos", () => {
   it("affects the offset position of pasted nodes", () => {
     setDocument({
       nodes: [
-        makeNode({ id: "node-1", bounds: { x: 0, y: 0, width: 100, height: 100 } }),
+        makeNode({
+          id: "node-1",
+          bounds: { x: 0, y: 0, width: 100, height: 100 },
+        }),
       ],
       edges: [],
     });
@@ -443,9 +433,7 @@ describe("setLastMouseWorldPos", () => {
     pasteNodes(onEdit);
 
     const state2 = getState();
-    const pasted2 = state2.document.nodes.find(
-      (n) => n.id !== "node-1" && n.id !== pasted1.id
-    )!;
+    const pasted2 = state2.document.nodes.find((n) => n.id !== "node-1" && n.id !== pasted1.id)!;
     // pasted1 center: (150+50, 150+50) = (200, 200). Offset to (0,0): (-200, -200)
     // pasted2 bounds.x: 150+(-200)=-50, bounds.y: 150+(-200)=-50
     expect(pasted2.bounds.x).toBe(-50);

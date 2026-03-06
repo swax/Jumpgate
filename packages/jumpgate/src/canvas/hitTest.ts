@@ -10,7 +10,7 @@ export function findNodeInBounds(
   worldX: number,
   worldY: number,
   nodes: { id: string; bounds: Bounds }[],
-  excludeIds?: Set<string>
+  excludeIds?: Set<string>,
 ): HitNodeInfo | null {
   for (let i = nodes.length - 1; i >= 0; i--) {
     const n = nodes[i];
@@ -28,12 +28,15 @@ export function findNodeAtPoint(
   worldX: number,
   worldY: number,
   viewport: Container,
-  excludeIds?: Set<string>
+  excludeIds?: Set<string>,
 ): HitNodeInfo | null {
   const doc = getState().document;
-  const nodes = doc.nodes.map(n => {
+  const nodes = doc.nodes.map((n) => {
     const container = viewport.getChildByLabel(n.id) as Container | null;
-    return { id: n.id, bounds: container ? getContainerBounds(container) : n.bounds };
+    return {
+      id: n.id,
+      bounds: container ? getContainerBounds(container) : n.bounds,
+    };
   });
   return findNodeInBounds(worldX, worldY, nodes, excludeIds);
 }

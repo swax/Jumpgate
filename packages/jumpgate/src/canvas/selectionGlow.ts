@@ -22,7 +22,7 @@ export class SelectionGlowManager {
     selectedEdgeIds: string[],
     locked: boolean,
     nodeZIndexMap: Map<string, number>,
-    theme?: string
+    theme?: string,
   ): void {
     if (!locked) {
       for (const [, gfx] of this.selectionGlows) {
@@ -117,14 +117,26 @@ export class SelectionGlowManager {
     this.selectionGlows.clear();
   }
 
-  private drawNodeGlow(glow: Graphics, x: number, y: number, width: number, height: number, color: number): void {
+  private drawNodeGlow(
+    glow: Graphics,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: number,
+  ): void {
     glow.clear();
-    glow.roundRect(x - 4, y - 4, width + 8, height + 8, 6)
-      .stroke({ color, width: 3, alpha: 1.0 });
-    glow.roundRect(x - 2, y - 2, width + 4, height + 4, 4)
+    glow.roundRect(x - 4, y - 4, width + 8, height + 8, 6).stroke({ color, width: 3, alpha: 1.0 });
+    glow
+      .roundRect(x - 2, y - 2, width + 4, height + 4, 4)
       .stroke({ color: 0xffffff, width: 3, alpha: 1.0 });
     if (!glow.filters || !(glow.filters as BlurFilter[])[0]) {
-      glow.filters = [new BlurFilter({ strength: GLOW_BLUR_STRENGTH, quality: GLOW_BLUR_QUALITY })];
+      glow.filters = [
+        new BlurFilter({
+          strength: GLOW_BLUR_STRENGTH,
+          quality: GLOW_BLUR_QUALITY,
+        }),
+      ];
     }
   }
 }

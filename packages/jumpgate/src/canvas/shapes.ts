@@ -11,17 +11,20 @@ export { drawGlowLayer, drawNebulaBg } from "./shapesSpace";
 
 export function directionToDeg(d: NodeDirection | undefined): number {
   switch (d) {
-    case "right": return 90;
-    case "down": return 180;
-    case "left": return 270;
-    default: return 0;
+    case "right":
+      return 90;
+    case "down":
+      return 180;
+    case "left":
+      return 270;
+    default:
+      return 0;
   }
 }
 
 export function setBoxHitArea(gfx: Graphics, width: number, height: number): void {
   gfx.hitArea = {
-    contains: (px: number, py: number) =>
-      px >= 0 && px <= width && py >= 0 && py <= height,
+    contains: (px: number, py: number) => px >= 0 && px <= width && py >= 0 && py <= height,
   };
 }
 
@@ -46,7 +49,7 @@ function transformVertices(
   flatPts: number[],
   width: number,
   height: number,
-  rotationDeg: number
+  rotationDeg: number,
 ): number[] {
   const cx = width / 2;
   const cy = height / 2;
@@ -61,7 +64,10 @@ function transformVertices(
     rotated.push(cx + dx * cos - dy * sin, cy + dx * sin + dy * cos);
   }
 
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
   for (let i = 0; i < rotated.length; i += 2) {
     minX = Math.min(minX, rotated[i]);
     maxX = Math.max(maxX, rotated[i]);
@@ -78,10 +84,7 @@ function transformVertices(
 
   const result: number[] = [];
   for (let i = 0; i < rotated.length; i += 2) {
-    result.push(
-      (rotated[i] - bbCx) * sx + cx,
-      (rotated[i + 1] - bbCy) * sy + cy
-    );
+    result.push((rotated[i] - bbCx) * sx + cx, (rotated[i + 1] - bbCy) * sy + cy);
   }
   return result;
 }
@@ -113,7 +116,11 @@ function roundRectVertices(w: number, h: number, r: number): number[] {
   return pts;
 }
 
-function getShapeVertices(width: number, height: number, shape: NodeShape | undefined): number[] | null {
+function getShapeVertices(
+  width: number,
+  height: number,
+  shape: NodeShape | undefined,
+): number[] | null {
   switch (shape) {
     case "rounded-rectangle":
       return roundRectVertices(width, height, 10);
@@ -184,7 +191,7 @@ function drawShapeStandard(
   shape: NodeShape | undefined,
   fillColor: number | null,
   strokeColor: number | null,
-  direction?: NodeDirection
+  direction?: NodeDirection,
 ): void {
   const deg = directionToDeg(direction);
 
@@ -202,7 +209,8 @@ function drawShapeStandard(
     const verts = getShapeVertices(width, height, shape);
     if (verts) {
       const transformed = transformVertices(verts, width, height, deg);
-      gfx.poly(transformed); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly(transformed);
+      applyStyle(gfx, fillColor, strokeColor);
       setBoxHitArea(gfx, width, height);
       return;
     }
@@ -210,35 +218,41 @@ function drawShapeStandard(
 
   switch (shape) {
     case "rounded-rectangle":
-      gfx.roundRect(0, 0, width, height, 10); applyStyle(gfx, fillColor, strokeColor);
+      gfx.roundRect(0, 0, width, height, 10);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
 
     case "ellipse":
-      gfx.ellipse(width / 2, height / 2, width / 2, height / 2); applyStyle(gfx, fillColor, strokeColor);
+      gfx.ellipse(width / 2, height / 2, width / 2, height / 2);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
 
     case "diamond": {
       const cx = width / 2;
       const cy = height / 2;
-      gfx.poly([cx, 0, width, cy, cx, height, 0, cy]); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly([cx, 0, width, cy, cx, height, 0, cy]);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
     case "parallelogram": {
       const offset = width * 0.2;
-      gfx.poly([offset, 0, width, 0, width - offset, height, 0, height]); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly([offset, 0, width, 0, width - offset, height, 0, height]);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
     case "trapezoid": {
       const offset = width * 0.15;
-      gfx.poly([offset, 0, width - offset, 0, width, height, 0, height]); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly([offset, 0, width - offset, 0, width, height, 0, height]);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
     case "triangle": {
       const cx = width / 2;
-      gfx.poly([cx, 0, width, height, 0, height]); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly([cx, 0, width, height, 0, height]);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
@@ -246,7 +260,8 @@ function drawShapeStandard(
       const swap = deg === 90 || deg === 270;
       const dw = swap ? height : width;
       const dh = swap ? width : height;
-      gfx.roundRect(0, 0, dw, dh, Math.min(dw, dh) / 2); applyStyle(gfx, fillColor, strokeColor);
+      gfx.roundRect(0, 0, dw, dh, Math.min(dw, dh) / 2);
+      applyStyle(gfx, fillColor, strokeColor);
       if (deg !== 0) {
         const rad = (deg * Math.PI) / 180;
         gfx.pivot.set(dw / 2, dh / 2);
@@ -265,7 +280,8 @@ function drawShapeStandard(
       }
       pts.push(width, height);
       pts.push(0, height);
-      gfx.poly(pts); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly(pts);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
@@ -283,7 +299,8 @@ function drawShapeStandard(
       }
       pts.push(dw - r, dh);
       pts.push(0, dh);
-      gfx.poly(pts); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly(pts);
+      applyStyle(gfx, fillColor, strokeColor);
       if (deg !== 0) {
         const rad = (deg * Math.PI) / 180;
         gfx.pivot.set(dw / 2, dh / 2);
@@ -307,7 +324,8 @@ function drawShapeStandard(
         pts.push(x, y);
       }
       pts.push(0, 0);
-      gfx.poly(pts); applyStyle(gfx, fillColor, strokeColor);
+      gfx.poly(pts);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
     }
 
@@ -316,13 +334,21 @@ function drawShapeStandard(
       const dw = swap ? height : width;
       const dh = swap ? width : height;
       const ry = Math.min(dh * 0.15, 20);
-      gfx.ellipse(dw / 2, dh - ry, dw / 2, ry); applyStyle(gfx, fillColor, strokeColor);
+      gfx.ellipse(dw / 2, dh - ry, dw / 2, ry);
+      applyStyle(gfx, fillColor, strokeColor);
       if (fillColor !== null) gfx.rect(0, ry, dw, dh - 2 * ry).fill(fillColor);
       if (strokeColor !== null) {
-        gfx.moveTo(0, ry).lineTo(0, dh - ry).stroke({ width: STROKE_WIDTH, color: strokeColor });
-        gfx.moveTo(dw, ry).lineTo(dw, dh - ry).stroke({ width: STROKE_WIDTH, color: strokeColor });
+        gfx
+          .moveTo(0, ry)
+          .lineTo(0, dh - ry)
+          .stroke({ width: STROKE_WIDTH, color: strokeColor });
+        gfx
+          .moveTo(dw, ry)
+          .lineTo(dw, dh - ry)
+          .stroke({ width: STROKE_WIDTH, color: strokeColor });
       }
-      gfx.ellipse(dw / 2, ry, dw / 2, ry); applyStyle(gfx, fillColor, strokeColor);
+      gfx.ellipse(dw / 2, ry, dw / 2, ry);
+      applyStyle(gfx, fillColor, strokeColor);
       if (deg !== 0) {
         const rad = (deg * Math.PI) / 180;
         gfx.pivot.set(dw / 2, dh / 2);
@@ -334,7 +360,8 @@ function drawShapeStandard(
 
     case "rectangle":
     default:
-      gfx.rect(0, 0, width, height); applyStyle(gfx, fillColor, strokeColor);
+      gfx.rect(0, 0, width, height);
+      applyStyle(gfx, fillColor, strokeColor);
       break;
   }
 
@@ -353,7 +380,7 @@ export function drawShape(
   fillColor: number | null,
   strokeColor: number | null,
   direction?: NodeDirection,
-  theme?: string
+  theme?: string,
 ): void {
   if (theme === "space") {
     drawShapeSpace(gfx, width, height, shape, fillColor, strokeColor, direction);

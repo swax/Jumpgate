@@ -35,7 +35,10 @@ function scaleAnchorsForNode(nodeId: string, oldBounds: Bounds, newBounds: Bound
     let fromAnchor: [number, number] | undefined;
     let toAnchor: [number, number] | undefined;
     if ("nodeId" in edge.from && edge.from.nodeId === nodeId && edge.from.anchor) {
-      fromAnchor = [Math.round(edge.from.anchor[0] * scaleX), Math.round(edge.from.anchor[1] * scaleY)];
+      fromAnchor = [
+        Math.round(edge.from.anchor[0] * scaleX),
+        Math.round(edge.from.anchor[1] * scaleY),
+      ];
     }
     if ("nodeId" in edge.to && edge.to.nodeId === nodeId && edge.to.anchor) {
       toAnchor = [Math.round(edge.to.anchor[0] * scaleX), Math.round(edge.to.anchor[1] * scaleY)];
@@ -74,4 +77,7 @@ export const nodesChanged = (updates: { id: string; changes: NodeChanges }[]) =>
   }
   sendEditDebounced();
 };
-export const edgeChanged = (id: string, changes: Partial<Omit<Edge, "id">>) => { updateEdge(id, changes); sendEditDebounced(); };
+export const edgeChanged = (id: string, changes: Partial<Omit<Edge, "id">>) => {
+  updateEdge(id, changes);
+  sendEditDebounced();
+};

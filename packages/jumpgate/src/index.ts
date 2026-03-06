@@ -30,12 +30,28 @@ import { setupSelectionBox } from "./interactions/selectionBox";
 import { createCursorManager } from "./interactions/cursorManager";
 import { setupGroupStatus } from "./interactions/groupStatus";
 import { setupThemeToggle } from "./controls/themeToggle";
-import { setCallbacks, sendEditDebounced, nodeChanged, nodesChanged, edgeChanged } from "./messaging";
+import {
+  setCallbacks,
+  sendEditDebounced,
+  nodeChanged,
+  nodesChanged,
+  edgeChanged,
+} from "./messaging";
 import { createStarfield, setupThemeBackground } from "./canvas/starfield";
 import { buildEditorDOM } from "./editorDOM";
 import type { JgDocument, FileLink } from "./schema";
 
-export type { JgDocument, Node, Edge, FileLink, Bounds, EdgeEndpoint, NodeShape, NodeDirection, DocumentTheme } from "./schema";
+export type {
+  JgDocument,
+  Node,
+  Edge,
+  FileLink,
+  Bounds,
+  EdgeEndpoint,
+  NodeShape,
+  NodeDirection,
+  DocumentTheme,
+} from "./schema";
 export { documentSchema, nodeSchema, edgeSchema } from "./schema";
 
 export interface JumpgateCallbacks {
@@ -44,7 +60,12 @@ export interface JumpgateCallbacks {
   /** Called when user wants to open a file link */
   onOpenFileLink?: (path: string, match?: string, preview?: boolean) => void;
   /** Called when user wants to edit a file link on a node/edge */
-  onEditFileLink?: (targetId: string, targetKind: "node" | "edge", currentPath?: string, currentMatch?: string) => void;
+  onEditFileLink?: (
+    targetId: string,
+    targetKind: "node" | "edge",
+    currentPath?: string,
+    currentMatch?: string,
+  ) => void;
   /** Called when user wants to view the raw source */
   onViewSource?: () => void;
 }
@@ -60,7 +81,7 @@ export interface JumpgateEditor {
 
 export async function createJumpgateEditor(
   container: HTMLDivElement,
-  callbacks?: JumpgateCallbacks
+  callbacks?: JumpgateCallbacks,
 ): Promise<JumpgateEditor> {
   setCallbacks(callbacks ?? {});
 
@@ -69,9 +90,10 @@ export async function createJumpgateEditor(
 
   // Set up PixiJS Application
   const app = new Application();
-  const defaultBg = getComputedStyle(document.documentElement)
-    .getPropertyValue("--vscode-editor-background")
-    .trim() || "#1e1e1e";
+  const defaultBg =
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--vscode-editor-background")
+      .trim() || "#1e1e1e";
   await app.init({
     resizeTo: elements.canvasContainer,
     backgroundAlpha: 1,
@@ -104,7 +126,13 @@ export async function createJumpgateEditor(
 
   setupSelectionBox(app, viewport, cursorManager);
 
-  const panZoom = setupPanZoom(app, viewport, cursorManager, () => getState().locked, () => getState().edgeMode);
+  const panZoom = setupPanZoom(
+    app,
+    viewport,
+    cursorManager,
+    () => getState().locked,
+    () => getState().edgeMode,
+  );
   setupLockToggle(elements.lockBtn);
   setupGridSnap(elements.snapBtn);
   setupThemeToggle(elements.themeBtn, sendEditDebounced);
@@ -132,9 +160,7 @@ export async function createJumpgateEditor(
       }
     },
     onOpenFileLink: (id, kind, preview) => {
-      const fileLink = kind === "edge"
-        ? getEdgeById(id)?.fileLink
-        : getNodeById(id)?.fileLink;
+      const fileLink = kind === "edge" ? getEdgeById(id)?.fileLink : getNodeById(id)?.fileLink;
       if (fileLink) {
         callbacks?.onOpenFileLink?.(fileLink.path, fileLink.match, preview);
       }
@@ -157,18 +183,13 @@ export async function createJumpgateEditor(
   setupContextMenu(app, viewport);
 
   setupGroupStatus(sendEditDebounced);
-  setupEdgeMode(
-    elements.edgeBtn,
-    viewport,
-    app.stage,
-    {
-      addEdge: (edge) => {
-        addEdge(edge);
-        sendEditDebounced();
-      },
-      generateEdgeId,
-    }
-  );
+  setupEdgeMode(elements.edgeBtn, viewport, app.stage, {
+    addEdge: (edge) => {
+      addEdge(edge);
+      sendEditDebounced();
+    },
+    generateEdgeId,
+  });
 
   return {
     setDocument(document: JgDocument) {
@@ -188,4 +209,3 @@ export async function createJumpgateEditor(
     },
   };
 }
-

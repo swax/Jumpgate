@@ -3,7 +3,13 @@ import type { Bounds, Edge, EdgeEndpoint } from "../schema";
 import { DOUBLE_CLICK_MS } from "../shared";
 import { resolveEndpoint, resolveAnchor } from "./edgeGeometry";
 import { isEdgeDragging } from "./canvasEdge";
-import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, computeAnchor, buildEndpoint } from "./edgeUtils";
+import {
+  DOT_RADIUS,
+  DOT_COLOR_EMPTY,
+  DOT_COLOR_NODE,
+  computeAnchor,
+  buildEndpoint,
+} from "./edgeUtils";
 import { findNodeAtPoint } from "./hitTest";
 import { getState, getEdgeById } from "../state";
 import { snap } from "../controls/gridSnap";
@@ -68,13 +74,24 @@ export class EdgeHandleOverlay {
   }
 
   /** Returns the in-flight endpoint override during a handle drag, or null. */
-  getEndpointOverride(): { edgeId: string; which: "from" | "to"; endpoint: EdgeEndpoint } | null {
+  getEndpointOverride(): {
+    edgeId: string;
+    which: "from" | "to";
+    endpoint: EdgeEndpoint;
+  } | null {
     if (!this.isDragging || !this.dragEdgeId || !this.dragWhich || !this.dragEndpoint) return null;
-    return { edgeId: this.dragEdgeId, which: this.dragWhich, endpoint: this.dragEndpoint };
+    return {
+      edgeId: this.dragEdgeId,
+      which: this.dragWhich,
+      endpoint: this.dragEndpoint,
+    };
   }
 
   /** Returns the in-flight waypoints override during a waypoint drag, or null. */
-  getWaypointOverrides(): { edgeId: string; waypoints: { x: number; y: number }[] } | null {
+  getWaypointOverrides(): {
+    edgeId: string;
+    waypoints: { x: number; y: number }[];
+  } | null {
     if (!this.isDraggingWaypoint || !this.dragWaypointEdgeId || !this.dragWaypoints) return null;
     return { edgeId: this.dragWaypointEdgeId, waypoints: this.dragWaypoints };
   }
@@ -126,7 +143,10 @@ export class EdgeHandleOverlay {
       handle.position.set(posX, posY);
       const r = DOT_RADIUS / viewport.scale.x;
       handle.clear();
-      handle.circle(0, 0, r).fill(color).stroke({ width: 1.5 / viewport.scale.x, color: 0xffffff });
+      handle
+        .circle(0, 0, r)
+        .fill(color)
+        .stroke({ width: 1.5 / viewport.scale.x, color: 0xffffff });
       const hitR = r * 3;
       handle.hitArea = {
         contains: (px: number, py: number) => px * px + py * py <= hitR * hitR,
@@ -222,7 +242,9 @@ export class EdgeHandleOverlay {
 
     const updated = [...edge.waypoints];
     updated.splice(wpIndex, 1);
-    this.callbacks.onEdgeChanged(edgeId, { waypoints: updated.length > 0 ? updated : undefined });
+    this.callbacks.onEdgeChanged(edgeId, {
+      waypoints: updated.length > 0 ? updated : undefined,
+    });
   }
 
   private startWaypointDrag(
@@ -230,7 +252,7 @@ export class EdgeHandleOverlay {
     wpIndex: number,
     edge: Edge,
     nodeMap: Map<string, Bounds>,
-    _e: FederatedPointerEvent
+    _e: FederatedPointerEvent,
   ): void {
     this.isDraggingWaypoint = true;
     this.dragWaypointEdgeId = edge.id;
@@ -256,7 +278,10 @@ export class EdgeHandleOverlay {
       handle.position.set(sx, sy);
       const r = DOT_RADIUS / viewport.scale.x;
       handle.clear();
-      handle.circle(0, 0, r).fill(DOT_COLOR_EMPTY).stroke({ width: 1.5 / viewport.scale.x, color: 0xffffff });
+      handle
+        .circle(0, 0, r)
+        .fill(DOT_COLOR_EMPTY)
+        .stroke({ width: 1.5 / viewport.scale.x, color: 0xffffff });
       const hitR = r * 3;
       handle.hitArea = {
         contains: (px: number, py: number) => px * px + py * py <= hitR * hitR,
@@ -303,7 +328,9 @@ export class EdgeHandleOverlay {
         existing[wpIndex] = { x: sx, y: sy };
       }
 
-      this.callbacks.onEdgeChanged(edge.id, { waypoints: existing.length > 0 ? existing : undefined });
+      this.callbacks.onEdgeChanged(edge.id, {
+        waypoints: existing.length > 0 ? existing : undefined,
+      });
     };
 
     handle.on("globalpointermove", onMove);
@@ -317,16 +344,10 @@ export class EdgeHandleOverlay {
     nodeMap: Map<string, Bounds>,
     viewportScale: number,
     locked: boolean,
-    edgeMode: boolean
+    edgeMode: boolean,
   ): void {
     // Only show handles when exactly 1 edge is selected, not locked, not in edge mode, not mid-drag
-    if (
-      selectedEdgeIds.length !== 1 ||
-      locked ||
-      edgeMode ||
-      this.isDragging ||
-      isEdgeDragging()
-    ) {
+    if (selectedEdgeIds.length !== 1 || locked || edgeMode || this.isDragging || isEdgeDragging()) {
       if (!this.isDragging && !this.isDraggingWaypoint) {
         this.fromHandle.visible = false;
         this.toHandle.visible = false;
@@ -378,11 +399,20 @@ export class EdgeHandleOverlay {
     }
   }
 
-  private drawDot(handle: Graphics, x: number, y: number, color: number, viewportScale: number): void {
+  private drawDot(
+    handle: Graphics,
+    x: number,
+    y: number,
+    color: number,
+    viewportScale: number,
+  ): void {
     const r = DOT_RADIUS / viewportScale;
 
     handle.clear();
-    handle.circle(0, 0, r).fill(color).stroke({ width: 1.5 / viewportScale, color: 0xffffff });
+    handle
+      .circle(0, 0, r)
+      .fill(color)
+      .stroke({ width: 1.5 / viewportScale, color: 0xffffff });
     handle.position.set(x, y);
     handle.visible = true;
 

@@ -74,7 +74,7 @@ export function getConnectedEdgeIds(nodeId: string): string[] {
     .filter(
       (e) =>
         ("nodeId" in e.from && e.from.nodeId === nodeId) ||
-        ("nodeId" in e.to && e.to.nodeId === nodeId)
+        ("nodeId" in e.to && e.to.nodeId === nodeId),
     )
     .map((e) => e.id);
 }
@@ -129,7 +129,7 @@ export function deleteNodes(ids: string[]): void {
       edges: state.document.edges.filter(
         (e) =>
           !("nodeId" in e.from && idSet.has(e.from.nodeId)) &&
-          !("nodeId" in e.to && idSet.has(e.to.nodeId))
+          !("nodeId" in e.to && idSet.has(e.to.nodeId)),
       ),
     },
     selectedNodeIds: state.selectedNodeIds.filter((id) => !idSet.has(id)),
@@ -181,9 +181,7 @@ export function updateEdge(id: string, changes: Partial<Omit<Edge, "id">>): void
     ...state,
     document: {
       ...state.document,
-      edges: state.document.edges.map((edge) =>
-        edge.id === id ? { ...edge, ...changes } : edge
-      ),
+      edges: state.document.edges.map((edge) => (edge.id === id ? { ...edge, ...changes } : edge)),
     },
   };
   notify();
@@ -210,7 +208,10 @@ export function setSnapToGrid(snapToGrid: boolean): void {
 }
 
 export function setDocumentTheme(theme: string | undefined): void {
-  state = { ...state, document: { ...state.document, theme: theme as DocumentTheme | undefined } };
+  state = {
+    ...state,
+    document: { ...state.document, theme: theme as DocumentTheme | undefined },
+  };
   notify();
 }
 
@@ -235,7 +236,7 @@ export function updateNode(id: string, changes: NodeChanges): void {
     document: {
       ...state.document,
       nodes: state.document.nodes.map((node) =>
-        node.id === id ? applyNodeChanges(node, changes) : node
+        node.id === id ? applyNodeChanges(node, changes) : node,
       ),
     },
   };

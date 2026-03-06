@@ -11,7 +11,7 @@ const SELECTION_STROKE_ALPHA = 0.8;
 export function setupSelectionBox(
   app: Application,
   viewport: Container,
-  cursorManager: CursorManager
+  cursorManager: CursorManager,
 ): void {
   const selectionRect = new Graphics();
   selectionRect.label = "__selection_rect__";
@@ -47,7 +47,11 @@ export function setupSelectionBox(
       .clear()
       .rect(x, y, w, h)
       .fill({ color: SELECTION_COLOR, alpha: SELECTION_ALPHA })
-      .stroke({ width: lineWidth, color: SELECTION_COLOR, alpha: SELECTION_STROKE_ALPHA });
+      .stroke({
+        width: lineWidth,
+        color: SELECTION_COLOR,
+        alpha: SELECTION_STROKE_ALPHA,
+      });
     selectionRect.visible = true;
   }
 

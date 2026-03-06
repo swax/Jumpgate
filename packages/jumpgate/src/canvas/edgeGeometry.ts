@@ -15,7 +15,7 @@ export function resolveAnchor(node: Bounds, anchor?: [number, number]): { x: num
 /** Resolve an endpoint to world coordinates. Node-anchored endpoints use the node + anchor; free-point endpoints use x/y directly. */
 export function resolveEndpoint(
   endpoint: EdgeEndpoint,
-  nodeMap: Map<string, Bounds>
+  nodeMap: Map<string, Bounds>,
 ): { x: number; y: number } | null {
   if ("nodeId" in endpoint) {
     const node = nodeMap.get(endpoint.nodeId);
@@ -26,11 +26,7 @@ export function resolveEndpoint(
 }
 
 /** Build the full polyline: [from, ...waypoints, to]. */
-export function buildPolylinePoints(
-  from: Point,
-  to: Point,
-  waypoints?: Point[]
-): Point[] {
+export function buildPolylinePoints(from: Point, to: Point, waypoints?: Point[]): Point[] {
   if (!waypoints || waypoints.length === 0) return [from, to];
   return [from, ...waypoints, to];
 }
@@ -75,7 +71,7 @@ export function pointToSegmentDistance(
   x1: number,
   y1: number,
   x2: number,
-  y2: number
+  y2: number,
 ): number {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -102,16 +98,22 @@ export function pointToSegmentDistance(
 export class PolylineHitArea {
   labelRect: { x: number; y: number; width: number; height: number } | null = null;
 
-  constructor(private points: Point[], private tolerance: number) {}
+  constructor(
+    private points: Point[],
+    private tolerance: number,
+  ) {}
 
   findSegmentIndex(x: number, y: number): number {
     let bestDist = Infinity;
     let bestIdx = 0;
     for (let i = 1; i < this.points.length; i++) {
       const dist = pointToSegmentDistance(
-        x, y,
-        this.points[i - 1].x, this.points[i - 1].y,
-        this.points[i].x, this.points[i].y
+        x,
+        y,
+        this.points[i - 1].x,
+        this.points[i - 1].y,
+        this.points[i].x,
+        this.points[i].y,
       );
       if (dist < bestDist) {
         bestDist = dist;
@@ -130,9 +132,12 @@ export class PolylineHitArea {
     }
     for (let i = 1; i < this.points.length; i++) {
       const dist = pointToSegmentDistance(
-        x, y,
-        this.points[i - 1].x, this.points[i - 1].y,
-        this.points[i].x, this.points[i].y
+        x,
+        y,
+        this.points[i - 1].x,
+        this.points[i - 1].y,
+        this.points[i].x,
+        this.points[i].y,
       );
       if (dist <= this.tolerance) return true;
     }

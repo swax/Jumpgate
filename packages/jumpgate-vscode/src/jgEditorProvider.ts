@@ -1,10 +1,7 @@
 import * as vscode from "vscode";
 import { documentSchema } from "jumpgate/schema";
 import type { FileLink } from "jumpgate/schema";
-import type {
-  ExtensionToWebviewMessage,
-  WebviewToExtensionMessage,
-} from "./messages";
+import type { ExtensionToWebviewMessage, WebviewToExtensionMessage } from "./messages";
 
 export class JgEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = "jumpgate.preview";
@@ -15,7 +12,7 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
       new JgEditorProvider(context),
       {
         webviewOptions: { retainContextWhenHidden: true },
-      }
+      },
     );
   }
 
@@ -24,15 +21,13 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<void> {
     const webview = webviewPanel.webview;
 
     webview.options = {
       enableScripts: true,
-      localResourceRoots: [
-        vscode.Uri.joinPath(this.context.extensionUri, "dist"),
-      ],
+      localResourceRoots: [vscode.Uri.joinPath(this.context.extensionUri, "dist")],
     };
 
     webview.html = this.getHtmlForWebview(webview);
@@ -65,11 +60,7 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
           case "edit": {
             const newContent = JSON.stringify(msg.document, null, 2) + "\n";
             const edit = new vscode.WorkspaceEdit();
-            edit.replace(
-              document.uri,
-              new vscode.Range(0, 0, document.lineCount, 0),
-              newContent
-            );
+            edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), newContent);
             isApplyingEdit = true;
             await vscode.workspace.applyEdit(edit);
             isApplyingEdit = false;
@@ -105,8 +96,9 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
               const otherGroups = vscode.window.tabGroups.all
                 .filter((g) => g.viewColumn !== panelColumn)
                 .sort((a, b) => a.viewColumn - b.viewColumn);
-              const viewColumn = otherGroups[0]?.viewColumn
-                ?? (backgroundOpen ? vscode.ViewColumn.Beside : undefined);
+              const viewColumn =
+                otherGroups[0]?.viewColumn ??
+                (backgroundOpen ? vscode.ViewColumn.Beside : undefined);
               await vscode.window.showTextDocument(fileDoc, {
                 selection,
                 preview: msg.preview ?? true,
@@ -135,7 +127,10 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
             const items: FileLinkItem[] = [];
 
             if (msg.currentPath) {
-              items.push({ label: "$(trash) Remove File Link", action: "remove" });
+              items.push({
+                label: "$(trash) Remove File Link",
+                action: "remove",
+              });
             }
             items.push({ label: "$(link) Enter URL...", action: "url" });
             items.push({ label: "", kind: vscode.QuickPickItemKind.Separator });
@@ -160,7 +155,10 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
               const url = await vscode.window.showInputBox({
                 prompt: "Enter URL",
                 placeHolder: "https://...",
-                value: msg.currentPath && /^https?:\/\//.test(msg.currentPath) ? msg.currentPath : undefined,
+                value:
+                  msg.currentPath && /^https?:\/\//.test(msg.currentPath)
+                    ? msg.currentPath
+                    : undefined,
               });
               if (url === undefined) break; // user cancelled
               if (url) {
@@ -169,9 +167,13 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
                 break; // empty input
               }
             } else if (picked.filePath) {
-              const prefill = (msg.currentPath === picked.filePath && msg.currentMatch) ? msg.currentMatch : undefined;
+              const prefill =
+                msg.currentPath === picked.filePath && msg.currentMatch
+                  ? msg.currentMatch
+                  : undefined;
               const match = await vscode.window.showInputBox({
-                prompt: "Optional: enter text to match in the file (leave empty to open file at top)",
+                prompt:
+                  "Optional: enter text to match in the file (leave empty to open file at top)",
                 placeHolder: "match text",
                 value: prefill,
               });
@@ -189,18 +191,14 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
             break;
           }
         }
-      }
+      },
     );
 
-    const changeDocumentSubscription =
-      vscode.workspace.onDidChangeTextDocument((e) => {
-        if (
-          e.document.uri.toString() === document.uri.toString() &&
-          !isApplyingEdit
-        ) {
-          sendDocument();
-        }
-      });
+    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document.uri.toString() === document.uri.toString() && !isApplyingEdit) {
+        sendDocument();
+      }
+    });
 
     webviewPanel.onDidDispose(() => {
       messageSubscription.dispose();
@@ -210,7 +208,7 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
 
   private getHtmlForWebview(webview: vscode.Webview): string {
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.context.extensionUri, "dist", "webview.js")
+      vscode.Uri.joinPath(this.context.extensionUri, "dist", "webview.js"),
     );
     const nonce = getNonce();
 
@@ -247,8 +245,7 @@ export class JgEditorProvider implements vscode.CustomTextEditorProvider {
 }
 
 function getNonce(): string {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let nonce = "";
   for (let i = 0; i < 32; i++) {
     nonce += chars.charAt(Math.floor(Math.random() * chars.length));

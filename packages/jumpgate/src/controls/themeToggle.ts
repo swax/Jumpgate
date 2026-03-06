@@ -6,10 +6,7 @@ const SPACE_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6
 // Square icon — shown when current theme is space (click to switch to standard)
 const STANDARD_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/></svg>`;
 
-export function setupThemeToggle(
-  button: HTMLButtonElement,
-  onChanged: () => void
-): void {
+export function setupThemeToggle(button: HTMLButtonElement, onChanged: () => void): void {
   function updateVisual(): void {
     const theme = getState().document.theme;
     if (theme === "space") {

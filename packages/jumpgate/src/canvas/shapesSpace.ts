@@ -4,7 +4,12 @@ import { directionToDeg, setBoxHitArea, glyphRadius } from "./shapes";
 
 // ── Glow & nebula layers (space-only) ───────────────────────────
 
-export function drawGlowLayer(gfx: Graphics, width: number, height: number, fillColor: number): void {
+export function drawGlowLayer(
+  gfx: Graphics,
+  width: number,
+  height: number,
+  fillColor: number,
+): void {
   const cx = width / 2;
   const cy = height / 2;
   const r = glyphRadius(width, height);
@@ -13,22 +18,27 @@ export function drawGlowLayer(gfx: Graphics, width: number, height: number, fill
   gfx.circle(cx, cy, r * 1.0).fill({ color: fillColor, alpha: 0.06 });
 }
 
-export function drawNebulaBg(gfx: Graphics, width: number, height: number, fillColor: number): void {
+export function drawNebulaBg(
+  gfx: Graphics,
+  width: number,
+  height: number,
+  fillColor: number,
+): void {
   const cx = width / 2;
   const cy = height / 2;
   const size = Math.max(width, height);
 
   const offsets = [
-    { dx: -0.25, dy: -0.2,  s: 0.35 },
-    { dx:  0.2,  dy: -0.15, s: 0.30 },
-    { dx:  0.0,  dy:  0.2,  s: 0.25 },
-    { dx: -0.15, dy:  0.05, s: 0.40 },
-    { dx:  0.3,  dy:  0.15, s: 0.28 },
-    { dx: -0.1,  dy: -0.3,  s: 0.32 },
-    { dx:  0.15, dy:  0.3,  s: 0.22 },
-    { dx: -0.3,  dy:  0.2,  s: 0.30 },
-    { dx:  0.25, dy: -0.25, s: 0.26 },
-    { dx:  0.0,  dy:  0.0,  s: 0.45 },
+    { dx: -0.25, dy: -0.2, s: 0.35 },
+    { dx: 0.2, dy: -0.15, s: 0.3 },
+    { dx: 0.0, dy: 0.2, s: 0.25 },
+    { dx: -0.15, dy: 0.05, s: 0.4 },
+    { dx: 0.3, dy: 0.15, s: 0.28 },
+    { dx: -0.1, dy: -0.3, s: 0.32 },
+    { dx: 0.15, dy: 0.3, s: 0.22 },
+    { dx: -0.3, dy: 0.2, s: 0.3 },
+    { dx: 0.25, dy: -0.25, s: 0.26 },
+    { dx: 0.0, dy: 0.0, s: 0.45 },
   ];
   for (const { dx, dy, s } of offsets) {
     const alpha = 0.04 + Math.abs(dx + dy) * 0.04;
@@ -70,7 +80,14 @@ export function drawNebulaBg(gfx: Graphics, width: number, height: number, fillC
 
 // ── Space glyph shapes ──────────────────────────────────────────
 
-function drawStar4(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawStar4(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const outer = r;
   const inner = r * 0.38;
   const pts: number[] = [];
@@ -84,7 +101,14 @@ function drawStar4(gfx: Graphics, cx: number, cy: number, r: number, fillColor: 
   if (strokeColor !== null) gfx.stroke({ width: 1.5, color: strokeColor });
 }
 
-function drawBrightBall(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawBrightBall(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const bodyR = r * 0.45;
   if (fillColor !== null) {
     gfx.circle(cx, cy, bodyR * 2.2).fill({ color: fillColor, alpha: 0.08 });
@@ -94,11 +118,20 @@ function drawBrightBall(gfx: Graphics, cx: number, cy: number, r: number, fillCo
   if (fillColor !== null) gfx.fill(fillColor);
   if (strokeColor !== null) gfx.stroke({ width: 1.5, color: strokeColor });
   if (fillColor !== null) {
-    gfx.circle(cx - bodyR * 0.2, cy - bodyR * 0.2, bodyR * 0.35).fill({ color: 0xffffff, alpha: 0.5 });
+    gfx
+      .circle(cx - bodyR * 0.2, cy - bodyR * 0.2, bodyR * 0.35)
+      .fill({ color: 0xffffff, alpha: 0.5 });
   }
 }
 
-function drawPlanet(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawPlanet(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const bodyR = r * 0.6;
   gfx.circle(cx, cy, bodyR);
   if (fillColor !== null) gfx.fill(fillColor);
@@ -116,7 +149,14 @@ function drawPlanet(gfx: Graphics, cx: number, cy: number, r: number, fillColor:
   }
 }
 
-function drawPulsar(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawPulsar(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const s = r * 0.5;
   gfx.poly([cx, cy - s, cx + s, cy, cx, cy + s, cx - s, cy]);
   if (fillColor !== null) gfx.fill(fillColor);
@@ -145,7 +185,15 @@ function drawPulsar(gfx: Graphics, cx: number, cy: number, r: number, fillColor:
   }
 }
 
-function drawComet(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null, deg: number): void {
+function drawComet(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+  deg: number,
+): void {
   const rad = (deg * Math.PI) / 180;
   const headR = r * 0.3;
   const tailLen = r * 1.5;
@@ -157,18 +205,31 @@ function drawComet(gfx: Graphics, cx: number, cy: number, r: number, fillColor: 
   const tailEndX = cx + dx * tailLen;
   const tailEndY = cy + dy * tailLen;
   if (fillColor !== null) {
-    gfx.poly([
-      cx - px * tailSpread, cy - py * tailSpread,
-      tailEndX, tailEndY,
-      cx + px * tailSpread, cy + py * tailSpread,
-    ]).fill({ color: fillColor, alpha: 0.35 });
+    gfx
+      .poly([
+        cx - px * tailSpread,
+        cy - py * tailSpread,
+        tailEndX,
+        tailEndY,
+        cx + px * tailSpread,
+        cy + py * tailSpread,
+      ])
+      .fill({ color: fillColor, alpha: 0.35 });
   }
   gfx.circle(cx, cy, headR);
   if (fillColor !== null) gfx.fill(fillColor);
   if (strokeColor !== null) gfx.stroke({ width: 1.5, color: strokeColor });
 }
 
-function drawStation(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null, deg: number): void {
+function drawStation(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+  deg: number,
+): void {
   const rad = (deg * Math.PI) / 180;
   const s = r * 0.55;
   const pts: number[] = [];
@@ -191,7 +252,15 @@ function drawStation(gfx: Graphics, cx: number, cy: number, r: number, fillColor
   }
 }
 
-function drawShip(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null, deg: number): void {
+function drawShip(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+  deg: number,
+): void {
   const rad = (deg * Math.PI) / 180;
   const s = r * 0.5;
   const tipX = cx - Math.sin(rad) * s;
@@ -208,7 +277,14 @@ function drawShip(gfx: Graphics, cx: number, cy: number, r: number, fillColor: n
   }
 }
 
-function drawWormhole(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawWormhole(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   if (strokeColor !== null) {
     const rings = 3;
     for (let i = rings; i >= 1; i--) {
@@ -223,7 +299,14 @@ function drawWormhole(gfx: Graphics, cx: number, cy: number, r: number, fillColo
   }
 }
 
-function drawNebula(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawNebula(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   if (fillColor !== null) {
     const offsets = [
       { dx: -r * 0.25, dy: -r * 0.15, s: 0.55 },
@@ -241,17 +324,33 @@ function drawNebula(gfx: Graphics, cx: number, cy: number, r: number, fillColor:
   }
 }
 
-function drawMoon(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawMoon(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const bodyR = r * 0.6;
   gfx.circle(cx, cy, bodyR);
   if (fillColor !== null) gfx.fill(fillColor);
   if (strokeColor !== null) gfx.stroke({ width: 1.5, color: strokeColor });
   if (fillColor !== null) {
-    gfx.circle(cx + bodyR * 0.4, cy - bodyR * 0.1, bodyR * 0.7).fill({ color: 0x020408, alpha: 0.85 });
+    gfx
+      .circle(cx + bodyR * 0.4, cy - bodyR * 0.1, bodyR * 0.7)
+      .fill({ color: 0x020408, alpha: 0.85 });
   }
 }
 
-function drawAsteroid(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawAsteroid(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const vertices = 8;
   const pts: number[] = [];
   const radii = [0.7, 0.9, 0.6, 1.0, 0.65, 0.85, 0.55, 0.95];
@@ -265,7 +364,14 @@ function drawAsteroid(gfx: Graphics, cx: number, cy: number, r: number, fillColo
   if (strokeColor !== null) gfx.stroke({ width: 1.5, color: strokeColor });
 }
 
-function drawBeacon(gfx: Graphics, cx: number, cy: number, r: number, fillColor: number | null, strokeColor: number | null): void {
+function drawBeacon(
+  gfx: Graphics,
+  cx: number,
+  cy: number,
+  r: number,
+  fillColor: number | null,
+  strokeColor: number | null,
+): void {
   const antTop = cy - r * 0.6;
   const antBottom = cy + r * 0.3;
   if (strokeColor !== null) {
@@ -276,13 +382,16 @@ function drawBeacon(gfx: Graphics, cx: number, cy: number, r: number, fillColor:
   }
   if (strokeColor !== null) {
     const baseW = r * 0.35;
-    gfx.moveTo(cx - baseW, antBottom).lineTo(cx + baseW, antBottom).stroke({ width: 2, color: strokeColor });
+    gfx
+      .moveTo(cx - baseW, antBottom)
+      .lineTo(cx + baseW, antBottom)
+      .stroke({ width: 2, color: strokeColor });
     for (let i = 1; i <= 3; i++) {
       const arcR = r * 0.2 * i;
       const segs = 12;
       const pts: number[] = [];
       for (let j = 0; j <= segs; j++) {
-        const t = -Math.PI / 3 + (j / segs) * (2 * Math.PI / 3);
+        const t = -Math.PI / 3 + (j / segs) * ((2 * Math.PI) / 3);
         pts.push(cx + Math.cos(t - Math.PI / 2) * arcR, antTop + Math.sin(t - Math.PI / 2) * arcR);
       }
       for (let j = 1; j < pts.length / 2; j++) {
@@ -303,7 +412,7 @@ export function drawShapeSpace(
   shape: NodeShape | undefined,
   fillColor: number | null,
   strokeColor: number | null,
-  direction?: NodeDirection
+  direction?: NodeDirection,
 ): void {
   const deg = directionToDeg(direction);
   const cx = width / 2;

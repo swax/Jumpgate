@@ -10,7 +10,6 @@ import { drawShape, drawGlowLayer, drawNebulaBg } from "./shapes";
 import { findNodeAtPoint } from "./hitTest";
 import { getNodeMeta, setNodeMeta, setNodeRectMeta } from "./metadata";
 
-
 export function getContainerBounds(container: Container): Bounds {
   const meta = getNodeMeta(container);
   return {
@@ -63,7 +62,7 @@ export function createCanvasNode(
   labelColor: string,
   labelEditCtx: LabelEditContext,
   callbacks: CanvasNodeCallbacks,
-  theme?: string
+  theme?: string,
 ): Container {
   const group = new Container();
   group.label = node.id;
@@ -93,7 +92,16 @@ export function createCanvasNode(
   if (hasChildren && isSpace && fillColor !== null) {
     drawNebulaBg(rect, node.bounds.width, node.bounds.height, fillColor);
   } else {
-    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, strokeColor, node.direction, theme);
+    drawShape(
+      rect,
+      node.bounds.width,
+      node.bounds.height,
+      node.shape,
+      fillColor,
+      strokeColor,
+      node.direction,
+      theme,
+    );
   }
   rect.eventMode = "passive";
 
@@ -267,7 +275,10 @@ export function createCanvasNode(
         draggingIds.add(nodeId);
         // Record start if single drag
         if (startPositions.size === 0) {
-          startPositions.set(nodeId, { x: group.position.x, y: group.position.y });
+          startPositions.set(nodeId, {
+            x: group.position.x,
+            y: group.position.y,
+          });
         }
         // Boost z-index so dragged nodes appear above everything
         const DRAG_Z_BASE = 8900;
@@ -348,7 +359,12 @@ export function createCanvasNode(
           const parentContainer = viewport.getChildByLabel(currentParentId) as Container | null;
           if (parentContainer) {
             const pb = getContainerBounds(parentContainer);
-            if (centerX < pb.x || centerX > pb.x + pb.width || centerY < pb.y || centerY > pb.y + pb.height) {
+            if (
+              centerX < pb.x ||
+              centerX > pb.x + pb.width ||
+              centerY < pb.y ||
+              centerY > pb.y + pb.height
+            ) {
               const parentNode = getNodeById(currentParentId);
               const parentLabel = parentNode?.label || parentNode?.id || currentParentId;
               showGroupDragMessage(`Remove from ${parentLabel}`);
@@ -379,13 +395,29 @@ export function createCanvasNode(
         for (const id of startPositions.keys()) {
           const g = id === nodeId ? group : (viewport.getChildByLabel(id) as Container | null);
           if (g) {
-            updates.push({ id, changes: { bounds: { x: Math.round(g.position.x), y: Math.round(g.position.y) } } });
+            updates.push({
+              id,
+              changes: {
+                bounds: {
+                  x: Math.round(g.position.x),
+                  y: Math.round(g.position.y),
+                },
+              },
+            });
           }
         }
         for (const id of cascadePositions.keys()) {
           const g = viewport.getChildByLabel(id) as Container | null;
           if (g) {
-            updates.push({ id, changes: { bounds: { x: Math.round(g.position.x), y: Math.round(g.position.y) } } });
+            updates.push({
+              id,
+              changes: {
+                bounds: {
+                  x: Math.round(g.position.x),
+                  y: Math.round(g.position.y),
+                },
+              },
+            });
           }
         }
 
@@ -457,7 +489,12 @@ export function isDraggingNode(id: string): boolean {
   return draggingIds.has(id) || groupDraggingIds.has(id);
 }
 
-export function updateCanvasNode(group: Container, node: Node, labelColor: string, theme?: string): void {
+export function updateCanvasNode(
+  group: Container,
+  node: Node,
+  labelColor: string,
+  theme?: string,
+): void {
   if (draggingIds.has(node.id) || groupDraggingIds.has(node.id)) return;
 
   const glow = group.getChildByLabel("node-glow") as Graphics | null;
@@ -489,7 +526,16 @@ export function updateCanvasNode(group: Container, node: Node, labelColor: strin
   if (hasChildren && isSpace && fillColor !== null) {
     drawNebulaBg(rect, node.bounds.width, node.bounds.height, fillColor);
   } else {
-    drawShape(rect, node.bounds.width, node.bounds.height, node.shape, fillColor, strokeColor, node.direction, theme);
+    drawShape(
+      rect,
+      node.bounds.width,
+      node.bounds.height,
+      node.shape,
+      fillColor,
+      strokeColor,
+      node.direction,
+      theme,
+    );
   }
 
   const updatedMeta = {

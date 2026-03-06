@@ -3,7 +3,13 @@ import type { Edge, EdgeEndpoint } from "../schema";
 import { getState, setEdgeMode, subscribe } from "../state";
 import { snap } from "../controls/gridSnap";
 import { resolveAnchor } from "../canvas/edgeGeometry";
-import { DOT_RADIUS, DOT_COLOR_EMPTY, DOT_COLOR_NODE, computeAnchor, buildEndpoint } from "../canvas/edgeUtils";
+import {
+  DOT_RADIUS,
+  DOT_COLOR_EMPTY,
+  DOT_COLOR_NODE,
+  computeAnchor,
+  buildEndpoint,
+} from "../canvas/edgeUtils";
 import { findNodeAtPoint } from "../canvas/hitTest";
 
 const EDGE_BTN_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -20,7 +26,7 @@ export function setupEdgeMode(
   btn: HTMLButtonElement,
   viewport: Container,
   stage: Container,
-  callbacks: EdgeModeCallbacks
+  callbacks: EdgeModeCallbacks,
 ): void {
   let sourceEndpoint: EdgeEndpoint | null = null;
   let previewLine: Graphics | null = null;
@@ -116,7 +122,12 @@ export function setupEdgeMode(
     e.stopPropagation();
 
     const worldPos = viewport.toLocal(e.global);
-    const { endpoint, resolved } = buildEndpoint(worldPos.x, worldPos.y, viewport, getState().snapToGrid);
+    const { endpoint, resolved } = buildEndpoint(
+      worldPos.x,
+      worldPos.y,
+      viewport,
+      getState().snapToGrid,
+    );
 
     if (!sourceEndpoint) {
       // First click: set source

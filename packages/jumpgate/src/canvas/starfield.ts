@@ -22,19 +22,21 @@ export function createStarfield(viewport: Container): Graphics {
 export function setupThemeBackground(
   app: Application,
   starfield: Graphics,
-  canvasContainer: HTMLDivElement
+  canvasContainer: HTMLDivElement,
 ): void {
   subscribe(() => {
     const theme = getState().document.theme;
     if (theme === "space") {
       starfield.visible = true;
       app.renderer.background.color = 0x020408;
-      canvasContainer.style.background = "radial-gradient(ellipse at center, #0a0e1a 0%, #020408 100%)";
+      canvasContainer.style.background =
+        "radial-gradient(ellipse at center, #0a0e1a 0%, #020408 100%)";
     } else {
       starfield.visible = false;
-      const bgColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--vscode-editor-background")
-        .trim() || "#1e1e1e";
+      const bgColor =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--vscode-editor-background")
+          .trim() || "#1e1e1e";
       app.renderer.background.color = bgColor;
       canvasContainer.style.background = bgColor;
     }

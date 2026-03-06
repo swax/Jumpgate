@@ -5,7 +5,7 @@ import { documentSchema } from "jumpgate/schema";
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(JgEditorProvider.register(context));
   context.subscriptions.push(
-    vscode.commands.registerCommand("jumpgate.linkToNode", linkToNodeCommand)
+    vscode.commands.registerCommand("jumpgate.linkToNode", linkToNodeCommand),
   );
 }
 
@@ -20,9 +20,7 @@ async function linkToNodeCommand(): Promise<void> {
   const selection = editor.document.getText(editor.selection) || undefined;
 
   // Find open .jg documents
-  const jgDocs = vscode.workspace.textDocuments.filter((d) =>
-    d.uri.fsPath.endsWith(".jg")
-  );
+  const jgDocs = vscode.workspace.textDocuments.filter((d) => d.uri.fsPath.endsWith(".jg"));
 
   if (jgDocs.length === 0) {
     vscode.window.showErrorMessage("No .jg file is currently open.");
@@ -38,7 +36,7 @@ async function linkToNodeCommand(): Promise<void> {
         label: vscode.workspace.asRelativePath(d.uri),
         doc: d,
       })),
-      { placeHolder: "Choose a .jg file" }
+      { placeHolder: "Choose a .jg file" },
     );
     if (!pick) return;
     jgDoc = pick.doc;
@@ -67,7 +65,10 @@ async function linkToNodeCommand(): Promise<void> {
   // Build quick pick items for nodes and edges
   const nodeMap = new Map(parsed.nodes.map((n) => [n.id, n]));
 
-  type LinkPickItem = vscode.QuickPickItem & { targetId: string; targetKind: "node" | "edge" };
+  type LinkPickItem = vscode.QuickPickItem & {
+    targetId: string;
+    targetKind: "node" | "edge";
+  };
 
   const nodeItems: LinkPickItem[] = parsed.nodes.map((n) => ({
     label: n.label || n.id,
@@ -85,7 +86,9 @@ async function linkToNodeCommand(): Promise<void> {
   }
 
   const edgeItems: LinkPickItem[] = parsed.edges.map((e) => ({
-    label: e.label || `${edgeEndpointLabel(e.from as { nodeId?: string; x?: number; y?: number })} → ${edgeEndpointLabel(e.to as { nodeId?: string; x?: number; y?: number })}`,
+    label:
+      e.label ||
+      `${edgeEndpointLabel(e.from as { nodeId?: string; x?: number; y?: number })} → ${edgeEndpointLabel(e.to as { nodeId?: string; x?: number; y?: number })}`,
     description: e.label ? `Edge: ${e.id}` : "Edge",
     targetId: e.id,
     targetKind: "edge" as const,
@@ -100,29 +103,24 @@ async function linkToNodeCommand(): Promise<void> {
 
   // Update the target's fileLink in the JSON
   const fullJson = JSON.parse(jgDoc.getText());
-  const fileLink = { path: filePath, ...(selection ? { match: selection } : {}) };
+  const fileLink = {
+    path: filePath,
+    ...(selection ? { match: selection } : {}),
+  };
 
   if (pick.targetKind === "node") {
-    const targetNode = fullJson.nodes.find(
-      (n: { id: string }) => n.id === pick.targetId
-    );
+    const targetNode = fullJson.nodes.find((n: { id: string }) => n.id === pick.targetId);
     if (!targetNode) return;
     targetNode.fileLink = fileLink;
   } else {
-    const targetEdge = fullJson.edges?.find(
-      (e: { id: string }) => e.id === pick.targetId
-    );
+    const targetEdge = fullJson.edges?.find((e: { id: string }) => e.id === pick.targetId);
     if (!targetEdge) return;
     targetEdge.fileLink = fileLink;
   }
 
   const newContent = JSON.stringify(fullJson, null, 2) + "\n";
   const edit = new vscode.WorkspaceEdit();
-  edit.replace(
-    jgDoc.uri,
-    new vscode.Range(0, 0, jgDoc.lineCount, 0),
-    newContent
-  );
+  edit.replace(jgDoc.uri, new vscode.Range(0, 0, jgDoc.lineCount, 0), newContent);
   await vscode.workspace.applyEdit(edit);
 }
 

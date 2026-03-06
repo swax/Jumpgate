@@ -36,33 +36,26 @@ const SPACE_SHAPE_OPTIONS: [string, string][] = [
   ["text", "T"],
 ];
 
-export interface SidebarChanges extends Partial<Pick<Node, "nodeColor" | "labelColor" | "borderColor" | "shape" | "direction">> {
+export interface SidebarChanges extends Partial<
+  Pick<Node, "nodeColor" | "labelColor" | "borderColor" | "shape" | "direction">
+> {
   bounds?: Partial<Node["bounds"]>;
 }
 
 export type EdgeSidebarChanges = Partial<Pick<Edge, "color" | "labelColor">>;
 
 export interface SidebarCallbacks {
-  onNodeChanged: (
-    id: string,
-    changes: SidebarChanges
-  ) => void;
+  onNodeChanged: (id: string, changes: SidebarChanges) => void;
   onNodesChanged?: (
     updates: {
       id: string;
       changes: SidebarChanges;
-    }[]
+    }[],
   ) => void;
-  onEdgeChanged: (
-    id: string,
-    changes: EdgeSidebarChanges
-  ) => void;
+  onEdgeChanged: (id: string, changes: EdgeSidebarChanges) => void;
 }
 
-export function setupSidebar(
-  container: HTMLElement,
-  callbacks: SidebarCallbacks
-): void {
+export function setupSidebar(container: HTMLElement, callbacks: SidebarCallbacks): void {
   const fillInput = container.querySelector<HTMLInputElement>("#fill-color")!;
   const fillWrapper = container.querySelector<HTMLElement>("#fill-color-wrapper")!;
   const fillClear = fillWrapper.querySelector<HTMLElement>(".color-clear")!;
@@ -125,7 +118,7 @@ export function setupSidebar(
         targetIds.map((id) => ({
           id,
           changes,
-        }))
+        })),
       );
       return;
     }
@@ -244,7 +237,11 @@ export function setupSidebar(
       if (node) {
         targetIds = selectedNodeIds;
         targetType = "node";
-        setColors(node.nodeColor ?? null, node.labelColor ?? DEFAULT_TEXT, node.borderColor ?? null);
+        setColors(
+          node.nodeColor ?? null,
+          node.labelColor ?? DEFAULT_TEXT,
+          node.borderColor ?? null,
+        );
         shapeSelect.value = node.shape ?? "";
         shapeSelect.disabled = false;
         rotateBtn.disabled = false;

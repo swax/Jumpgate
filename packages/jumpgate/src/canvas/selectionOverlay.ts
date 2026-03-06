@@ -19,8 +19,8 @@ type NodeInfo = Bounds & { id: string };
 const HANDLE_SIZE = 8;
 const HANDLE_COLOR = 0x4a90d9;
 const OUTLINE_COLOR = 0x4da3ff;
-const SPACE_HANDLE_COLOR = 0x00FFAA;
-const SPACE_OUTLINE_COLOR = 0x00FFAA;
+const SPACE_HANDLE_COLOR = 0x00ffaa;
+const SPACE_OUTLINE_COLOR = 0x00ffaa;
 
 type HandleId =
   | "top-left"
@@ -49,10 +49,7 @@ export class SelectionOverlay {
   private dragStartBbox = { x: 0, y: 0, width: 0, height: 0 };
   private dragStartPointer = { x: 0, y: 0 };
 
-  constructor(
-    viewportGetter: () => Container,
-    callbacks: SelectionOverlayCallbacks
-  ) {
+  constructor(viewportGetter: () => Container, callbacks: SelectionOverlayCallbacks) {
     this.callbacks = callbacks;
     this.viewportGetter = viewportGetter;
 
@@ -167,8 +164,12 @@ export class SelectionOverlay {
   }
 
   private drawDashedLine(
-    x1: number, y1: number, x2: number, y2: number,
-    dashLen: number, gapLen: number
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    dashLen: number,
+    gapLen: number,
   ): void {
     const dx = x2 - x1;
     const dy = y2 - y1;
@@ -191,8 +192,12 @@ export class SelectionOverlay {
   }
 
   private drawDashedRect(
-    x: number, y: number, width: number, height: number,
-    dashLen: number, gapLen: number
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    dashLen: number,
+    gapLen: number,
   ): void {
     this.drawDashedLine(x, y, x + width, y, dashLen, gapLen);
     this.drawDashedLine(x + width, y, x + width, y + height, dashLen, gapLen);
@@ -267,11 +272,16 @@ export class SelectionOverlay {
     for (const [hid, handle] of this.handles) {
       const pos = rawPositions[hid];
       handle.clear();
-      handle.rect(-hs / 2, -hs / 2, hs, hs).fill(handleColor).stroke({ width: 1 / viewportScale, color: 0xffffff });
+      handle
+        .rect(-hs / 2, -hs / 2, hs, hs)
+        .fill(handleColor)
+        .stroke({ width: 1 / viewportScale, color: 0xffffff });
       handle.position.set(pos.x, pos.y);
       handle.visible = true;
       // Make hit area larger for easier grabbing
-      handle.hitArea = { contains: (px: number, py: number) => px >= -hs && px <= hs && py >= -hs && py <= hs };
+      handle.hitArea = {
+        contains: (px: number, py: number) => px >= -hs && px <= hs && py >= -hs && py <= hs,
+      };
     }
   }
 
@@ -368,7 +378,9 @@ export class SelectionOverlay {
           const strokeClr = rectMeta?.strokeColor ?? null;
           const shape = rectMeta?.nodeShape;
           const dir = rectMeta?.nodeDirection;
-          const isGroup = glow ? (glow as Graphics & { __isGroup?: boolean }).__isGroup ?? false : false;
+          const isGroup = glow
+            ? ((glow as Graphics & { __isGroup?: boolean }).__isGroup ?? false)
+            : false;
           const isSpace = this.theme === "space";
           rect.clear();
           if (isGroup && isSpace && fill !== null) {
@@ -417,13 +429,24 @@ export class SelectionOverlay {
             const strokeClr = rectMeta?.strokeColor ?? 0x333333;
             const shape = rectMeta?.nodeShape;
             const dir = rectMeta?.nodeDirection;
-            const isGroup = glow ? (glow as Graphics & { __isGroup?: boolean }).__isGroup ?? false : false;
+            const isGroup = glow
+              ? ((glow as Graphics & { __isGroup?: boolean }).__isGroup ?? false)
+              : false;
             const isSpace = this.theme === "space";
             rect.clear();
             if (isGroup && isSpace && fill !== null) {
               drawNebulaBg(rect, newBounds.width, newBounds.height, fill);
             } else {
-              drawShape(rect, newBounds.width, newBounds.height, shape, fill, strokeClr, dir, this.theme);
+              drawShape(
+                rect,
+                newBounds.width,
+                newBounds.height,
+                shape,
+                fill,
+                strokeClr,
+                dir,
+                this.theme,
+              );
             }
             if (glow && isSpace && fill !== null && (isGroup || shape !== "text")) {
               glow.clear();
