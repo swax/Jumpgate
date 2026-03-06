@@ -1,4 +1,6 @@
-src/
+packages/jumpgate/
+packages/jumpgate-vscode/src/
+packages/jumpgate-vscode/node_modules/
 node_modules/
 .gitignore
 .github/
