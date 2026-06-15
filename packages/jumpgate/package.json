@@ -23,7 +23,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsc",
-    "dev": "esbuild demo/demo.ts --bundle --outfile=demo/demo.js --format=iife --platform=browser --sourcemap --servedir=demo --serve=8080",
+    "dev": "node dev.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

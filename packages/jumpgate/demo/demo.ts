@@ -1,5 +1,9 @@
 import { createJumpgateEditor, documentSchema, type JgDocument, type JumpgateEditor } from "../src/index";
 
+// Injected by dev.mjs via esbuild `define` when a file is passed to `npm run dev`.
+declare const __INITIAL_DOC__: string | null;
+declare const __INITIAL_NAME__: string | null;
+
 const EMPTY_DOC: JgDocument = { nodes: [], edges: [] };
 
 let editor: JumpgateEditor;
@@ -22,7 +26,21 @@ async function main(): Promise<void> {
     },
   });
 
-  editor.setDocument(EMPTY_DOC);
+  // Load a file passed to `npm run dev <file.jg>`, otherwise start empty.
+  if (__INITIAL_DOC__) {
+    const result = documentSchema.safeParse(JSON.parse(__INITIAL_DOC__));
+    if (result.success) {
+      currentDoc = result.data;
+      currentFilename = __INITIAL_NAME__ ?? "";
+      filenameEl.textContent = currentFilename;
+      editor.setDocument(currentDoc);
+    } else {
+      console.error("Invalid preloaded .jg file:", result.error.message);
+      editor.setDocument(EMPTY_DOC);
+    }
+  } else {
+    editor.setDocument(EMPTY_DOC);
+  }
 
   // Open button
   document.getElementById("open-btn")!.addEventListener("click", () => {

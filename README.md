@@ -94,10 +94,13 @@ npm test               # Run tests
 
 ```sh
 cd packages/jumpgate
-npm run dev            # Serves at http://localhost:8080
+npm run dev                              # Serves an empty editor at http://localhost:8080
+npm run dev -- ../../samples/sample.jg   # ...or preload a .jg file on startup
 ```
 
-Open a `.jg` file from the `samples/` directory using the Open button or drag-and-drop.
+Sample `.jg` files live in the `samples/` directory at the repo root. With the
+server running you can also open any of them via the Open button or by dragging
+a `.jg` file onto the page.
 
 ## Performance
 
