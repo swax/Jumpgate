@@ -105,6 +105,9 @@ Every edge requires `id`, `from`, and `to`. All other fields are optional.
   "labelColor": "#333333",     // optional edge label text color (hex)
   "style": "solid",            // "solid" (default), "dashed", "dotted"
   "arrow": "end",              // "none" (default), "end", "start", "both"
+  "width": 3,                  // optional line thickness in px (default 2); scale by a value for Sankey-style ribbons
+  "opacity": 0.8,              // optional line alpha 0–1 (default 1); use <1 so overlapping ribbons blend
+  "curve": "smooth",           // optional: "straight" (default) or "smooth" (horizontal-tangent bezier per segment — the Sankey/flow look; needs only endpoints + maybe one waypoint)
   "waypoints": [               // optional intermediate points for routing
     { "x": 300, "y": 150 }
   ],

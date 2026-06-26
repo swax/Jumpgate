@@ -67,6 +67,9 @@ export const edgeSchema = z.object({
   labelColor: z.string().optional(),
   style: z.enum(["solid", "dashed", "dotted"]).optional(),
   arrow: z.enum(["none", "end", "start", "both"]).optional(),
+  width: z.number().positive().optional(),
+  opacity: z.number().min(0).max(1).optional(),
+  curve: z.enum(["straight", "smooth"]).optional(),
   fileLink: fileLinkSchema.optional(),
 });
 

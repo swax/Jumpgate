@@ -283,6 +283,9 @@ describe("edgeSchema", () => {
       labelColor: "#112233",
       style: "dashed" as const,
       arrow: "both" as const,
+      width: 4,
+      opacity: 0.5,
+      curve: "smooth" as const,
       fileLink: { path: "/link.ts" },
     };
     const result = edgeSchema.safeParse(full);
@@ -314,6 +317,28 @@ describe("edgeSchema", () => {
   it("rejects an invalid arrow enum value", () => {
     const result = edgeSchema.safeParse({ ...minimalEdge, arrow: "double" });
     expect(result.success).toBe(false);
+  });
+
+  it("accepts opacity at the 0 and 1 bounds", () => {
+    for (const opacity of [0, 0.5, 1]) {
+      expect(edgeSchema.safeParse({ ...minimalEdge, opacity }).success).toBe(true);
+    }
+  });
+
+  it("rejects opacity outside 0–1", () => {
+    expect(edgeSchema.safeParse({ ...minimalEdge, opacity: 1.5 }).success).toBe(false);
+    expect(edgeSchema.safeParse({ ...minimalEdge, opacity: -0.1 }).success).toBe(false);
+  });
+
+  it("rejects non-positive width", () => {
+    expect(edgeSchema.safeParse({ ...minimalEdge, width: 0 }).success).toBe(false);
+    expect(edgeSchema.safeParse({ ...minimalEdge, width: -2 }).success).toBe(false);
+  });
+
+  it("accepts both curve enum values and rejects others", () => {
+    expect(edgeSchema.safeParse({ ...minimalEdge, curve: "straight" }).success).toBe(true);
+    expect(edgeSchema.safeParse({ ...minimalEdge, curve: "smooth" }).success).toBe(true);
+    expect(edgeSchema.safeParse({ ...minimalEdge, curve: "wavy" }).success).toBe(false);
   });
 
   it("accepts empty waypoints array", () => {

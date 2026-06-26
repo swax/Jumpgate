@@ -98,22 +98,30 @@ export function pointToSegmentDistance(
 export class PolylineHitArea {
   labelRect: { x: number; y: number; width: number; height: number } | null = null;
 
+  /**
+   * @param points        dense path used for containment (may be a flattened curve so the
+   *                      clickable region hugs the visible edge)
+   * @param tolerance     half-width of the clickable band, in world units
+   * @param segmentPoints coarse path (endpoints + waypoints) used for drag segment mapping;
+   *                      defaults to `points` when the edge has no separate flattened form
+   */
   constructor(
     private points: Point[],
     private tolerance: number,
+    private segmentPoints: Point[] = points,
   ) {}
 
   findSegmentIndex(x: number, y: number): number {
     let bestDist = Infinity;
     let bestIdx = 0;
-    for (let i = 1; i < this.points.length; i++) {
+    for (let i = 1; i < this.segmentPoints.length; i++) {
       const dist = pointToSegmentDistance(
         x,
         y,
-        this.points[i - 1].x,
-        this.points[i - 1].y,
-        this.points[i].x,
-        this.points[i].y,
+        this.segmentPoints[i - 1].x,
+        this.segmentPoints[i - 1].y,
+        this.segmentPoints[i].x,
+        this.segmentPoints[i].y,
       );
       if (dist < bestDist) {
         bestDist = dist;

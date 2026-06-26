@@ -344,17 +344,25 @@ export function updateCanvasEdge(
 
   const isSpace = theme === "space";
   const color = colorToHex(edge.color, isSpace ? SPACE_EDGE_COLOR : DEFAULT_EDGE_COLOR);
-  const lineWidth = isSpace ? 1.5 : 2;
+  const baseWidth = isSpace ? 1.5 : 2;
+  const lineWidth = edge.width ?? baseWidth;
+  const alpha = edge.opacity ?? 1;
+  // A translucent solid edge is drawn as one FILLED ribbon instead of a stroke: a single fill is
+  // one coverage pass, so the edge never darkens where it overlaps itself at a bend, and it draws
+  // straight to the antialiased canvas (no filter, so no jaggies). Different edges still blend.
+  // Opaque or dashed edges keep the normal stroke path.
   const style = edge.style ?? "solid";
+  const useRibbon = style === "solid" && alpha < 1;
   const arrow = edge.arrow ?? "end";
+  const smooth = (edge.curve ?? "straight") === "smooth";
 
   // Selection glow — separate Graphics so its alpha can be pulsed independently
   edgeGlow.clear();
   if (isSelected && locked) {
     const glowColor = isSpace ? SPACE_SELECTED_COLOR : SELECTED_EDGE_COLOR;
-    drawPolyline(edgeGlow, points);
+    tracePath(edgeGlow, points, smooth);
     edgeGlow.stroke({ width: 10, color: glowColor, alpha: 1.0 });
-    drawPolyline(edgeGlow, points);
+    tracePath(edgeGlow, points, smooth);
     edgeGlow.stroke({ width: 4, color: 0xffffff, alpha: 0.7 });
     if (!edgeGlow.filters || !(edgeGlow.filters as BlurFilter[])[0]) {
       edgeGlow.filters = [new BlurFilter({ strength: 5, quality: 4 })];
@@ -366,14 +374,16 @@ export function updateCanvasEdge(
 
   // Glow pass — wider low-alpha stroke behind the main line (space theme only)
   if (isSpace && style === "solid") {
-    drawPolyline(gfx, points);
+    tracePath(gfx, points, smooth);
     gfx.stroke({ width: 4, color, alpha: 0.12 });
   }
 
   // Draw main line through all points
-  if (style === "solid") {
-    drawPolyline(gfx, points);
-    gfx.stroke({ width: lineWidth, color });
+  if (useRibbon) {
+    gfx.poly(ribbonPolygon(samplePath(points, smooth), lineWidth, smooth)).fill({ color, alpha });
+  } else if (style === "solid") {
+    tracePath(gfx, points, smooth);
+    gfx.stroke({ width: lineWidth, color, alpha });
   } else {
     for (let i = 1; i < points.length; i++) {
       drawDashedLine(
@@ -385,6 +395,7 @@ export function updateCanvasEdge(
         lineWidth,
         color,
         style,
+        alpha,
       );
     }
   }
@@ -414,9 +425,13 @@ export function updateCanvasEdge(
     }
   }
 
-  // Hit area for click detection (wider than the visual line)
-  const tolerance = HIT_TOLERANCE / viewportScale;
-  gfx.hitArea = new PolylineHitArea(points, Math.max(tolerance, HIT_TOLERANCE));
+  // Hit area for click detection. The band is at least HIT_TOLERANCE screen pixels wide so thin
+  // edges stay easy to grab, but never narrower than the edge's own half-width so a wide ribbon is
+  // clickable across its whole body. The containment path follows the flattened curve (so a curved
+  // edge's hit region hugs the visible bend), while the coarse points drive drag-segment mapping.
+  const baseTolerance = Math.max(HIT_TOLERANCE / viewportScale, HIT_TOLERANCE);
+  const tolerance = Math.max(baseTolerance, lineWidth / 2);
+  gfx.hitArea = new PolylineHitArea(samplePath(points, smooth), tolerance, points);
 }
 
 function drawPolyline(gfx: Graphics, points: Point[]): void {
@@ -424,6 +439,84 @@ function drawPolyline(gfx: Graphics, points: Point[]): void {
   for (let i = 1; i < points.length; i++) {
     gfx.lineTo(points[i].x, points[i].y);
   }
+}
+
+/**
+ * Trace a path through `points`. When `smooth`, each segment is a cubic bezier with
+ * horizontal control handles (the Sankey/flow look) — so a path needs only its endpoints
+ * plus a waypoint or two to read as a smooth curve, keeping draggable handles to a minimum.
+ * Otherwise it's a straight polyline.
+ */
+function tracePath(gfx: Graphics, points: Point[], smooth: boolean): void {
+  gfx.moveTo(points[0].x, points[0].y);
+  if (!smooth || points.length < 2) {
+    for (let i = 1; i < points.length; i++) gfx.lineTo(points[i].x, points[i].y);
+    return;
+  }
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const dx = (b.x - a.x) * 0.5;
+    gfx.bezierCurveTo(a.x + dx, a.y, b.x - dx, b.y, b.x, b.y);
+  }
+}
+
+/** Flatten the path into a dense polyline. `smooth` samples the same horizontal-tangent
+ *  beziers `tracePath` draws, so the filled ribbon hugs exactly the curve a stroke would. */
+function samplePath(points: Point[], smooth: boolean): Point[] {
+  if (!smooth || points.length < 2) return points;
+  const out: Point[] = [points[0]];
+  const N = 16;
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const dx = (b.x - a.x) * 0.5;
+    const c1x = a.x + dx, c2x = b.x - dx;
+    for (let k = 1; k <= N; k++) {
+      const t = k / N, u = 1 - t;
+      out.push({
+        x: u * u * u * a.x + 3 * u * u * t * c1x + 3 * u * t * t * c2x + t * t * t * b.x,
+        y: u * u * u * a.y + 3 * u * u * t * a.y + 3 * u * t * t * b.y + t * t * t * b.y,
+      });
+    }
+  }
+  return out;
+}
+
+/** Build a closed ribbon polygon of constant width centred on `centerline` — offset each
+ *  point by ±width/2 along the local normal, then return the top edge followed by the bottom
+ *  edge reversed. Filled once, a ribbon has uniform coverage (no self-overlap darkening).
+ *  When `flatEnds`, the first/last caps use a vertical normal: smooth edges leave a node with a
+ *  horizontal tangent, so a vertical cap meets the (vertical) node side flush instead of tilting
+ *  by the slope of the first sampled chord. */
+function ribbonPolygon(centerline: Point[], width: number, flatEnds = false): Point[] {
+  const half = width / 2;
+  const last = centerline.length - 1;
+  const top: Point[] = [];
+  const bottom: Point[] = [];
+  for (let i = 0; i < centerline.length; i++) {
+    let nx: number;
+    let ny: number;
+    if (flatEnds && (i === 0 || i === last)) {
+      nx = 0;
+      ny = half;
+    } else {
+      const prev = centerline[Math.max(0, i - 1)];
+      const next = centerline[Math.min(last, i + 1)];
+      let tx = next.x - prev.x;
+      let ty = next.y - prev.y;
+      const len = Math.hypot(tx, ty) || 1;
+      tx /= len;
+      ty /= len;
+      nx = -ty * half;
+      ny = tx * half;
+    }
+    const p = centerline[i];
+    top.push({ x: p.x + nx, y: p.y + ny });
+    bottom.push({ x: p.x - nx, y: p.y - ny });
+  }
+  bottom.reverse();
+  return top.concat(bottom);
 }
 
 function drawDashedLine(
@@ -435,6 +528,7 @@ function drawDashedLine(
   width: number,
   color: number,
   style: "dashed" | "dotted",
+  alpha = 1,
 ): void {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -453,7 +547,7 @@ function drawDashedLine(
     gfx
       .moveTo(x1 + ux * pos, y1 + uy * pos)
       .lineTo(x1 + ux * endPos, y1 + uy * endPos)
-      .stroke({ width, color });
+      .stroke({ width, color, alpha });
     pos += segLen;
   }
 }

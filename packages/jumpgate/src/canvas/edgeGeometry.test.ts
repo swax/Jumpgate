@@ -490,4 +490,42 @@ describe("PolylineHitArea", () => {
       expect(hitArea.findSegmentIndex(10, 5)).toBe(0);
     });
   });
+
+  describe("separate containment and segment-mapping paths", () => {
+    // A curved edge passes a dense flattened path for containment plus the coarse
+    // [from, ...waypoints, to] path for drag-segment mapping.
+    const dense = [
+      { x: 0, y: 0 },
+      { x: 25, y: 12 },
+      { x: 50, y: 20 },
+      { x: 75, y: 12 },
+      { x: 100, y: 0 },
+    ];
+    const coarse = [
+      { x: 0, y: 0 },
+      { x: 50, y: 20 },
+      { x: 100, y: 0 },
+    ];
+
+    it("containment follows the dense path, not the coarse one", () => {
+      const hitArea = new PolylineHitArea(dense, 4, coarse);
+      // (25,12) is on the dense path but ~6px from the coarse chord (0,0)->(50,20):
+      // within tolerance only because containment uses the dense path.
+      expect(hitArea.contains(25, 12)).toBe(true);
+    });
+
+    it("findSegmentIndex maps to coarse segments (so waypoint drag stays correct)", () => {
+      const hitArea = new PolylineHitArea(dense, 4, coarse);
+      // Two coarse segments => only indices 0 and 1 are ever returned, regardless of
+      // how many points the dense path has.
+      expect(hitArea.findSegmentIndex(10, 4)).toBe(0);
+      expect(hitArea.findSegmentIndex(90, 4)).toBe(1);
+    });
+
+    it("defaults segmentPoints to the containment path when omitted", () => {
+      const hitArea = new PolylineHitArea(dense, 4);
+      // With no coarse override, dense path drives both — index can exceed 1.
+      expect(hitArea.findSegmentIndex(75, 12)).toBe(2);
+    });
+  });
 });
