@@ -1,5 +1,5 @@
 import type { Container, Application } from "pixi.js";
-import { getState } from "../state";
+import { getState, undo, redo } from "../state";
 import {
   copySelectedNodes,
   cutSelectedNodes,
@@ -20,6 +20,22 @@ export function setupKeyboard(onEdit: () => void, app: Application, viewport: Co
     if (state.locked) return;
     const tag = (e.target as HTMLElement).tagName;
     if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+    // Undo / redo. Ctrl/Cmd+Z undoes; Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z redoes.
+    // `key` is normalized to lowercase because Shift makes it "Z".
+    if (e.ctrlKey || e.metaKey) {
+      const key = e.key.toLowerCase();
+      if (key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        if (undo()) onEdit();
+        return;
+      }
+      if (key === "y" || (key === "z" && e.shiftKey)) {
+        e.preventDefault();
+        if (redo()) onEdit();
+        return;
+      }
+    }
 
     if (e.key === "Delete" || e.key === "Backspace") {
       deleteSelected(onEdit);

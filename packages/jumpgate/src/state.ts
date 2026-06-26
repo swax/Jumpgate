@@ -49,12 +49,88 @@ let state: EditorState = {
 
 const listeners: Set<Listener> = new Set();
 
+// ── Undo / redo history ────────────────────────────────────────────
+// Snapshots of `document` taken just before each mutation. A single user gesture frequently
+// fans out into several synchronous mutations (a resize also rescales connected-edge anchors;
+// deleting a selection removes nodes then edges). We capture only the first mutation's pre-state
+// per microtask, so the whole synchronous cascade collapses into one undo step. Separate user
+// gestures arrive on separate DOM events (separate macrotasks), so they never coalesce.
+const MAX_HISTORY = 100;
+let undoStack: JgDocument[] = [];
+let redoStack: JgDocument[] = [];
+let historyCaptured = false;
+
+function cloneDocument(document: JgDocument): JgDocument {
+  return structuredClone(document);
+}
+
+/** Capture the current document as a restore point. Called at the start of every mutation;
+ *  coalesces same-tick cascades into a single entry. */
+export function recordHistory(): void {
+  if (historyCaptured) return;
+  historyCaptured = true;
+  queueMicrotask(() => {
+    historyCaptured = false;
+  });
+  undoStack.push(cloneDocument(state.document));
+  if (undoStack.length > MAX_HISTORY) undoStack.shift();
+  redoStack = [];
+}
+
+/** Restore a previous document snapshot (undo/redo) without recording new history. Keeps the
+ *  id counters monotonic so a redo can't hand out an id that collides with a restored node. */
+function applyRestoredDocument(document: JgDocument): void {
+  for (const n of document.nodes) usedNodeIds.add(n.id);
+  for (const e of document.edges) usedEdgeIds.add(e.id);
+  const nodeIds = new Set(document.nodes.map((n) => n.id));
+  const edgeIds = new Set(document.edges.map((e) => e.id));
+  state = {
+    ...state,
+    document,
+    selectedNodeIds: state.selectedNodeIds.filter((id) => nodeIds.has(id)),
+    selectedEdgeIds: state.selectedEdgeIds.filter((id) => edgeIds.has(id)),
+  };
+  notify();
+}
+
+export function undo(): boolean {
+  const previous = undoStack.pop();
+  if (!previous) return false;
+  redoStack.push(cloneDocument(state.document));
+  applyRestoredDocument(previous);
+  return true;
+}
+
+export function redo(): boolean {
+  const next = redoStack.pop();
+  if (!next) return false;
+  undoStack.push(cloneDocument(state.document));
+  applyRestoredDocument(next);
+  return true;
+}
+
+export function canUndo(): boolean {
+  return undoStack.length > 0;
+}
+
+export function canRedo(): boolean {
+  return redoStack.length > 0;
+}
+
+/** Discard all history — call when a brand-new document is loaded. */
+export function resetHistory(): void {
+  undoStack = [];
+  redoStack = [];
+  historyCaptured = false;
+}
+
 export function getState(): EditorState {
   return state;
 }
 
 export function setDocument(document: JgDocument): void {
   initializeIdTracking(document);
+  resetHistory();
   state = { ...state, document };
   notify();
 }
@@ -101,6 +177,7 @@ export function toggleSelectedNodeId(id: string): void {
 }
 
 export function addNodes(nodes: Node[]): void {
+  recordHistory();
   state = {
     ...state,
     document: {
@@ -112,6 +189,7 @@ export function addNodes(nodes: Node[]): void {
 }
 
 export function deleteNodes(ids: string[]): void {
+  recordHistory();
   const idSet = new Set(ids);
   state = {
     ...state,
@@ -153,6 +231,7 @@ export function setEdgeMode(edgeMode: boolean): void {
 }
 
 export function addEdge(edge: Edge): void {
+  recordHistory();
   state = {
     ...state,
     document: {
@@ -164,6 +243,7 @@ export function addEdge(edge: Edge): void {
 }
 
 export function deleteEdges(ids: string[]): void {
+  recordHistory();
   const idSet = new Set(ids);
   state = {
     ...state,
@@ -177,6 +257,7 @@ export function deleteEdges(ids: string[]): void {
 }
 
 export function updateEdge(id: string, changes: Partial<Omit<Edge, "id">>): void {
+  recordHistory();
   state = {
     ...state,
     document: {
@@ -208,6 +289,7 @@ export function setSnapToGrid(snapToGrid: boolean): void {
 }
 
 export function setDocumentTheme(theme: string | undefined): void {
+  recordHistory();
   state = {
     ...state,
     document: { ...state.document, theme: theme as DocumentTheme | undefined },
@@ -231,6 +313,7 @@ function applyNodeChanges(node: Node, changes: NodeChanges): Node {
 }
 
 export function updateNode(id: string, changes: NodeChanges): void {
+  recordHistory();
   state = {
     ...state,
     document: {
@@ -244,6 +327,7 @@ export function updateNode(id: string, changes: NodeChanges): void {
 }
 
 export function updateNodes(updates: { id: string; changes: NodeChanges }[]): void {
+  recordHistory();
   const changesById = new Map(updates.map((u) => [u.id, u.changes]));
   state = {
     ...state,
@@ -333,4 +417,5 @@ export function resetState(): void {
   nodeMap = null;
   edgeMap = null;
   listeners.clear();
+  resetHistory();
 }

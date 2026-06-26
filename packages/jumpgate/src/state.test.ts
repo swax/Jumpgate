@@ -28,7 +28,15 @@ import {
   setDocumentTheme,
   subscribe,
   resetState,
+  undo,
+  redo,
+  canUndo,
+  canRedo,
 } from "./state";
+
+/** Let the queued microtask reset history coalescing, so the next mutation starts a new
+ *  undo step — mirrors how separate user gestures arrive on separate event-loop turns. */
+const nextGesture = () => Promise.resolve();
 
 function makeNode(id: string, overrides: Partial<Node> = {}): Node {
   return {
@@ -510,6 +518,109 @@ describe("state", () => {
       setDocumentTheme("space");
       setDocumentTheme(undefined);
       expect(getState().document.theme).toBeUndefined();
+    });
+  });
+
+  describe("undo / redo", () => {
+    it("has nothing to undo or redo on a fresh document", () => {
+      expect(canUndo()).toBe(false);
+      expect(canRedo()).toBe(false);
+      expect(undo()).toBe(false);
+      expect(redo()).toBe(false);
+    });
+
+    it("undoes a node addition and redoes it", () => {
+      addNodes([makeNode("node-1")]);
+      expect(getState().document.nodes).toHaveLength(1);
+      expect(canUndo()).toBe(true);
+
+      expect(undo()).toBe(true);
+      expect(getState().document.nodes).toHaveLength(0);
+      expect(canRedo()).toBe(true);
+
+      expect(redo()).toBe(true);
+      expect(getState().document.nodes).toHaveLength(1);
+      expect(getState().document.nodes[0].id).toBe("node-1");
+    });
+
+    it("undoes a drag (node position change) without removing the node", async () => {
+      addNodes([makeNode("node-1", { bounds: { x: 0, y: 0, width: 100, height: 50 } })]);
+      await nextGesture();
+      updateNode("node-1", { bounds: { x: 200, y: 120 } });
+      expect(getNodeById("node-1")?.bounds.x).toBe(200);
+
+      undo();
+      expect(getNodeById("node-1")).toBeDefined();
+      expect(getNodeById("node-1")?.bounds.x).toBe(0);
+      expect(getNodeById("node-1")?.bounds.y).toBe(0);
+    });
+
+    it("coalesces multiple synchronous mutations into one undo step", () => {
+      // A delete that removes nodes and edges, or a resize that rescales anchors, fans out into
+      // several mutations in one tick — all of which should undo together.
+      setDocument({
+        nodes: [makeNode("node-1"), makeNode("node-2")],
+        edges: [makeEdge("edge-1", "node-1", "node-2")],
+      });
+      deleteNodes(["node-1"]); // also drops edge-1 — but deleteNodes does that in one call
+      deleteEdges([]); // a second synchronous mutation in the same tick
+      expect(getState().document.nodes).toHaveLength(1);
+
+      // One undo restores everything captured before the first mutation of this tick.
+      expect(undo()).toBe(true);
+      expect(getState().document.nodes).toHaveLength(2);
+      expect(getState().document.edges).toHaveLength(1);
+    });
+
+    it("treats mutations on separate gestures as separate undo steps", async () => {
+      addNodes([makeNode("node-1")]);
+      await nextGesture();
+      addNodes([makeNode("node-2")]);
+      expect(getState().document.nodes).toHaveLength(2);
+
+      expect(undo()).toBe(true);
+      expect(getState().document.nodes.map((n) => n.id)).toEqual(["node-1"]);
+
+      expect(undo()).toBe(true);
+      expect(getState().document.nodes).toHaveLength(0);
+
+      expect(undo()).toBe(false);
+    });
+
+    it("clears the redo stack when a new edit is made after undo", async () => {
+      addNodes([makeNode("node-1")]);
+      await nextGesture();
+      undo();
+      expect(canRedo()).toBe(true);
+
+      addNodes([makeNode("node-2")]);
+      expect(canRedo()).toBe(false);
+      expect(redo()).toBe(false);
+      expect(getState().document.nodes.map((n) => n.id)).toEqual(["node-2"]);
+    });
+
+    it("resets history when a new document is loaded", () => {
+      addNodes([makeNode("node-1")]);
+      expect(canUndo()).toBe(true);
+      setDocument({ nodes: [makeNode("node-9")], edges: [] });
+      expect(canUndo()).toBe(false);
+      expect(canRedo()).toBe(false);
+    });
+
+    it("keeps generated ids from colliding across undo", () => {
+      const id1 = generateNodeId();
+      addNodes([makeNode(id1)]);
+      undo();
+      // After undoing the add, a freshly generated id must not reuse the undone node's id.
+      const id2 = generateNodeId();
+      expect(id2).not.toBe(id1);
+    });
+
+    it("prunes selection of items removed by undo", () => {
+      addNodes([makeNode("node-1")]);
+      setSelectedNodeIds(["node-1"]);
+      undo();
+      expect(getState().selectedNodeIds).toEqual([]);
     });
   });
 });
