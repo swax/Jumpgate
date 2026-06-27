@@ -286,6 +286,7 @@ describe("edgeSchema", () => {
       width: 4,
       opacity: 0.5,
       curve: "smooth" as const,
+      labelPos: 0.2,
       fileLink: { path: "/link.ts" },
     };
     const result = edgeSchema.safeParse(full);
@@ -339,6 +340,14 @@ describe("edgeSchema", () => {
     expect(edgeSchema.safeParse({ ...minimalEdge, curve: "straight" }).success).toBe(true);
     expect(edgeSchema.safeParse({ ...minimalEdge, curve: "smooth" }).success).toBe(true);
     expect(edgeSchema.safeParse({ ...minimalEdge, curve: "wavy" }).success).toBe(false);
+  });
+
+  it("accepts labelPos within 0–1 and rejects outside", () => {
+    for (const labelPos of [0, 0.15, 1]) {
+      expect(edgeSchema.safeParse({ ...minimalEdge, labelPos }).success).toBe(true);
+    }
+    expect(edgeSchema.safeParse({ ...minimalEdge, labelPos: 1.2 }).success).toBe(false);
+    expect(edgeSchema.safeParse({ ...minimalEdge, labelPos: -0.1 }).success).toBe(false);
   });
 
   it("accepts empty waypoints array", () => {

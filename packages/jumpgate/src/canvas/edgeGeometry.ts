@@ -31,8 +31,9 @@ export function buildPolylinePoints(from: Point, to: Point, waypoints?: Point[])
   return [from, ...waypoints, to];
 }
 
-/** Walk 50% of total arc length to find the midpoint for label placement. */
-export function computePolylineMidpoint(points: Point[]): Point {
+/** Walk `frac` (0..1) of total arc length to find a point along the polyline — 0 = start,
+ *  0.5 = midpoint, 1 = end. Used to place an edge label anywhere along the edge. */
+export function computePolylinePointAt(points: Point[], frac: number): Point {
   if (points.length < 2) return points[0] ?? { x: 0, y: 0 };
 
   // Compute total length
@@ -43,14 +44,14 @@ export function computePolylineMidpoint(points: Point[]): Point {
     totalLen += Math.sqrt(dx * dx + dy * dy);
   }
 
-  const halfLen = totalLen / 2;
+  const target = totalLen * Math.max(0, Math.min(1, frac));
   let walked = 0;
   for (let i = 1; i < points.length; i++) {
     const dx = points[i].x - points[i - 1].x;
     const dy = points[i].y - points[i - 1].y;
     const segLen = Math.sqrt(dx * dx + dy * dy);
-    if (walked + segLen >= halfLen) {
-      const remaining = halfLen - walked;
+    if (walked + segLen >= target) {
+      const remaining = target - walked;
       const t = segLen > 0 ? remaining / segLen : 0;
       return {
         x: points[i - 1].x + dx * t,
@@ -62,6 +63,11 @@ export function computePolylineMidpoint(points: Point[]): Point {
 
   // Fallback: last point
   return points[points.length - 1];
+}
+
+/** Midpoint for label placement (50% of arc length). */
+export function computePolylineMidpoint(points: Point[]): Point {
+  return computePolylinePointAt(points, 0.5);
 }
 
 /** Point-to-segment distance (exported for hit-testing in renderer). */

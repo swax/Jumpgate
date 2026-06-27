@@ -12,6 +12,7 @@ export {
   resolveEndpoint,
   buildPolylinePoints,
   computePolylineMidpoint,
+  computePolylinePointAt,
   pointToSegmentDistance,
   PolylineHitArea,
   type Point,

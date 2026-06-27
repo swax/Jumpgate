@@ -10,6 +10,9 @@ interface LabelEntry {
   /** Height in world units (node labels only). */
   height: number;
   kind: "node" | "edge";
+  /** Horizontal anchoring for edge labels: "left" anchors the text's left edge at the point
+   *  (so it reads rightward, away from a source), "right" anchors its right edge, "center" centers. */
+  justify: "left" | "center" | "right";
   hasChildren: boolean;
   isSpace: boolean;
   /** True when layout-affecting properties changed since last syncPositions. */
@@ -74,6 +77,7 @@ export class DomLabelManager {
         width,
         height,
         kind: "node",
+        justify: "center",
         hasChildren,
         isSpace,
         dirty: true,
@@ -111,6 +115,7 @@ export class DomLabelManager {
     worldX: number,
     worldY: number,
     isSpace: boolean,
+    justify: "left" | "center" | "right" = "center",
   ): void {
     let entry = this.labels.get(id);
     if (!entry) {
@@ -132,6 +137,7 @@ export class DomLabelManager {
         width: 0,
         height: 0,
         kind: "edge",
+        justify,
         hasChildren: false,
         isSpace,
         dirty: false,
@@ -143,6 +149,7 @@ export class DomLabelManager {
     entry.worldX = worldX;
     entry.worldY = worldY;
     entry.isSpace = isSpace;
+    entry.justify = justify;
 
     entry.el.textContent = text;
     entry.el.style.color = color;
@@ -232,10 +239,11 @@ export class DomLabelManager {
           entry.dirty = false;
         }
       } else {
-        // Edge label: centered at midpoint
+        // Edge label: anchored at its point, justified left / center / right
         const screenX = worldX * zoom + vpX;
         const screenY = worldY * zoom + vpY;
-        el.style.transform = `translate(${screenX}px, ${screenY}px) translate(-50%, -50%)`;
+        const jx = entry.justify === "left" ? "0" : entry.justify === "right" ? "-100%" : "-50%";
+        el.style.transform = `translate(${screenX}px, ${screenY}px) translate(${jx}, -50%)`;
 
         if (zoomChanged) {
           el.style.fontSize = `${fontSize}px`;

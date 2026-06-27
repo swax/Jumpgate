@@ -7,6 +7,7 @@ import {
   resolveEndpoint,
   buildPolylinePoints,
   computePolylineMidpoint,
+  computePolylinePointAt,
   PolylineHitArea,
   getSegmentDragOverride,
   type CanvasEdgeCallbacks,
@@ -144,9 +145,20 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
       isLocked,
     );
 
-    // Upsert DOM label for this edge
+    // Upsert DOM label for this edge — placed `labelPos` along the edge (default midpoint).
+    // Justify so the text reads away from its anchor: a label near the start (labelPos < 0.5)
+    // is left-justified (grows toward the target), one near the end is right-justified.
     const points = buildPolylinePoints(from, to, renderEdge.waypoints);
-    const mid = computePolylineMidpoint(points);
+    const mid =
+      edge.labelPos === undefined
+        ? computePolylineMidpoint(points)
+        : computePolylinePointAt(points, edge.labelPos);
+    const justify: "left" | "center" | "right" =
+      edge.labelPos === undefined || edge.labelPos === 0.5
+        ? "center"
+        : edge.labelPos < 0.5
+          ? "left"
+          : "right";
     const isSpace = doc.theme === "space";
     const edgeFontFamily = isSpace ? "Consolas, 'Courier New', monospace" : DEFAULT_FONT_FAMILY;
     const edgeLabelColor = edge.labelColor ?? labelColor;
@@ -158,6 +170,7 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
       mid.x,
       mid.y,
       isSpace,
+      justify,
     );
 
     // Expand edge hit area to include the label bounding box
@@ -167,8 +180,9 @@ export function reconcileEdges(ctx: EdgeReconcilerContext, state: EditorState): 
         const zoom = viewport.scale.x;
         const worldW = labelEl.offsetWidth / zoom;
         const worldH = labelEl.offsetHeight / zoom;
+        const rectX = justify === "left" ? mid.x : justify === "right" ? mid.x - worldW : mid.x - worldW / 2;
         edgeGfx.hitArea.labelRect = {
-          x: mid.x - worldW / 2,
+          x: rectX,
           y: mid.y - worldH / 2,
           width: worldW,
           height: worldH,

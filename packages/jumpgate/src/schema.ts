@@ -70,6 +70,7 @@ export const edgeSchema = z.object({
   width: z.number().positive().optional(),
   opacity: z.number().min(0).max(1).optional(),
   curve: z.enum(["straight", "smooth"]).optional(),
+  labelPos: z.number().min(0).max(1).optional(),
   fileLink: fileLinkSchema.optional(),
 });
 

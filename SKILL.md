@@ -108,6 +108,7 @@ Every edge requires `id`, `from`, and `to`. All other fields are optional.
   "width": 3,                  // optional line thickness in px (default 2); scale by a value for Sankey-style ribbons
   "opacity": 0.8,              // optional line alpha 0–1 (default 1); use <1 so overlapping ribbons blend
   "curve": "smooth",           // optional: "straight" (default) or "smooth" (horizontal-tangent bezier per segment — the Sankey/flow look; needs only endpoints + maybe one waypoint)
+  "labelPos": 0.15,            // optional 0–1: where the label sits along the edge (0 = at source, 0.5 = midpoint (default), 1 = at target). The label auto-justifies: left-aligned when < 0.5 (reads toward the target), right-aligned when > 0.5, centered at 0.5
   "waypoints": [               // optional intermediate points for routing
     { "x": 300, "y": 150 }
   ],
