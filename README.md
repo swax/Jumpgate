@@ -102,6 +102,18 @@ Sample `.jg` files live in the `samples/` directory at the repo root. With the
 server running you can also open any of them via the Open button or by dragging
 a `.jg` file onto the page.
 
+**Render to PNG** — Render a `.jg` file to an image from the command line using
+headless Chromium (one-time setup: `npx playwright install chromium`):
+
+```sh
+cd packages/jumpgate
+npm run render -- ../../samples/sample.jg                 # writes samples/sample.png
+npm run render -- diagram.jg out.png --width 1600 --height 1000 --scale 2
+```
+
+The diagram is fitted to the viewport with `--padding` pixels of margin (default 40).
+`--scale` sets the device pixel ratio for higher-resolution output.
+
 ## Performance
 
 Diagrams render on a PixiJS/WebGL canvas, so panning, zooming, and dragging stay smooth even with large numbers of nodes and edges. Text labels are rendered as native DOM elements overlaid on the canvas — this keeps text crisp and fully legible at any zoom level, even when nodes are tiny. (PixiJS rasterizes text to textures, which gets fuzzy when scaled down; DOM text uses the browser's own font rendering with full hinting and subpixel antialiasing.)

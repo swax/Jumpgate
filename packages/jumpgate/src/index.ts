@@ -75,6 +75,11 @@ export interface JumpgateEditor {
   setDocument(document: JgDocument): void;
   /** Push a file link result back (response to onEditFileLink callback) */
   setFileLink(targetId: string, targetKind: "node" | "edge", fileLink?: FileLink): void;
+  /**
+   * Pan and zoom so every node fits inside the canvas with `padding` pixels
+   * of margin. Does nothing when the document has no nodes.
+   */
+  fitToView(padding?: number): void;
   /** Clean up and destroy the editor */
   destroy(): void;
 }
@@ -201,6 +206,30 @@ export async function createJumpgateEditor(
       } else {
         edgeChanged(targetId, { fileLink });
       }
+    },
+    fitToView(padding = 40) {
+      const nodes = getState().document.nodes;
+      if (nodes.length === 0) return;
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      for (const { bounds } of nodes) {
+        minX = Math.min(minX, bounds.x);
+        minY = Math.min(minY, bounds.y);
+        maxX = Math.max(maxX, bounds.x + bounds.width);
+        maxY = Math.max(maxY, bounds.y + bounds.height);
+      }
+      const worldW = maxX - minX;
+      const worldH = maxY - minY;
+      const viewW = Math.max(1, app.screen.width - padding * 2);
+      const viewH = Math.max(1, app.screen.height - padding * 2);
+      const scale = Math.min(viewW / worldW, viewH / worldH);
+      viewport.scale.set(scale);
+      viewport.position.set(
+        (app.screen.width - worldW * scale) / 2 - minX * scale,
+        (app.screen.height - worldH * scale) / 2 - minY * scale,
+      );
     },
     destroy() {
       app.destroy(true);
