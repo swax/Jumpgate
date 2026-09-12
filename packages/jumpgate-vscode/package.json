@@ -3,7 +3,7 @@
   "displayName": "Jumpgate",
   "description": "A viewer for .jg diagram files",
   "version": "0.0.1",
-  "publisher": "publisher-name",
+  "publisher": "swax",
   "license": "MIT",
   "repository": {
     "type": "git",
