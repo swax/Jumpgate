@@ -1,0 +1,466 @@
+{
+  "theme": "standard",
+  "nodes": [
+    {
+      "id": "title",
+      "bounds": { "x": 40, "y": -160, "width": 700, "height": 60 },
+      "label": "OpenSlope",
+      "shape": "text"
+    },
+    {
+      "id": "subtitle",
+      "bounds": { "x": 40, "y": -90, "width": 800, "height": 60 },
+      "label": "Build and ride snowboard courses. Author in Slopesmith or import from your own disc,\nride it in the browser or on a standalone Quest — or pack it back onto a PS2 disc.",
+      "shape": "text"
+    },
+    {
+      "id": "legal-note",
+      "bounds": { "x": 1080, "y": -90, "width": 760, "height": 60 },
+      "label": "No retail asset, executable, or disc content. Behavior is implemented from Trailmap;\nanything read off a disc stays in gitignored folders on your machine.",
+      "shape": "text"
+    },
+
+    {
+      "id": "in-scratch",
+      "bounds": { "x": 40, "y": 30, "width": 440, "height": 70 },
+      "label": "Author from scratch\nno game data required",
+      "shape": "parallelogram",
+      "nodeColor": "#43A047",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "in-disc",
+      "bounds": { "x": 520, "y": 30, "width": 440, "height": 70 },
+      "label": "Your own SSX Tricky disc\ndiscs/  (gitignored, never committed)",
+      "shape": "cylinder",
+      "nodeColor": "#78909C",
+      "labelColor": "#ffffff"
+    },
+
+    {
+      "id": "grp-front",
+      "bounds": { "x": 20, "y": 140, "width": 980, "height": 360 },
+      "label": "Front ends — two ways to fill  Maps/<NAME>/",
+      "nodeColor": "#263238",
+      "borderColor": "#546E7A",
+      "labelColor": "#B0BEC5"
+    },
+    {
+      "id": "slopesmith",
+      "bounds": { "x": 50, "y": 200, "width": 440, "height": 170 },
+      "parentId": "grp-front",
+      "label": "Slopesmith  ·  collaborative web editor + rider\nBézier-patch terrain, one racing line\nsculpt · paint · props · rails · lights · gems\neffects graph · skybox · sound · AI art gen\nmulti-user server · WebXR / Quest · test ride",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#1976D2",
+      "labelColor": "#ffffff",
+      "fileLink": { "path": "Slopesmith/README.md" }
+    },
+    {
+      "id": "snowknife-import",
+      "bounds": { "x": 530, "y": 200, "width": 440, "height": 170 },
+      "parentId": "grp-front",
+      "label": "snowknife import  ·  import your own disc\nterrain · props · textures · lightmaps\naudio · SFX · the portable effect graph\n+ race-music per level; shared (decks,\nannouncer, board FX) once per project",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#FB8C00",
+      "labelColor": "#000000",
+      "fileLink": { "path": "Snowknife/README.md" }
+    },
+    {
+      "id": "sx-lib",
+      "bounds": { "x": 280, "y": 390, "width": 460, "height": 90 },
+      "parentId": "grp-front",
+      "label": "wraps SSX-Library (swax fork, submodule)\n50+ subcommands in 8 groups: iso · BIG · SSH ·\nBNK · audio · effects · repack · validate",
+      "nodeColor": "#455A64",
+      "labelColor": "#CFD8DC"
+    },
+
+    {
+      "id": "grp-maps",
+      "bounds": { "x": 20, "y": 560, "width": 980, "height": 270 },
+      "label": "Maps/<NAME>/ — one canonical map contract  (gitignored, source-agnostic)",
+      "nodeColor": "#263238",
+      "borderColor": "#90A4AE",
+      "labelColor": "#CFD8DC"
+    },
+    {
+      "id": "m-patches",
+      "bounds": { "x": 50, "y": 620, "width": 300, "height": 70 },
+      "parentId": "grp-maps",
+      "label": "Patches.json\nbicubic Bézier terrain quilt",
+      "shape": "document",
+      "nodeColor": "#546E7A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "m-instances",
+      "bounds": { "x": 370, "y": 620, "width": 300, "height": 70 },
+      "parentId": "grp-maps",
+      "label": "Instances.json · Models.json\nMeshes/ — native prop tables",
+      "shape": "document",
+      "nodeColor": "#546E7A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "m-textures",
+      "bounds": { "x": 690, "y": 620, "width": 300, "height": 70 },
+      "parentId": "grp-maps",
+      "label": "Textures/ · Lightmaps/\nSkybox/ · Materials.json",
+      "shape": "document",
+      "nodeColor": "#546E7A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "m-effects",
+      "bounds": { "x": 50, "y": 720, "width": 300, "height": 70 },
+      "parentId": "grp-maps",
+      "label": "Effects.json\nstable-ID effect graph",
+      "shape": "document",
+      "nodeColor": "#546E7A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "m-audio",
+      "bounds": { "x": 370, "y": 720, "width": 300, "height": 70 },
+      "parentId": "grp-maps",
+      "label": "Audio/\nmusic · SFX · speech",
+      "shape": "document",
+      "nodeColor": "#546E7A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "m-splines",
+      "bounds": { "x": 690, "y": 720, "width": 300, "height": 70 },
+      "parentId": "grp-maps",
+      "label": "Splines.json · Lights\nProps.obj (derived)",
+      "shape": "document",
+      "nodeColor": "#546E7A",
+      "labelColor": "#ffffff"
+    },
+
+    {
+      "id": "gltf",
+      "bounds": { "x": 40, "y": 890, "width": 460, "height": 150 },
+      "label": "snowknife gltf   →  Maps/<NAME>/gltf/\nthe engine-neutral bundle, baked once:\nterrain.glb · props.glb · collision.glb\nmanifest.json + LightmapAtlas.png\nopens in Blender as-is",
+      "shape": "trapezoid",
+      "nodeColor": "#FB8C00",
+      "labelColor": "#000000",
+      "fileLink": { "path": "Snowknife/docs/034-bundle-pipeline.md" }
+    },
+    {
+      "id": "repack",
+      "bounds": { "x": 560, "y": 890, "width": 400, "height": 150 },
+      "label": "snowknife repack\npack the map back onto a real disc:\nssx-tricky-<NAME>.iso\nauthored props, effects, textures,\ncustom music, ELF patches",
+      "shape": "trapezoid",
+      "nodeColor": "#FB8C00",
+      "labelColor": "#000000",
+      "fileLink": { "path": "Snowknife/REPACK.md" }
+    },
+
+    {
+      "id": "unity-stage",
+      "bounds": { "x": 40, "y": 1080, "width": 460, "height": 80 },
+      "label": "snowknife unity  →  <project>/Assets/OpenSlope/Maps/\nstages the importer-needed subset + Shared",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#FB8C00",
+      "labelColor": "#000000"
+    },
+    {
+      "id": "ps2",
+      "bounds": { "x": 560, "y": 1080, "width": 400, "height": 80 },
+      "label": "Ride it in the original game\nPCSX2 or real PS2 hardware",
+      "shape": "ellipse",
+      "nodeColor": "#43A047",
+      "labelColor": "#ffffff"
+    },
+
+    {
+      "id": "grp-unity",
+      "bounds": { "x": 20, "y": 1210, "width": 560, "height": 400 },
+      "label": "Unity — Unity importer + runtime",
+      "nodeColor": "#263238",
+      "borderColor": "#00897B",
+      "labelColor": "#B2DFDB"
+    },
+    {
+      "id": "u-load",
+      "bounds": { "x": 50, "y": 1270, "width": 230, "height": 80 },
+      "parentId": "grp-unity",
+      "label": "OpenSlope ▸ Load ▸ Map…\nterrain · props\ncollision · skybox",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#00897B",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "u-setup",
+      "bounds": { "x": 320, "y": 1270, "width": 230, "height": 80 },
+      "parentId": "grp-unity",
+      "label": "OpenSlope ▸ Setup All\nprobes · music · boards\nplayer flight",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#00897B",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "u-board",
+      "bounds": { "x": 50, "y": 1370, "width": 230, "height": 80 },
+      "parentId": "grp-unity",
+      "label": "Rideable board\nVRCStation vehicle\nper-surface ride feel",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#26A69A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "u-rails",
+      "bounds": { "x": 320, "y": 1370, "width": 230, "height": 80 },
+      "parentId": "grp-unity",
+      "label": "Grind rails\nsnap · ride · ollie off\nsparks + grind loop",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#26A69A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "u-fx",
+      "bounds": { "x": 50, "y": 1470, "width": 230, "height": 80 },
+      "parentId": "grp-unity",
+      "label": "Breakables · physics\nprops · fireworks\nparticles · gems",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#26A69A",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "u-audio",
+      "bounds": { "x": 320, "y": 1470, "width": 230, "height": 80 },
+      "parentId": "grp-unity",
+      "label": "Race music graph\n+ MC announcer\ncrowd, wind, surface SFX",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#26A69A",
+      "labelColor": "#ffffff"
+    },
+
+    {
+      "id": "basis",
+      "bounds": { "x": 640, "y": 1210, "width": 360, "height": 110 },
+      "label": "Basis\nthe same markers realized under\nBasis  (Unity 6 / URP)",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "vrchat",
+      "bounds": { "x": 640, "y": 1360, "width": 360, "height": 110 },
+      "label": "Upload an AUTHORED world to VRChat\nor test in ClientSim\nride it with friends",
+      "shape": "ellipse",
+      "nodeColor": "#43A047",
+      "labelColor": "#ffffff"
+    },
+
+    {
+      "id": "grp-re",
+      "bounds": { "x": 1080, "y": 140, "width": 560, "height": 920 },
+      "label": "Trailmap — the reverse engineering",
+      "nodeColor": "#263238",
+      "borderColor": "#7B1FA2",
+      "labelColor": "#E1BEE7"
+    },
+    {
+      "id": "trailmap",
+      "bounds": { "x": 1110, "y": 200, "width": 500, "height": 160 },
+      "parentId": "grp-re",
+      "label": "Trailmap  ·  specs/  — 40 chapters\nOn-disc formats: terrain, models, textures,\naudio, level data, archives\nRuntime behavior: rider states, ground contact,\ncarving, jumps, rails, boost, scoring, music",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#7B1FA2",
+      "labelColor": "#ffffff",
+      "fileLink": { "path": "Trailmap/specs/README.md" }
+    },
+    {
+      "id": "re-research",
+      "bounds": { "x": 1110, "y": 400, "width": 500, "height": 110 },
+      "parentId": "grp-re",
+      "label": "research/  — the derivations behind it\ntraces, negative results, open questions,\nconfidence rating on every note",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#8E24AA",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "re-data",
+      "bounds": { "x": 1110, "y": 550, "width": 500, "height": 110 },
+      "parentId": "grp-re",
+      "label": "specs/data/ride-v1.json\nthe versioned replication profile a port\ncan consume directly",
+      "shape": "document",
+      "nodeColor": "#8E24AA",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "re-tools",
+      "bounds": { "x": 1110, "y": 700, "width": 500, "height": 150 },
+      "parentId": "grp-re",
+      "label": "tools/\nssx_analyze.py — ELF + SQLite analysis db\nPINE live instrumentation & telemetry\nELF patches: noclip, HUD text, sky colour\nspec_trace.py — clean/dirty + traceability",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#9575CD",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "re-autotest",
+      "bounds": { "x": 1110, "y": 890, "width": 500, "height": 140 },
+      "parentId": "grp-re",
+      "label": "autotest  — the closed loop\nauthor a fixture → repack → PCSX2\nride it headless → per-variant verdict\nanswers \"does the engine support X?\"",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#9575CD",
+      "labelColor": "#ffffff"
+    },
+
+    {
+      "id": "legend",
+      "bounds": { "x": 1240, "y": 1090, "width": 400, "height": 40 },
+      "label": "dashed = cites / derives from",
+      "shape": "text"
+    },
+
+    {
+      "id": "grp-tools",
+      "bounds": { "x": 20, "y": 1690, "width": 980, "height": 200 },
+      "label": "Repo-wide gates & side tooling",
+      "nodeColor": "#263238",
+      "borderColor": "#546E7A",
+      "labelColor": "#B0BEC5"
+    },
+    {
+      "id": "t-verify",
+      "bounds": { "x": 50, "y": 1750, "width": 300, "height": 110 },
+      "parentId": "grp-tools",
+      "label": "npm run verify   (and CI)\nhygiene gate · C# + TS suites\ncoverage gates · builds · export →\nreal glTF smoke; :full adds disc tier",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "t-blender",
+      "bounds": { "x": 370, "y": 1750, "width": 300, "height": 110 },
+      "parentId": "grp-tools",
+      "label": "Blender/\nopen the bundle directly,\nvalidate terrain patches",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "t-schemas",
+      "bounds": { "x": 690, "y": 1750, "width": 300, "height": 110 },
+      "parentId": "grp-tools",
+      "label": "schemas/   (Apache-2.0)\nportable JSON contracts,\nvalidated at every\nimport/export boundary",
+      "shape": "rounded-rectangle",
+      "nodeColor": "#455A64",
+      "labelColor": "#ffffff"
+    },
+    {
+      "id": "ignored-note",
+      "bounds": { "x": 20, "y": 1920, "width": 980, "height": 40 },
+      "label": "Maps/, discs/, ResearchData/ and workspace/ are gitignored — nothing disc-derived is committed.",
+      "shape": "text"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-scratch-slope",
+      "from": { "nodeId": "in-scratch", "anchor": [220, 70] },
+      "to": { "nodeId": "slopesmith", "anchor": [210, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-disc-import",
+      "from": { "nodeId": "in-disc", "anchor": [230, 70] },
+      "to": { "nodeId": "snowknife-import", "anchor": [220, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-slope-maps",
+      "from": { "nodeId": "slopesmith", "anchor": [210, 170] },
+      "to": { "nodeId": "grp-maps", "anchor": [240, 0] },
+      "label": "EXPORT",
+      "color": "#1976D2",
+      "arrow": "end"
+    },
+    {
+      "id": "e-import-maps",
+      "from": { "nodeId": "snowknife-import", "anchor": [220, 170] },
+      "to": { "nodeId": "grp-maps", "anchor": [740, 0] },
+      "label": "extract",
+      "color": "#FB8C00",
+      "arrow": "end"
+    },
+    {
+      "id": "e-maps-gltf",
+      "from": { "nodeId": "grp-maps", "anchor": [240, 270] },
+      "to": { "nodeId": "gltf", "anchor": [220, 0] },
+      "label": "bake",
+      "arrow": "end"
+    },
+    {
+      "id": "e-maps-repack",
+      "from": { "nodeId": "grp-maps", "anchor": [740, 270] },
+      "to": { "nodeId": "repack", "anchor": [200, 0] },
+      "label": "pack",
+      "arrow": "end"
+    },
+    {
+      "id": "e-gltf-stage",
+      "from": { "nodeId": "gltf", "anchor": [220, 150] },
+      "to": { "nodeId": "unity-stage", "anchor": [220, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-repack-ps2",
+      "from": { "nodeId": "repack", "anchor": [200, 150] },
+      "to": { "nodeId": "ps2", "anchor": [200, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-stage-unity",
+      "from": { "nodeId": "unity-stage", "anchor": [220, 80] },
+      "to": { "nodeId": "grp-unity", "anchor": [240, 0] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-unity-basis",
+      "from": { "nodeId": "grp-unity", "anchor": [560, 50] },
+      "to": { "nodeId": "basis", "anchor": [0, 55] },
+      "label": "same markers",
+      "style": "dashed",
+      "arrow": "end"
+    },
+    {
+      "id": "e-unity-vrchat",
+      "from": { "nodeId": "grp-unity", "anchor": [560, 200] },
+      "to": { "nodeId": "vrchat", "anchor": [0, 55] },
+      "arrow": "end"
+    },
+    {
+      "id": "e-front-re",
+      "from": { "nodeId": "grp-front", "anchor": [980, 145] },
+      "to": { "nodeId": "trailmap", "anchor": [0, 85] },
+      "label": "cites  [Trailmap: NNN]",
+      "labelPos": 0.5,
+      "color": "#7B1FA2",
+      "style": "dashed",
+      "arrow": "end"
+    },
+    {
+      "id": "e-repack-autotest",
+      "from": { "nodeId": "repack", "anchor": [400, 75] },
+      "to": { "nodeId": "re-autotest", "anchor": [0, 70] },
+      "label": "the harness rides a built ISO",
+      "color": "#9575CD",
+      "style": "dashed",
+      "arrow": "end"
+    },
+    {
+      "id": "e-unity-re",
+      "from": { "nodeId": "grp-unity", "anchor": [560, 300] },
+      "to": { "nodeId": "grp-re", "anchor": [80, 920] },
+      "waypoints": [{ "x": 1160, "y": 1510 }],
+      "label": "ride feel, race music and announcer are built from the spec",
+      "labelPos": 0.25,
+      "color": "#7B1FA2",
+      "style": "dashed",
+      "arrow": "end"
+    }
+  ]
+}
